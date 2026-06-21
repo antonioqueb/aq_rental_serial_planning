@@ -479,19 +479,25 @@ class RentalSerialReservation(models.Model):
                 "state": r.state, "partner": r.partner_id.display_name,
                 "sale_order_id": r.sale_order_id.id,
                 "sale_order": r.sale_order_id.name,
+                "product_name": r.product_id.display_name,
+                "lot_name": r.lot_id.name,
                 "billable_start": r.rental_billable_start and r.rental_billable_start.isoformat(),
                 "billable_end": r.rental_billable_end and r.rental_billable_end.isoformat(),
                 "start": r.reservation_block_start.isoformat(),
                 "end": r.reservation_block_end.isoformat(),
                 "conflict": r.conflict_status == "conflict",
+                "overdue": r.is_overdue,
             })
         dt_by_lot = {}
         for d in downtimes:
             dt_by_lot.setdefault(d.lot_id.id, []).append({
                 "id": d.id, "type": "downtime", "name": d.name,
                 "state": "maintenance", "reason": d.reason,
+                "lot_name": d.lot_id.name,
+                "product_name": d.product_id.display_name,
                 "start": d.start_datetime.isoformat(),
                 "end": (d.end_datetime or end).isoformat(),
+                "open_ended": not d.end_datetime,
                 "conflict": False,
             })
 
@@ -507,6 +513,7 @@ class RentalSerialReservation(models.Model):
             result.append({
                 "product_id": product.id,
                 "product_name": product.display_name,
+                "sku": product.default_code or "",
                 "serial_count": len(product_lots),
                 "serials": serial_rows,
             })
