@@ -194,13 +194,18 @@ class RentalSerialReservation(models.Model):
             WHERE conname = 'rental_serial_no_overlap'
         """)
         if not self.env.cr.fetchone():
+            # NOTE: Odoo stores Datetime as `timestamp WITHOUT time zone`
+            # (UTC-naive). `tstzrange` would force a session-timezone cast that
+            # is only STABLE, which Postgres rejects in an index expression
+            # ("functions in index expression must be marked IMMUTABLE").
+            # `tsrange` over the naive timestamps is IMMUTABLE -> use it.
             self.env.cr.execute("""
                 ALTER TABLE rental_serial_reservation
                 ADD CONSTRAINT rental_serial_no_overlap
                 EXCLUDE USING gist (
                     lot_id WITH =,
-                    tstzrange(reservation_block_start,
-                              reservation_block_end, '[)') WITH &&
+                    tsrange(reservation_block_start,
+                            reservation_block_end, '[)') WITH &&
                 )
                 WHERE (
                     state IN ('soft_hold','reserved','prepared','picked_up',
