@@ -6,13 +6,13 @@ class StockLot(models.Model):
     _inherit = "stock.lot"
 
     x_reservation_ids = fields.One2many(
-        "rental.serial.reservation", "lot_id", string="Reservations")
-    x_reservation_count = fields.Integer(compute="_compute_rental_counts")
+        "rental.serial.reservation", "lot_id", string="Reservas")
+    x_reservation_count = fields.Integer(string="N° reservas", compute="_compute_rental_counts")
     x_downtime_ids = fields.One2many(
-        "rental.serial.downtime", "lot_id", string="Downtime")
-    x_downtime_count = fields.Integer(compute="_compute_rental_counts")
+        "rental.serial.downtime", "lot_id", string="Bloqueos")
+    x_downtime_count = fields.Integer(string="N° bloqueos", compute="_compute_rental_counts")
     x_rental_revenue = fields.Monetary(
-        string="Rental Revenue", compute="_compute_rental_revenue",
+        string="Ingresos por renta", compute="_compute_rental_revenue",
         currency_field="x_currency_id")
     x_currency_id = fields.Many2one(
         "res.currency", compute="_compute_rental_revenue")
@@ -44,7 +44,7 @@ class StockLot(models.Model):
         self.ensure_one()
         return {
             "type": "ir.actions.act_window",
-            "name": _("Reservations: %s") % self.name,
+            "name": _("Reservas: %s") % self.name,
             "res_model": "rental.serial.reservation",
             "view_mode": "list,form,calendar",
             "domain": [("lot_id", "=", self.id)],

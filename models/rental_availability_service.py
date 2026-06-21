@@ -26,7 +26,7 @@ DOWNTIME_BLOCKING_STATES = ("scheduled", "in_progress")
 
 class RentalAvailabilityService(models.AbstractModel):
     _name = "rental.availability.service"
-    _description = "Rental Serial Availability Engine"
+    _description = "Motor de disponibilidad por serie"
 
     # ------------------------------------------------------------------
     # Low level helpers

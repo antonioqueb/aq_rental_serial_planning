@@ -6,17 +6,17 @@
         <field name="inherit_id" ref="product.product_template_only_form_view"/>
         <field name="arch" type="xml">
             <xpath expr="//notebook" position="inside">
-                <page string="Serial Rental Planning" name="serial_planning"
+                <page string="Planeación por serie" name="serial_planning"
                       invisible="not rent_ok and not x_rental_serial_planning">
                     <group>
-                        <group string="Planning">
+                        <group string="Planeación">
                             <field name="x_rental_serial_planning"/>
                             <field name="x_requires_serial_reservation"/>
                             <field name="x_rental_package_eligible"/>
                             <field name="x_allow_auto_serial_assignment"/>
                             <field name="x_allow_manual_serial_assignment"/>
                         </group>
-                        <group string="Operational Buffers (hours)">
+                        <group string="Márgenes operativos (horas)">
                             <field name="x_default_preparation_hours"/>
                             <field name="x_default_delivery_buffer_hours"/>
                             <field name="x_default_return_buffer_hours"/>
@@ -24,9 +24,9 @@
                         </group>
                     </group>
                     <div class="text-muted">
-                        The operational block period is derived from the billable
-                        period by widening it with these buffers
-                        (prep + delivery before, return + cleaning after).
+                        El periodo operativo de bloqueo se deriva del periodo
+                        facturable ensanchándolo con estos márgenes
+                        (preparación + entrega antes, retorno + limpieza después).
                     </div>
                 </page>
             </xpath>
@@ -43,7 +43,7 @@
                         class="oe_stat_button" icon="fa-calendar"
                         invisible="tracking != 'serial'">
                     <field name="x_serial_reservation_count" widget="statinfo"
-                           string="Reservations"/>
+                           string="Reservas"/>
                 </button>
             </xpath>
         </field>

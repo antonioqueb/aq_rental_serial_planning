@@ -23,11 +23,11 @@
         <field name="arch" type="xml">
             <form>
                 <header>
-                    <button name="action_start" type="object" string="Start"
+                    <button name="action_start" type="object" string="Iniciar"
                             invisible="state != 'scheduled'"/>
-                    <button name="action_done" type="object" string="Mark Done"
+                    <button name="action_done" type="object" string="Marcar terminado"
                             class="btn-primary" invisible="state not in ('scheduled','in_progress')"/>
-                    <button name="action_cancel" type="object" string="Cancel"
+                    <button name="action_cancel" type="object" string="Cancelar"
                             invisible="state in ('done','cancelled')"/>
                     <field name="state" widget="statusbar"/>
                 </header>
@@ -45,7 +45,7 @@
                             <field name="company_id" groups="base.group_multi_company"/>
                         </group>
                     </group>
-                    <field name="notes" placeholder="Notes..."/>
+                    <field name="notes" placeholder="Notas..."/>
                 </sheet>
                 <chatter/>
             </form>
@@ -65,7 +65,7 @@
     </record>
 
     <record id="action_rental_downtime" model="ir.actions.act_window">
-        <field name="name">Serial Downtime</field>
+        <field name="name">Mantenimiento / Bloqueos</field>
         <field name="res_model">rental.serial.downtime</field>
         <field name="view_mode">list,form,calendar</field>
     </record>

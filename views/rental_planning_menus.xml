@@ -1,28 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <menuitem id="menu_rental_planning_root" name="Rental Planning"
+    <menuitem id="menu_rental_planning_root" name="Planeación de Renta"
               web_icon="aq_rental_serial_planning,static/description/icon.png"
               sequence="40"
               groups="group_rental_planner_user"/>
 
-    <menuitem id="menu_rental_planning_board" name="Planning Board"
+    <menuitem id="menu_rental_planning_board" name="Tablero de Planeación"
               parent="menu_rental_planning_root"
               action="action_rental_planning_board" sequence="10"/>
 
-    <menuitem id="menu_rental_reservations" name="Serial Reservations"
+    <menuitem id="menu_rental_reservations" name="Reservas por Serie"
               parent="menu_rental_planning_root"
               action="action_rental_serial_reservation" sequence="20"/>
 
-    <menuitem id="menu_rental_downtime" name="Downtime / Maintenance"
+    <menuitem id="menu_rental_downtime" name="Mantenimiento / Bloqueos"
               parent="menu_rental_planning_root"
               action="action_rental_downtime" sequence="30"
               groups="group_rental_warehouse_user"/>
 
-    <menuitem id="menu_rental_config" name="Configuration"
+    <menuitem id="menu_rental_config" name="Configuración"
               parent="menu_rental_planning_root" sequence="90"
               groups="group_rental_administrator"/>
 
-    <menuitem id="menu_rental_packages" name="Packages"
+    <menuitem id="menu_rental_packages" name="Paquetes"
               parent="menu_rental_config"
               action="action_rental_package" sequence="10"/>
+
+    <menuitem id="menu_rental_sample_data" name="Cargar datos de ejemplo"
+              parent="menu_rental_config"
+              action="action_rental_sample_data" sequence="90"
+              groups="group_rental_administrator"/>
 </odoo>

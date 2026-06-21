@@ -19,17 +19,17 @@ const STATE_COLORS = {
 };
 
 const STATE_LABELS = {
-    soft_hold: "Soft Hold",
-    reserved: "Reserved",
-    prepared: "Prepared",
-    picked_up: "Picked Up",
-    delivered: "Delivered",
-    in_use: "In Use",
-    returned: "Returned (pending review)",
-    released: "Released",
-    quotation: "Quotation",
-    draft: "Draft",
-    maintenance: "Maintenance / Downtime",
+    soft_hold: "Apartado temporal",
+    reserved: "Reservado",
+    prepared: "Preparado",
+    picked_up: "Retirado",
+    delivered: "Entregado",
+    in_use: "En uso",
+    returned: "Devuelto (por revisar)",
+    released: "Liberado",
+    quotation: "Cotización",
+    draft: "Borrador",
+    maintenance: "Mantenimiento / Bloqueo",
 };
 
 const WEEKDAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
@@ -184,7 +184,7 @@ export class RentalPlanningBoard extends Component {
     blockTitle(block) {
         const label = STATE_LABELS[block.state] || block.state;
         const partner = block.partner ? ` — ${block.partner}` : "";
-        const conflict = block.conflict ? " ⚠ CONFLICT" : "";
+        const conflict = block.conflict ? " ⚠ CONFLICTO" : "";
         return `${block.name} [${label}]${partner}${conflict}`;
     }
 
@@ -244,7 +244,7 @@ export class RentalPlanningBoard extends Component {
     // ------------------------------------------------------------------
     openSaleOrder(block) {
         if (!block.sale_order_id) {
-            this.notification.add("No sale order linked.", { type: "warning" });
+            this.notification.add("No hay pedido de venta vinculado.", { type: "warning" });
             return;
         }
         this.action.doAction({
@@ -269,11 +269,11 @@ export class RentalPlanningBoard extends Component {
         try {
             await this.orm.call("rental.serial.reservation", "release_reservations",
                 [[block.id]]);
-            this.notification.add("Serial released.", { type: "success" });
+            this.notification.add("Serie liberada.", { type: "success" });
             this.state.selected = null;
             await this.loadBoard();
         } catch (e) {
-            this.notification.add("Release failed: " + (e.message || e), { type: "danger" });
+            this.notification.add("No se pudo liberar: " + (e.message || e), { type: "danger" });
         }
     }
 
@@ -288,7 +288,7 @@ export class RentalPlanningBoard extends Component {
     async submitDowntime() {
         const f = this.state.downtimeForm;
         if (!f.lot_id || !f.start) {
-            this.notification.add("Serial and start are required.", { type: "warning" });
+            this.notification.add("La serie y la fecha de inicio son obligatorias.", { type: "warning" });
             return;
         }
         try {
@@ -298,11 +298,11 @@ export class RentalPlanningBoard extends Component {
                 start: toServer(new Date(f.start)),
                 end: f.end ? toServer(new Date(f.end)) : null,
             });
-            this.notification.add("Downtime created.", { type: "success" });
+            this.notification.add("Bloqueo creado.", { type: "success" });
             this.state.showDowntime = false;
             await this.loadBoard();
         } catch (e) {
-            this.notification.add("Could not create downtime: " + (e.message || e), { type: "danger" });
+            this.notification.add("No se pudo crear el bloqueo: " + (e.message || e), { type: "danger" });
         }
     }
 

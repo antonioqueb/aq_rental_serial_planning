@@ -6,7 +6,7 @@ class ProductProduct(models.Model):
     _inherit = "product.product"
 
     x_serial_reservation_count = fields.Integer(
-        string="Active Serial Reservations",
+        string="Reservas por serie activas",
         compute="_compute_serial_reservation_count")
 
     def _compute_serial_reservation_count(self):
@@ -24,6 +24,6 @@ class ProductProduct(models.Model):
         return {
             "type": "ir.actions.client",
             "tag": "aq_rental_planning_board",
-            "name": _("Availability: %s") % self.display_name,
+            "name": _("Disponibilidad: %s") % self.display_name,
             "params": {"product_id": self.id},
         }

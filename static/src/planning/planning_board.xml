@@ -5,7 +5,7 @@
             <!-- Toolbar -->
             <div class="aq_pb_toolbar">
                 <div class="aq_pb_nav">
-                    <button class="btn btn-secondary" t-on-click="() => this.shift(-1)" title="Previous">
+                    <button class="btn btn-secondary" t-on-click="() => this.shift(-1)" title="Anterior">
                         <i class="fa fa-chevron-left"/>
                     </button>
                     <input type="date" class="o_input" t-att-value="state.dateStart"
@@ -13,26 +13,26 @@
                     <span class="mx-1">→</span>
                     <input type="date" class="o_input" t-att-value="state.dateEnd"
                            t-on-change="(ev) => this.onDateChange('dateEnd', ev)"/>
-                    <button class="btn btn-secondary" t-on-click="() => this.shift(1)" title="Next">
+                    <button class="btn btn-secondary" t-on-click="() => this.shift(1)" title="Siguiente">
                         <i class="fa fa-chevron-right"/>
                     </button>
-                    <button class="btn btn-light" t-on-click="() => this.refresh()" title="Refresh">
+                    <button class="btn btn-light" t-on-click="() => this.refresh()" title="Actualizar">
                         <i class="fa fa-refresh"/>
                     </button>
                 </div>
 
                 <div class="aq_pb_zoom btn-group">
                     <button class="btn" t-att-class="state.zoom === 'day' ? 'btn-primary' : 'btn-light'"
-                            t-on-click="() => this.setZoom('day')">Day</button>
+                            t-on-click="() => this.setZoom('day')">Día</button>
                     <button class="btn" t-att-class="state.zoom === 'week' ? 'btn-primary' : 'btn-light'"
-                            t-on-click="() => this.setZoom('week')">Week</button>
+                            t-on-click="() => this.setZoom('week')">Semana</button>
                     <button class="btn" t-att-class="state.zoom === 'month' ? 'btn-primary' : 'btn-light'"
-                            t-on-click="() => this.setZoom('month')">Month</button>
+                            t-on-click="() => this.setZoom('month')">Mes</button>
                 </div>
 
                 <div class="aq_pb_filters">
                     <select class="o_input" t-on-change="(ev) => this.onFilterChange('warehouse_id', ev)">
-                        <option value="">All warehouses</option>
+                        <option value="">Todos los almacenes</option>
                         <t t-foreach="state.meta.warehouses" t-as="w" t-key="w.id">
                             <option t-att-value="w.id"
                                     t-att-selected="state.filters.warehouse_id === w.id">
@@ -41,13 +41,13 @@
                         </t>
                     </select>
                     <select class="o_input" t-on-change="(ev) => this.onFilterChange('package_id', ev)">
-                        <option value="">All packages</option>
+                        <option value="">Todos los paquetes</option>
                         <t t-foreach="state.meta.packages" t-as="p" t-key="p.id">
                             <option t-att-value="p.id"><t t-esc="p.name"/></option>
                         </t>
                     </select>
                     <select class="o_input" t-on-change="(ev) => this.onFilterChange('states', ev)">
-                        <option value="">All states</option>
+                        <option value="">Todos los estados</option>
                         <t t-foreach="state.meta.states" t-as="s" t-key="s.key">
                             <option t-att-value="s.key"><t t-esc="s.label"/></option>
                         </t>
@@ -64,20 +64,20 @@
                     </span>
                 </t>
                 <span class="aq_pb_legend_item">
-                    <span class="aq_pb_swatch" style="background:#dc3545;"/> Conflict
+                    <span class="aq_pb_swatch" style="background:#dc3545;"/> Conflicto
                 </span>
             </div>
 
             <!-- Loading -->
             <div t-if="state.loading" class="aq_pb_loading">
-                <i class="fa fa-spinner fa-spin"/> Loading availability…
+                <i class="fa fa-spinner fa-spin"/> Cargando disponibilidad…
             </div>
 
             <!-- Grid -->
             <div t-else="" class="aq_pb_grid">
                 <!-- Header row with day columns -->
                 <div class="aq_pb_header">
-                    <div class="aq_pb_rowlabel aq_pb_corner">Product / Serial</div>
+                    <div class="aq_pb_rowlabel aq_pb_corner">Producto / Serie</div>
                     <div class="aq_pb_timeline">
                         <t t-foreach="columns" t-as="col" t-key="col.key">
                             <div class="aq_pb_colhead" t-att-class="col.isWeekend ? 'aq_pb_weekend' : ''"
@@ -116,7 +116,7 @@
                                         <t t-esc="serial.lot_name"/>
                                         <button class="btn btn-sm btn-link aq_pb_dt_btn"
                                                 t-on-click.stop="() => this.startDowntime(serial.lot_id)"
-                                                title="Add downtime / maintenance">
+                                                title="Agregar mantenimiento / bloqueo">
                                             <i class="fa fa-wrench"/>
                                         </button>
                                     </div>
@@ -138,13 +138,13 @@
                                 </div>
                             </t>
                             <div t-if="!product.serials.length" class="aq_pb_serial_row aq_pb_empty">
-                                <div class="aq_pb_rowlabel aq_pb_serial text-muted">No serials in stock</div>
+                                <div class="aq_pb_rowlabel aq_pb_serial text-muted">Sin series en stock</div>
                                 <div class="aq_pb_timeline"/>
                             </div>
                         </t>
                     </t>
                     <div t-if="!state.products.length" class="aq_pb_noresult">
-                        No serial-planned products match the current filters.
+                        Ningún producto con planeación por serie coincide con los filtros.
                     </div>
                 </div>
             </div>
@@ -159,34 +159,34 @@
                 </div>
                 <div class="aq_pb_panel_body">
                     <table class="table table-sm">
-                        <tr><td>State</td><td><strong t-esc="state.selected.state"/></td></tr>
-                        <tr t-if="state.selected.partner"><td>Customer</td><td t-esc="state.selected.partner"/></tr>
-                        <tr t-if="state.selected.sale_order"><td>Sale Order</td><td t-esc="state.selected.sale_order"/></tr>
+                        <tr><td>Estado</td><td><strong t-esc="state.selected.state"/></td></tr>
+                        <tr t-if="state.selected.partner"><td>Cliente</td><td t-esc="state.selected.partner"/></tr>
+                        <tr t-if="state.selected.sale_order"><td>Pedido</td><td t-esc="state.selected.sale_order"/></tr>
                         <tr t-if="state.selected.billable_start">
-                            <td>Billable</td>
+                            <td>Facturable</td>
                             <td><t t-esc="state.selected.billable_start"/> → <t t-esc="state.selected.billable_end"/></td>
                         </tr>
                         <tr>
-                            <td>Block</td>
+                            <td>Bloqueo</td>
                             <td><t t-esc="state.selected.start"/> → <t t-esc="state.selected.end"/></td>
                         </tr>
                         <tr t-if="state.selected.conflict">
-                            <td>Conflict</td><td class="text-danger">⚠ Overlapping booking</td>
+                            <td>Conflicto</td><td class="text-danger">⚠ Reserva empalmada</td>
                         </tr>
                     </table>
                     <div class="aq_pb_panel_actions">
                         <button class="btn btn-primary btn-sm" t-on-click="() => this.openReservation(state.selected)">
-                            Open
+                            Abrir
                         </button>
                         <button class="btn btn-secondary btn-sm"
                                 t-if="state.selected.type !== 'downtime'"
                                 t-on-click="() => this.openSaleOrder(state.selected)">
-                            Sale Order
+                            Pedido
                         </button>
                         <button class="btn btn-outline-danger btn-sm"
                                 t-if="state.selected.type !== 'downtime'"
                                 t-on-click="() => this.releaseReservation(state.selected)">
-                            Release
+                            Liberar
                         </button>
                     </div>
                 </div>
@@ -195,28 +195,28 @@
             <!-- Downtime quick form -->
             <div t-if="state.showDowntime" class="aq_pb_panel aq_pb_dtform">
                 <div class="aq_pb_panel_head">
-                    <strong>New Downtime</strong>
+                    <strong>Nuevo bloqueo / mantenimiento</strong>
                     <button class="btn btn-sm btn-light" t-on-click="() => state.showDowntime = false">
                         <i class="fa fa-times"/>
                     </button>
                 </div>
                 <div class="aq_pb_panel_body">
-                    <label>Reason</label>
+                    <label>Motivo</label>
                     <select class="o_input mb-2" t-model="state.downtimeForm.reason">
-                        <option value="maintenance">Maintenance</option>
-                        <option value="cleaning">Cleaning</option>
-                        <option value="repair">Repair</option>
-                        <option value="damaged">Damaged</option>
-                        <option value="lost">Lost</option>
-                        <option value="internal_use">Internal Use</option>
-                        <option value="other">Other</option>
+                        <option value="maintenance">Mantenimiento</option>
+                        <option value="cleaning">Limpieza</option>
+                        <option value="repair">Reparación</option>
+                        <option value="damaged">Dañado</option>
+                        <option value="lost">Perdido</option>
+                        <option value="internal_use">Uso interno</option>
+                        <option value="other">Otro</option>
                     </select>
-                    <label>Start</label>
+                    <label>Inicio</label>
                     <input type="datetime-local" class="o_input mb-2" t-model="state.downtimeForm.start"/>
-                    <label>End (optional)</label>
+                    <label>Fin (opcional)</label>
                     <input type="datetime-local" class="o_input mb-3" t-model="state.downtimeForm.end"/>
                     <button class="btn btn-primary btn-sm" t-on-click="() => this.submitDowntime()">
-                        Create
+                        Crear
                     </button>
                 </div>
             </div>

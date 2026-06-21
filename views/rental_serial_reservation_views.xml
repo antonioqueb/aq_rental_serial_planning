@@ -35,50 +35,50 @@
         <field name="arch" type="xml">
             <form>
                 <header>
-                    <button name="action_soft_hold" type="object" string="Soft Hold"
+                    <button name="action_soft_hold" type="object" string="Apartar"
                             invisible="state not in ('draft','quotation')"/>
-                    <button name="action_reserve" type="object" string="Reserve"
+                    <button name="action_reserve" type="object" string="Reservar"
                             class="btn-primary"
                             invisible="state not in ('draft','quotation','soft_hold')"/>
-                    <button name="action_prepare" type="object" string="Prepare"
+                    <button name="action_prepare" type="object" string="Preparar"
                             invisible="state != 'reserved'"/>
-                    <button name="action_pickup" type="object" string="Pick Up"
+                    <button name="action_pickup" type="object" string="Retirar"
                             invisible="state != 'prepared'"/>
-                    <button name="action_deliver" type="object" string="Deliver"
+                    <button name="action_deliver" type="object" string="Entregar"
                             invisible="state != 'picked_up'"/>
-                    <button name="action_set_in_use" type="object" string="In Use"
+                    <button name="action_set_in_use" type="object" string="Marcar en uso"
                             invisible="state != 'delivered'"/>
                     <button name="action_create_delivery_picking" type="object"
-                            string="Create Delivery" class="btn-primary"
+                            string="Crear entrega" class="btn-primary"
                             groups="aq_rental_serial_planning.group_rental_warehouse_user"
                             invisible="state not in ('reserved','prepared','picked_up') or lot_id == False"/>
-                    <button name="action_return" type="object" string="Register Return"
+                    <button name="action_return" type="object" string="Registrar devolución"
                             invisible="state not in ('delivered','in_use','picked_up')"/>
                     <button name="action_create_return_picking" type="object"
-                            string="Create Return"
+                            string="Crear retorno"
                             groups="aq_rental_serial_planning.group_rental_warehouse_user"
                             invisible="state not in ('delivered','in_use') or lot_id == False"/>
-                    <button name="action_release" type="object" string="Release"
+                    <button name="action_release" type="object" string="Liberar"
                             class="btn-primary"
                             groups="aq_rental_serial_planning.group_rental_planner_manager"
                             invisible="state in ('released','cancelled','draft')"/>
-                    <button name="action_cancel" type="object" string="Cancel"
+                    <button name="action_cancel" type="object" string="Cancelar"
                             invisible="state in ('released','cancelled')"/>
-                    <button name="action_reset_to_draft" type="object" string="Reset to Draft"
+                    <button name="action_reset_to_draft" type="object" string="Restablecer a borrador"
                             invisible="state not in ('cancelled',)"/>
                     <field name="state" widget="statusbar"
                            statusbar_visible="draft,reserved,prepared,delivered,in_use,returned,released"/>
                 </header>
                 <sheet>
-                    <widget name="web_ribbon" title="Conflict" bg_color="text-bg-danger"
+                    <widget name="web_ribbon" title="Conflicto" bg_color="text-bg-danger"
                             invisible="conflict_status != 'conflict'"/>
-                    <widget name="web_ribbon" title="Overdue" bg_color="text-bg-warning"
+                    <widget name="web_ribbon" title="Atrasado" bg_color="text-bg-warning"
                             invisible="not is_overdue"/>
                     <div class="oe_title">
                         <h1><field name="name" readonly="1"/></h1>
                     </div>
                     <group>
-                        <group string="Inventory">
+                        <group string="Inventario">
                             <field name="product_id"/>
                             <field name="lot_id"/>
                             <field name="quantity"/>
@@ -86,7 +86,7 @@
                             <field name="location_id"/>
                             <field name="company_id" groups="base.group_multi_company"/>
                         </group>
-                        <group string="Commercial">
+                        <group string="Comercial">
                             <field name="partner_id"/>
                             <field name="sale_order_id"/>
                             <field name="sale_order_line_id" invisible="1"/>
@@ -94,20 +94,20 @@
                         </group>
                     </group>
                     <group>
-                        <group string="Billable Period (what is charged)">
+                        <group string="Periodo facturable (lo que se cobra)">
                             <field name="rental_billable_start"/>
                             <field name="rental_billable_end"/>
                         </group>
-                        <group string="Operational Block (what blocks stock)">
+                        <group string="Periodo operativo (lo que bloquea stock)">
                             <field name="reservation_block_start"/>
                             <field name="reservation_block_end"/>
                             <field name="auto_release_policy"/>
                         </group>
                     </group>
                     <notebook>
-                        <page string="Operations" name="ops">
+                        <page string="Operaciones" name="ops">
                             <group>
-                                <group string="Real Stamps">
+                                <group string="Marcas reales">
                                     <field name="actual_pickup_datetime"/>
                                     <field name="actual_delivery_datetime"/>
                                     <field name="actual_return_datetime"/>
@@ -115,13 +115,13 @@
                                     <field name="delivery_picking_id"/>
                                     <field name="return_picking_id"/>
                                 </group>
-                                <group string="Soft Hold">
+                                <group string="Apartado temporal">
                                     <field name="soft_hold_until"/>
                                     <field name="soft_hold_owner_id"/>
                                     <field name="soft_hold_reason"/>
                                 </group>
                             </group>
-                            <field name="notes" placeholder="Notes..."/>
+                            <field name="notes" placeholder="Notas..."/>
                         </page>
                     </notebook>
                 </sheet>
@@ -136,23 +136,23 @@
         <field name="model">rental.serial.reservation</field>
         <field name="arch" type="xml">
             <search>
-                <field name="name" string="Reference"/>
+                <field name="name" string="Referencia"/>
                 <field name="product_id"/>
                 <field name="lot_id"/>
                 <field name="partner_id"/>
                 <field name="sale_order_id"/>
-                <filter name="conflicts" string="Conflicts"
+                <filter name="conflicts" string="Conflictos"
                         domain="[('conflict_status', '=', 'conflict')]"/>
-                <filter name="active_blocks" string="Active Blocks"
+                <filter name="active_blocks" string="Bloqueos activos"
                         domain="[('state', 'in', ['soft_hold', 'reserved', 'prepared', 'picked_up', 'delivered', 'in_use', 'returned'])]"/>
                 <separator/>
-                <filter name="soft_hold" string="Soft Holds" domain="[('state', '=', 'soft_hold')]"/>
-                <filter name="released" string="Released" domain="[('state', '=', 'released')]"/>
+                <filter name="soft_hold" string="Apartados" domain="[('state', '=', 'soft_hold')]"/>
+                <filter name="released" string="Liberadas" domain="[('state', '=', 'released')]"/>
                 <separator/>
-                <filter name="g_product" string="Product" context="{'group_by': 'product_id'}"/>
-                <filter name="g_lot" string="Serial" context="{'group_by': 'lot_id'}"/>
-                <filter name="g_state" string="State" context="{'group_by': 'state'}"/>
-                <filter name="g_partner" string="Customer" context="{'group_by': 'partner_id'}"/>
+                <filter name="g_product" string="Producto" context="{'group_by': 'product_id'}"/>
+                <filter name="g_lot" string="Serie" context="{'group_by': 'lot_id'}"/>
+                <filter name="g_state" string="Estado" context="{'group_by': 'state'}"/>
+                <filter name="g_partner" string="Cliente" context="{'group_by': 'partner_id'}"/>
             </search>
         </field>
     </record>
@@ -162,7 +162,7 @@
         <field name="name">rental.serial.reservation.calendar</field>
         <field name="model">rental.serial.reservation</field>
         <field name="arch" type="xml">
-            <calendar string="Reservations" date_start="reservation_block_start"
+            <calendar string="Reservas" date_start="reservation_block_start"
                       date_stop="reservation_block_end" color="lot_id" mode="month">
                 <field name="lot_id" filters="1"/>
                 <field name="product_id" filters="1"/>
@@ -173,7 +173,7 @@
     </record>
 
     <record id="action_rental_serial_reservation" model="ir.actions.act_window">
-        <field name="name">Serial Reservations</field>
+        <field name="name">Reservas por serie</field>
         <field name="res_model">rental.serial.reservation</field>
         <field name="view_mode">list,form,calendar</field>
         <field name="search_view_id" ref="view_rental_serial_reservation_search"/>

@@ -39,6 +39,7 @@ application (``sale_renting``):
         "data/ir_sequence.xml",
         "data/ir_cron.xml",
         "wizard/rental_serial_assign_wizard_views.xml",
+        "wizard/rental_sample_data_views.xml",
         "views/rental_serial_reservation_views.xml",
         "views/rental_package_views.xml",
         "views/rental_serial_downtime_views.xml",
@@ -48,9 +49,7 @@ application (``sale_renting``):
         "views/rental_planning_board_views.xml",
         "views/rental_planning_menus.xml",
         "report/rental_logistics_report.xml",
-    ],
-    "demo": [
-        "demo/aq_rental_demo.xml",
+        "data/load_sample_data.xml",
     ],
     "assets": {
         "web.assets_backend": [
@@ -59,7 +58,6 @@ application (``sale_renting``):
             "aq_rental_serial_planning/static/src/planning/planning_board.js",
         ],
     },
-    "post_init_hook": "post_init_hook",
     "application": True,
     "installable": True,
 }

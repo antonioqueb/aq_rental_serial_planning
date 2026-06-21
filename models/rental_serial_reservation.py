@@ -7,17 +7,17 @@ from odoo.exceptions import ValidationError, UserError
 from .rental_availability_service import BLOCKING_STATES
 
 STATE_SELECTION = [
-    ("draft", "Draft"),
-    ("quotation", "Quotation"),
-    ("soft_hold", "Soft Hold"),
-    ("reserved", "Reserved"),
-    ("prepared", "Prepared"),
-    ("picked_up", "Picked Up"),
-    ("delivered", "Delivered"),
-    ("in_use", "In Use"),
-    ("returned", "Returned"),
-    ("released", "Released"),
-    ("cancelled", "Cancelled"),
+    ("draft", "Borrador"),
+    ("quotation", "Cotización"),
+    ("soft_hold", "Apartado temporal"),
+    ("reserved", "Reservado"),
+    ("prepared", "Preparado"),
+    ("picked_up", "Retirado"),
+    ("delivered", "Entregado"),
+    ("in_use", "En uso"),
+    ("returned", "Devuelto"),
+    ("released", "Liberado"),
+    ("cancelled", "Cancelado"),
 ]
 
 # Forward flow used by the action buttons.
@@ -27,82 +27,83 @@ _FORWARD = ["reserved", "prepared", "picked_up", "delivered",
 
 class RentalSerialReservation(models.Model):
     _name = "rental.serial.reservation"
-    _description = "Rental Serial Reservation"
+    _description = "Reserva por número de serie"
     _inherit = ["mail.thread", "mail.activity.mixin"]
     _order = "reservation_block_start desc, id desc"
     _rec_name = "name"
 
     name = fields.Char(
-        string="Reference", required=True, copy=False, readonly=True,
-        index=True, default=lambda self: _("New"))
+        string="Referencia", required=True, copy=False, readonly=True,
+        index=True, default=lambda self: _("Nuevo"))
     state = fields.Selection(
-        STATE_SELECTION, default="draft", required=True, tracking=True, index=True)
+        STATE_SELECTION, string="Estado", default="draft", required=True,
+        tracking=True, index=True)
 
     # Commercial links
     sale_order_id = fields.Many2one(
-        "sale.order", string="Sale Order", index=True, ondelete="cascade")
+        "sale.order", string="Pedido de venta", index=True, ondelete="cascade")
     sale_order_line_id = fields.Many2one(
-        "sale.order.line", string="Order Line", index=True, ondelete="cascade")
-    package_id = fields.Many2one("rental.package.template", string="Package")
-    package_line_id = fields.Many2one("rental.package.template.line", string="Package Line")
-    partner_id = fields.Many2one("res.partner", string="Customer", tracking=True)
+        "sale.order.line", string="Línea del pedido", index=True, ondelete="cascade")
+    package_id = fields.Many2one("rental.package.template", string="Paquete")
+    package_line_id = fields.Many2one("rental.package.template.line", string="Línea de paquete")
+    partner_id = fields.Many2one("res.partner", string="Cliente", tracking=True)
 
     # Inventory links
     product_id = fields.Many2one(
-        "product.product", string="Product", required=True, index=True,
+        "product.product", string="Producto", required=True, index=True,
         domain="[('tracking', '=', 'serial')]")
     lot_id = fields.Many2one(
-        "stock.lot", string="Serial Number", index=True,
+        "stock.lot", string="Número de serie", index=True,
         domain="[('product_id', '=', product_id)]", tracking=True)
-    warehouse_id = fields.Many2one("stock.warehouse", string="Warehouse")
-    location_id = fields.Many2one("stock.location", string="Source Location")
+    warehouse_id = fields.Many2one("stock.warehouse", string="Almacén")
+    location_id = fields.Many2one("stock.location", string="Ubicación origen")
     company_id = fields.Many2one(
-        "res.company", string="Company", required=True, index=True,
+        "res.company", string="Compañía", required=True, index=True,
         default=lambda self: self.env.company)
-    quantity = fields.Float(string="Quantity", default=1.0)
+    quantity = fields.Float(string="Cantidad", default=1.0)
 
     # Billable period (what the customer pays)
-    rental_billable_start = fields.Datetime(string="Billable Start", tracking=True)
-    rental_billable_end = fields.Datetime(string="Billable End", tracking=True)
+    rental_billable_start = fields.Datetime(string="Inicio facturable", tracking=True)
+    rental_billable_end = fields.Datetime(string="Fin facturable", tracking=True)
 
     # Operational block period (what really blocks inventory)
     reservation_block_start = fields.Datetime(
-        string="Block Start", required=True, index=True, tracking=True)
+        string="Inicio de bloqueo", required=True, index=True, tracking=True)
     reservation_block_end = fields.Datetime(
-        string="Block End", required=True, index=True, tracking=True)
+        string="Fin de bloqueo", required=True, index=True, tracking=True)
 
     # Real-world stamps
-    actual_pickup_datetime = fields.Datetime(string="Actual Pickup")
-    actual_delivery_datetime = fields.Datetime(string="Actual Delivery")
-    actual_return_datetime = fields.Datetime(string="Actual Return")
-    actual_release_datetime = fields.Datetime(string="Actual Release")
+    actual_pickup_datetime = fields.Datetime(string="Retiro real")
+    actual_delivery_datetime = fields.Datetime(string="Entrega real")
+    actual_return_datetime = fields.Datetime(string="Devolución real")
+    actual_release_datetime = fields.Datetime(string="Liberación real")
 
     auto_release_policy = fields.Selection(
-        [("on_block_end", "Auto on block end"),
-         ("on_return_validation", "On return validation"),
-         ("manual_only", "Manual only")],
-        string="Auto-Release Policy", default="on_return_validation", required=True)
+        [("on_block_end", "Automática al fin del bloqueo"),
+         ("on_return_validation", "Al validar la devolución"),
+         ("manual_only", "Solo manual")],
+        string="Política de liberación", default="on_return_validation", required=True)
 
     # Soft hold
-    soft_hold_until = fields.Datetime(string="Soft Hold Until")
-    soft_hold_owner_id = fields.Many2one("res.users", string="Hold Owner")
-    soft_hold_reason = fields.Char(string="Hold Reason")
+    soft_hold_until = fields.Datetime(string="Apartado hasta")
+    soft_hold_owner_id = fields.Many2one("res.users", string="Responsable del apartado")
+    soft_hold_reason = fields.Char(string="Motivo del apartado")
 
     conflict_status = fields.Selection(
-        [("ok", "OK"), ("conflict", "Conflict")],
-        string="Conflict", compute="_compute_conflict_status", store=True)
+        [("ok", "OK"), ("conflict", "Conflicto")],
+        string="Conflicto", compute="_compute_conflict_status", store=True)
     availability_status = fields.Selection(
-        [("available", "Available"), ("blocked", "Blocked")],
-        string="Availability", default="available")
+        [("available", "Disponible"), ("blocked", "Bloqueado")],
+        string="Disponibilidad", default="available")
     is_overdue = fields.Boolean(
-        string="Overdue", compute="_compute_is_overdue", store=False)
-    notes = fields.Text(string="Notes")
+        string="Atrasado", compute="_compute_is_overdue", store=False)
+    notes = fields.Text(string="Notas")
 
     # Inventory integration (Section 12)
     delivery_picking_id = fields.Many2one(
-        "stock.picking", string="Delivery Transfer", copy=False, readonly=True)
+        "stock.picking", string="Transferencia de entrega", copy=False, readonly=True)
     return_picking_id = fields.Many2one(
-        "stock.picking", string="Return Transfer", copy=False, readonly=True)
+        "stock.picking", string="Transferencia de retorno", copy=False, readonly=True)
 
     _sql_constraints = [
         ("block_period_chk",
@@ -116,9 +117,9 @@ class RentalSerialReservation(models.Model):
     @api.model_create_multi
     def create(self, vals_list):
         for vals in vals_list:
-            if vals.get("name", _("New")) == _("New"):
+            if vals.get("name", _("Nuevo")) == _("Nuevo"):
                 vals["name"] = self.env["ir.sequence"].next_by_code(
-                    "rental.serial.reservation") or _("New")
+                    "rental.serial.reservation") or _("Nuevo")
         records = super().create(vals_list)
         records._check_serial_conflicts()
         return records
@@ -173,8 +174,8 @@ class RentalSerialReservation(models.Model):
             conflicts = rec._find_conflicts()
             if conflicts:
                 raise ValidationError(_(
-                    "Serial '%(lot)s' is already booked in an overlapping "
-                    "operational period by %(refs)s.",
+                    "La serie '%(lot)s' ya está reservada en un periodo "
+                    "operativo que se empalma por %(refs)s.",
                     lot=rec.lot_id.name,
                     refs=", ".join(conflicts.mapped("name"))))
 
@@ -221,7 +222,7 @@ class RentalSerialReservation(models.Model):
         missing = self.filtered(lambda r: not r.lot_id)
         if missing:
             raise UserError(_(
-                "A serial number must be assigned before reserving: %s",
+                "Debe asignarse un número de serie antes de reservar: %s",
                 ", ".join(missing.mapped("name"))))
 
     def action_reserve(self):
@@ -230,7 +231,7 @@ class RentalSerialReservation(models.Model):
         self._lock_rows()
         self._check_serial_conflicts()
         self.write({"state": "reserved"})
-        self._post_state_message(_("Reservation confirmed (serial blocked)."))
+        self._post_state_message(_("Reserva confirmada (serie bloqueada)."))
 
     def action_soft_hold(self):
         self._require_lot()
@@ -269,13 +270,13 @@ class RentalSerialReservation(models.Model):
                     and not rec.actual_return_datetime
                     and rec.state not in ("draft", "quotation", "cancelled")):
                 raise UserError(_(
-                    "Reservation %s cannot be released: its policy requires a "
-                    "validated return first.", rec.name))
+                    "La reserva %s no puede liberarse: su política requiere "
+                    "primero una devolución validada.", rec.name))
         self.write({
             "state": "released",
             "actual_release_datetime": fields.Datetime.now(),
         })
-        self._post_state_message(_("Serial released and available again."))
+        self._post_state_message(_("Serie liberada y disponible nuevamente."))
 
     def action_cancel(self):
         self.write({"state": "cancelled"})
@@ -294,19 +295,19 @@ class RentalSerialReservation(models.Model):
         self.ensure_one()
         new_lot = self.env["stock.lot"].browse(new_lot_id)
         if new_lot.product_id != self.product_id:
-            raise UserError(_("The new serial does not belong to this product."))
+            raise UserError(_("La nueva serie no pertenece a este producto."))
         available = self.env["rental.availability.service"].get_available_serials(
             self.product_id.id, self.reservation_block_start,
             self.reservation_block_end, self.location_id.id or None,
             ignore_reservation_ids=self.ids)
         if new_lot not in available:
             raise UserError(_(
-                "Serial '%s' is not available for this operational period.",
+                "La serie '%s' no está disponible para este periodo operativo.",
                 new_lot.name))
         old_name = self.lot_id.name
         self.lot_id = new_lot
         self.message_post(body=_(
-            "Serial changed from %(old)s to %(new)s.",
+            "Serie cambiada de %(old)s a %(new)s.",
             old=old_name, new=new_lot.name))
 
     # ------------------------------------------------------------------
@@ -399,7 +400,7 @@ class RentalSerialReservation(models.Model):
         self.write({"state": "delivered",
                     "actual_delivery_datetime": fields.Datetime.now()})
         for rec in self:
-            rec.message_post(body=_("Delivery transfer %s validated.") % (
+            rec.message_post(body=_("Transferencia de entrega %s validada.") % (
                 rec.delivery_picking_id.name or ""))
         return self._picking_action(pickings)
 
@@ -409,7 +410,7 @@ class RentalSerialReservation(models.Model):
         self.write({"state": "returned",
                     "actual_return_datetime": fields.Datetime.now()})
         for rec in self:
-            rec.message_post(body=_("Return transfer %s validated.") % (
+            rec.message_post(body=_("Transferencia de retorno %s validada.") % (
                 rec.return_picking_id.name or ""))
         return self._picking_action(pickings)
 
@@ -422,7 +423,7 @@ class RentalSerialReservation(models.Model):
             "view_mode": "list,form" if len(pickings) > 1 else "form",
             "res_id": pickings.id if len(pickings) == 1 else False,
             "domain": [("id", "in", pickings.ids)],
-            "name": _("Serial Transfers"),
+            "name": _("Transferencias por serie"),
         }
 
     # ------------------------------------------------------------------
@@ -560,7 +561,7 @@ class RentalSerialReservation(models.Model):
             ("soft_hold_until", "<", now),
         ])
         for rec in expired:
-            rec.message_post(body=_("Soft hold expired automatically; released."))
+            rec.message_post(body=_("Apartado temporal expirado automáticamente; liberado."))
         expired.write({"state": "released",
                        "actual_release_datetime": now})
 
@@ -574,7 +575,7 @@ class RentalSerialReservation(models.Model):
             ("reservation_block_end", "<", now),
         ])
         for rec in to_release:
-            rec.message_post(body=_("Auto-released on block end."))
+            rec.message_post(body=_("Liberado automáticamente al fin del bloqueo."))
         to_release.write({"state": "released", "actual_release_datetime": now})
 
         # Flag overdue items whose policy needs a real return.
@@ -587,6 +588,6 @@ class RentalSerialReservation(models.Model):
         for rec in overdue:
             rec.activity_schedule(
                 "mail.mail_activity_data_todo",
-                summary=_("Overdue rental return: %s") % rec.name,
-                note=_("Serial %s should have been returned by %s.") % (
+                summary=_("Devolución de renta atrasada: %s") % rec.name,
+                note=_("La serie %s debió devolverse antes de %s.") % (
                     rec.lot_id.name, rec.reservation_block_end))

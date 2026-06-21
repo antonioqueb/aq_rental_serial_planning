@@ -5,16 +5,16 @@ from odoo.exceptions import UserError
 
 class RentalSerialAssignWizard(models.TransientModel):
     _name = "rental.serial.assign.wizard"
-    _description = "Manual Serial Assignment Wizard"
+    _description = "Asistente de asignación manual de series"
 
-    sale_order_line_id = fields.Many2one("sale.order.line", required=True)
-    product_id = fields.Many2one("product.product", required=True, readonly=True)
-    block_start = fields.Datetime(required=True)
-    block_end = fields.Datetime(required=True)
-    location_id = fields.Many2one("stock.location", string="Location")
-    required_qty = fields.Integer(compute="_compute_required_qty")
+    sale_order_line_id = fields.Many2one("sale.order.line", string="Línea de pedido", required=True)
+    product_id = fields.Many2one("product.product", string="Producto", required=True, readonly=True)
+    block_start = fields.Datetime(string="Inicio de bloqueo", required=True)
+    block_end = fields.Datetime(string="Fin de bloqueo", required=True)
+    location_id = fields.Many2one("stock.location", string="Ubicación")
+    required_qty = fields.Integer(string="Cantidad requerida", compute="_compute_required_qty")
     line_ids = fields.One2many(
-        "rental.serial.assign.wizard.line", "wizard_id", string="Serials")
+        "rental.serial.assign.wizard.line", "wizard_id", string="Series")
 
     @api.depends("sale_order_line_id")
     def _compute_required_qty(self):
@@ -59,11 +59,11 @@ class RentalSerialAssignWizard(models.TransientModel):
         self.ensure_one()
         chosen = self.line_ids.filtered("selected")
         if not chosen:
-            raise UserError(_("Select at least one serial."))
+            raise UserError(_("Selecciona al menos una serie."))
         invalid = chosen.filtered(lambda l: l.status not in ("available",))
         if invalid:
             raise UserError(_(
-                "These serials are not available: %s",
+                "Estas series no están disponibles: %s",
                 ", ".join(invalid.mapped("lot_id.name"))))
         Reservation = self.env["rental.serial.reservation"]
         sol = self.sale_order_line_id
@@ -80,15 +80,15 @@ class RentalSerialAssignWizard(models.TransientModel):
 
 class RentalSerialAssignWizardLine(models.TransientModel):
     _name = "rental.serial.assign.wizard.line"
-    _description = "Manual Serial Assignment Wizard Line"
+    _description = "Línea del asistente de asignación de series"
     _order = "status, lot_id"
 
     wizard_id = fields.Many2one("rental.serial.assign.wizard", required=True, ondelete="cascade")
-    lot_id = fields.Many2one("stock.lot", required=True, readonly=True)
+    lot_id = fields.Many2one("stock.lot", string="Número de serie", required=True, readonly=True)
     status = fields.Selection(
-        [("available", "Available"),
-         ("blocked", "Reserved / In use / Maintenance"),
-         ("in_reservation", "Already in this reservation"),
-         ("no_stock", "No stock / other location")],
-        readonly=True)
-    selected = fields.Boolean()
+        [("available", "Disponible"),
+         ("blocked", "Reservado / En uso / Mantenimiento"),
+         ("in_reservation", "Ya en esta reserva"),
+         ("no_stock", "Sin stock / otra ubicación")],
+        string="Estado", readonly=True)
+    selected = fields.Boolean(string="Seleccionar")

@@ -9,32 +9,36 @@ class SaleOrderLine(models.Model):
     _inherit = "sale.order.line"
 
     # Package handling
-    x_is_package_parent = fields.Boolean(string="Package Parent")
-    x_package_id = fields.Many2one("rental.package.template", string="Package")
-    x_package_line_id = fields.Many2one("rental.package.template.line")
+    x_is_package_parent = fields.Boolean(string="Línea padre de paquete")
+    x_package_id = fields.Many2one("rental.package.template", string="Paquete")
+    x_package_line_id = fields.Many2one("rental.package.template.line",
+                                        string="Línea de paquete")
     x_parent_package_line_id = fields.Many2one(
-        "sale.order.line", string="Parent Package Line", ondelete="cascade")
+        "sale.order.line", string="Línea de paquete padre", ondelete="cascade")
     x_child_line_ids = fields.One2many(
-        "sale.order.line", "x_parent_package_line_id", string="Exploded Components")
+        "sale.order.line", "x_parent_package_line_id", string="Componentes explotados")
 
     # Serial handling
     x_requires_serial_assignment = fields.Boolean(
+        string="Requiere asignación de serie",
         compute="_compute_requires_serial", store=True)
     x_serial_reservation_ids = fields.One2many(
-        "rental.serial.reservation", "sale_order_line_id", string="Serial Reservations")
+        "rental.serial.reservation", "sale_order_line_id", string="Reservas por serie")
     x_reserved_lot_ids = fields.Many2many(
-        "stock.lot", compute="_compute_reserved_lots", string="Reserved Serials")
-    x_reserved_serial_count = fields.Integer(compute="_compute_reserved_lots")
+        "stock.lot", compute="_compute_reserved_lots", string="Series reservadas")
+    x_reserved_serial_count = fields.Integer(
+        string="Series reservadas", compute="_compute_reserved_lots")
 
     # Per-line periods (fall back to order-level defaults)
-    x_billable_start = fields.Datetime(string="Billable Start")
-    x_billable_end = fields.Datetime(string="Billable End")
-    x_block_start = fields.Datetime(string="Block Start")
-    x_block_end = fields.Datetime(string="Block End")
+    x_billable_start = fields.Datetime(string="Inicio facturable")
+    x_billable_end = fields.Datetime(string="Fin facturable")
+    x_block_start = fields.Datetime(string="Inicio de bloqueo")
+    x_block_end = fields.Datetime(string="Fin de bloqueo")
 
     x_available_qty_for_period = fields.Float(
-        string="Available in Period", compute="_compute_available_qty")
-    x_conflict_warning = fields.Char(compute="_compute_conflict_warning")
+        string="Disponible en el periodo", compute="_compute_available_qty")
+    x_conflict_warning = fields.Char(string="Aviso de conflicto",
+                                     compute="_compute_conflict_warning")
 
     @api.depends("product_id.x_requires_serial_reservation",
                  "product_id.tracking")
@@ -74,7 +78,7 @@ class SaleOrderLine(models.Model):
             conflicts = line.x_serial_reservation_ids.filtered(
                 lambda r: r.conflict_status == "conflict")
             line.x_conflict_warning = (
-                _("%d serial conflict(s)!") % len(conflicts) if conflicts else "")
+                _("¡%d conflicto(s) de serie!") % len(conflicts) if conflicts else "")
 
     # ------------------------------------------------------------------
     # Period derivation
@@ -118,7 +122,7 @@ class SaleOrderLine(models.Model):
         self.ensure_one()
         package = self.x_package_id
         if not package:
-            raise UserError(_("This line is not linked to a package."))
+            raise UserError(_("Esta línea no está vinculada a un paquete."))
         # Remove previously exploded children before re-exploding.
         self.x_child_line_ids.unlink()
         self.x_is_package_parent = True
@@ -181,8 +185,8 @@ class SaleOrderLine(models.Model):
             blk_start, blk_end = line._get_block_period()
             if not (blk_start and blk_end):
                 raise UserError(_(
-                    "Define a billable or operational period for line '%s' "
-                    "before assigning serials.", line.product_id.display_name))
+                    "Define un periodo facturable u operativo para la línea '%s' "
+                    "antes de asignar series.", line.product_id.display_name))
             needed = int(line.product_uom_qty) - line.x_reserved_serial_count
             if needed <= 0:
                 continue
@@ -194,8 +198,8 @@ class SaleOrderLine(models.Model):
             available = line._sort_serials(available)
             if len(available) < needed:
                 raise UserError(_(
-                    "Only %(have)d serial(s) available for '%(prod)s' in the "
-                    "operational period, but %(need)d are required.",
+                    "Solo hay %(have)d serie(s) disponible(s) de '%(prod)s' en el "
+                    "periodo operativo, pero se requieren %(need)d.",
                     have=len(available), prod=line.product_id.display_name,
                     need=needed))
             # Lock candidate lots, then create reservations one by one so the
@@ -209,7 +213,7 @@ class SaleOrderLine(models.Model):
         blk_start, blk_end = self._get_block_period()
         return {
             "type": "ir.actions.act_window",
-            "name": _("Assign Serials: %s") % self.product_id.display_name,
+            "name": _("Asignar series: %s") % self.product_id.display_name,
             "res_model": "rental.serial.assign.wizard",
             "view_mode": "form",
             "target": "new",
@@ -232,7 +236,7 @@ class SaleOrderLine(models.Model):
         self.ensure_one()
         return {
             "type": "ir.actions.act_window",
-            "name": _("Serials for %s") % self.product_id.display_name,
+            "name": _("Series de %s") % self.product_id.display_name,
             "res_model": "rental.serial.reservation",
             "view_mode": "list,form",
             "domain": [("sale_order_line_id", "=", self.id)],

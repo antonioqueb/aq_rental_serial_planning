@@ -5,25 +5,27 @@ from odoo import api, fields, models, _
 class SaleOrder(models.Model):
     _inherit = "sale.order"
 
-    x_is_event_rental = fields.Boolean(string="Event Rental")
-    x_event_name = fields.Char(string="Event Name")
-    x_event_location = fields.Char(string="Event Location")
-    x_event_start = fields.Datetime(string="Event Start")
-    x_event_end = fields.Datetime(string="Event End")
+    x_is_event_rental = fields.Boolean(string="Renta de evento")
+    x_event_name = fields.Char(string="Nombre del evento")
+    x_event_location = fields.Char(string="Ubicación del evento")
+    x_event_start = fields.Datetime(string="Inicio del evento")
+    x_event_end = fields.Datetime(string="Fin del evento")
 
     # Default periods propagated to lines that don't override them.
-    x_billable_start = fields.Datetime(string="Billable Start")
-    x_billable_end = fields.Datetime(string="Billable End")
-    x_block_start = fields.Datetime(string="Block Start")
-    x_block_end = fields.Datetime(string="Block End")
-    x_logistics_notes = fields.Text(string="Logistics Notes")
+    x_billable_start = fields.Datetime(string="Inicio facturable")
+    x_billable_end = fields.Datetime(string="Fin facturable")
+    x_block_start = fields.Datetime(string="Inicio de bloqueo")
+    x_block_end = fields.Datetime(string="Fin de bloqueo")
+    x_logistics_notes = fields.Text(string="Notas logísticas")
 
     x_reservation_ids = fields.One2many(
-        "rental.serial.reservation", "sale_order_id", string="Serial Reservations")
-    x_reservation_count = fields.Integer(compute="_compute_reservation_stats")
-    x_reservation_conflict_count = fields.Integer(compute="_compute_reservation_stats")
+        "rental.serial.reservation", "sale_order_id", string="Reservas por serie")
+    x_reservation_count = fields.Integer(string="N° reservas", compute="_compute_reservation_stats")
+    x_reservation_conflict_count = fields.Integer(
+        string="N° conflictos", compute="_compute_reservation_stats")
 
-    x_serial_picking_count = fields.Integer(compute="_compute_reservation_stats")
+    x_serial_picking_count = fields.Integer(
+        string="N° transferencias", compute="_compute_reservation_stats")
 
     @api.depends("x_reservation_ids.conflict_status",
                  "x_reservation_ids.delivery_picking_id",
@@ -53,7 +55,7 @@ class SaleOrder(models.Model):
                     | self.x_reservation_ids.mapped("return_picking_id"))
         return {
             "type": "ir.actions.act_window",
-            "name": _("Serial Transfers"),
+            "name": _("Transferencias por serie"),
             "res_model": "stock.picking",
             "view_mode": "list,form",
             "domain": [("id", "in", pickings.ids)],
@@ -74,7 +76,7 @@ class SaleOrder(models.Model):
         self.ensure_one()
         return {
             "type": "ir.actions.act_window",
-            "name": _("Serial Reservations"),
+            "name": _("Reservas por serie"),
             "res_model": "rental.serial.reservation",
             "view_mode": "list,form,calendar",
             "domain": [("sale_order_id", "=", self.id)],
@@ -94,7 +96,7 @@ class SaleOrder(models.Model):
         return {
             "type": "ir.actions.client",
             "tag": "aq_rental_planning_board",
-            "name": _("Planning - %s") % self.name,
+            "name": _("Planeación - %s") % self.name,
             "params": {"sale_order_id": self.id},
         }
 

@@ -4,7 +4,7 @@
         <field name="name">rental.serial.assign.wizard.form</field>
         <field name="model">rental.serial.assign.wizard</field>
         <field name="arch" type="xml">
-            <form string="Assign Serials">
+            <form string="Asignar series">
                 <group>
                     <group>
                         <field name="product_id"/>
@@ -31,9 +31,9 @@
                     </list>
                 </field>
                 <footer>
-                    <button name="action_assign" type="object" string="Assign Selected"
+                    <button name="action_assign" type="object" string="Asignar seleccionadas"
                             class="btn-primary"/>
-                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                    <button string="Cancelar" class="btn-secondary" special="cancel"/>
                 </footer>
             </form>
         </field>
