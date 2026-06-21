@@ -7,7 +7,10 @@
             <div class="aq_kpi_topbar">
                 <div class="aq_kpi_titles">
                     <h1>Indicadores de Planeación</h1>
-                    <span class="aq_kpi_sub" t-if="state.data">Actualizado: <t t-esc="state.data.generated"/></span>
+                    <span class="aq_kpi_sub">
+                        <t t-if="ready"><t t-esc="periodLabel"/> · actualizado <t t-esc="state.data.generated"/></t>
+                        <t t-else="">Centro de control operativo</t>
+                    </span>
                 </div>
                 <div class="aq_kpi_controls">
                     <div class="btn-group aq_kpi_period">
@@ -20,12 +23,49 @@
                 </div>
             </div>
 
-            <div t-if="state.loading" class="aq_kpi_loading"><i class="fa fa-spinner fa-spin"/> Calculando indicadores…</div>
+            <!-- Loading skeleton -->
+            <div t-if="state.loading" class="aq_kpi_scroll">
+                <div class="aq_kpi_cards">
+                    <t t-foreach="[1,2,3,4,5,6,7,8]" t-as="n" t-key="n"><div class="aq_kpi_card aq_skeleton"/></t>
+                </div>
+                <div class="aq_dashboard_grid">
+                    <div class="aq_card aq_skeleton aq_col_6" style="height:220px"/>
+                    <div class="aq_card aq_skeleton aq_col_6" style="height:220px"/>
+                </div>
+            </div>
 
+            <!-- Error -->
+            <div t-elif="state.error" class="aq_kpi_state">
+                <i class="fa fa-exclamation-circle"/>
+                <p>No se pudieron cargar los indicadores.</p>
+                <button class="btn btn-secondary btn-sm" t-on-click="() => this.refresh()">Intentar de nuevo</button>
+            </div>
+
+            <!-- Empty -->
+            <div t-elif="!state.data.headline.total_serials" class="aq_kpi_state">
+                <i class="fa fa-inbox"/>
+                <p>No hay items rentables planificados para este periodo.</p>
+            </div>
+
+            <!-- Content -->
             <div t-else="" class="aq_kpi_scroll">
-                <!-- Hero: utilization + breakdown + events value -->
+
+                <!-- Atención requerida -->
+                <div t-if="hasAlerts" class="aq_alert_summary">
+                    <div class="aq_alert_head"><i class="fa fa-bell"/> Atención requerida</div>
+                    <div class="aq_alert_items">
+                        <t t-foreach="alerts" t-as="a" t-key="a.key">
+                            <button class="aq_alert_chip" t-att-class="a.level" t-on-click="() => this.onAlertClick(a)">
+                                <i t-attf-class="fa {{a.icon}}"/> <t t-esc="a.text"/>
+                            </button>
+                        </t>
+                    </div>
+                </div>
+                <div t-else="" class="aq_alert_ok"><i class="fa fa-check-circle"/> Sin incidencias críticas</div>
+
+                <!-- Hero -->
                 <div class="aq_kpi_hero">
-                    <div class="aq_kpi_hero_card aq_util">
+                    <div class="aq_kpi_hero_card aq_util" t-att-class="utilStatus.cls">
                         <div class="aq_kpi_donut" t-att-style="donutStyle">
                             <div class="aq_kpi_donut_hole">
                                 <span class="aq_donut_val"><t t-esc="state.data.headline.utilization"/>%</span>
@@ -33,116 +73,143 @@
                             </div>
                         </div>
                         <div class="aq_util_breakdown">
-                            <div class="aq_util_row"><span class="aq_dot is-busy"/>Ocupadas <strong t-esc="state.data.headline.blocked_now"/></div>
-                            <div class="aq_util_row"><span class="aq_dot is-ok"/>Disponibles <strong t-esc="state.data.headline.available_now"/></div>
-                            <div class="aq_util_row"><span class="aq_dot is-muted"/>Mantenimiento <strong t-esc="state.data.headline.maint_now"/></div>
-                            <div class="aq_util_total">Total <strong t-esc="state.data.headline.total_serials"/> items</div>
+                            <div class="aq_util_status" t-esc="utilStatus.label"/>
+                            <div class="aq_util_big"><strong t-esc="fmt(state.data.headline.available_now)"/> disponibles <span class="aq_util_of">de <t t-esc="fmt(state.data.headline.total_serials)"/> items</span></div>
+                            <div class="aq_util_rows">
+                                <span class="aq_util_row"><span class="aq_dot is-busy"/><t t-esc="fmt(state.data.headline.blocked_now)"/> ocupados</span>
+                                <span class="aq_util_row"><span class="aq_dot is-muted"/><t t-esc="fmt(state.data.headline.maint_now)"/> en mantenimiento</span>
+                            </div>
                         </div>
                     </div>
-                    <div class="aq_kpi_hero_card aq_value">
+
+                    <div class="aq_kpi_hero_card aq_value" t-att-title="'Valor estimado de pedidos de evento activos en los próximos ' + state.days + ' días'">
                         <div class="aq_value_icon"><i class="fa fa-star"/></div>
                         <div class="aq_value_amount" t-esc="money(state.data.headline.events_value)"/>
-                        <div class="aq_value_label">Valor de eventos próximos</div>
-                        <div class="aq_value_sub"><t t-esc="state.data.headline.upcoming_events"/> eventos activos</div>
+                        <div class="aq_value_label">Valor estimado próximos <t t-esc="state.days"/> días</div>
+                        <div class="aq_value_sub">
+                            <t t-esc="state.data.headline.upcoming_events"/> eventos activos
+                            <span t-if="state.data.headline.events_delta !== null" class="aq_value_delta"
+                                  t-att-class="state.data.headline.events_delta >= 0 ? 'is-up' : 'is-down'">
+                                <t t-esc="state.data.headline.events_delta >= 0 ? '+' : ''"/><t t-esc="state.data.headline.events_delta"/>% vs periodo anterior
+                            </span>
+                        </div>
                     </div>
                 </div>
 
                 <!-- KPI cards -->
                 <div class="aq_kpi_cards">
                     <t t-foreach="cards" t-as="c" t-key="c.key">
-                        <div class="aq_kpi_card" t-att-class="c.cls">
+                        <div class="aq_kpi_card aq_clickable" t-att-class="c.sev" t-att-title="c.tip" t-on-click="() => this.onCardClick(c)">
                             <div class="aq_kpi_card_icon"><i t-attf-class="fa {{c.icon}}"/></div>
                             <div class="aq_kpi_card_body">
-                                <div class="aq_kpi_card_value" t-esc="c.value"/>
+                                <div class="aq_kpi_card_value" t-esc="fmt(c.value)"/>
                                 <div class="aq_kpi_card_label" t-esc="c.label"/>
-                                <div class="aq_kpi_card_sub" t-if="c.sub" t-esc="c.sub"/>
+                                <div class="aq_kpi_card_sub" t-esc="c.sub"/>
                             </div>
                         </div>
                     </t>
                 </div>
 
-                <!-- Row: state funnel + demand -->
-                <div class="aq_kpi_grid2">
-                    <div class="aq_kpi_panel">
+                <!-- Analytics grid -->
+                <div class="aq_dashboard_grid">
+                    <!-- estado -->
+                    <div class="aq_card aq_col_6 aq_kpi_panel">
                         <div class="aq_panel_title"><i class="fa fa-bars me-2"/>Reservas por estado</div>
+                        <div t-if="!state.data.reservations_by_state.length" class="aq_panel_empty">Sin reservas en el periodo.</div>
                         <div class="aq_bars">
                             <t t-foreach="state.data.reservations_by_state" t-as="s" t-key="s.key">
-                                <div class="aq_bar_row">
+                                <div class="aq_bar_row" t-attf-title="{{s.label}}: {{s.count}} reservas · {{s.pct}}% del total">
                                     <div class="aq_bar_label" t-esc="s.label"/>
                                     <div class="aq_bar_track">
-                                        <div class="aq_bar_fill" t-attf-style="width:{{pct(s.count, stateMax)}}%;background:{{stateColor(s.key)}};"/>
+                                        <div class="aq_bar_fill" t-attf-style="width:{{s.pct}}%;background:{{stateColor(s.key)}};"/>
                                     </div>
-                                    <div class="aq_bar_value" t-esc="s.count"/>
+                                    <div class="aq_bar_value"><t t-esc="s.count"/> <span class="aq_bar_pct"><t t-esc="s.pct"/>%</span></div>
                                 </div>
                             </t>
                         </div>
                     </div>
 
-                    <div class="aq_kpi_panel">
+                    <!-- demanda -->
+                    <div class="aq_card aq_col_6 aq_kpi_panel">
                         <div class="aq_panel_title"><i class="fa fa-line-chart me-2"/>Demanda próximas 8 semanas</div>
+                        <div class="aq_panel_caption">Items bloqueados por semana (% del inventario)</div>
                         <div class="aq_columns">
                             <t t-foreach="state.data.demand" t-as="d" t-key="d.label">
-                                <div class="aq_col">
+                                <div class="aq_col aq_clickable" t-att-title="demandTip(d)" t-on-click="() => this.openWeek(d)">
                                     <div class="aq_col_val" t-esc="d.count"/>
                                     <div class="aq_col_bar_wrap">
-                                        <div class="aq_col_bar" t-attf-style="height:{{pct(d.count, demandMax)}}%;"/>
+                                        <div t-attf-class="aq_col_bar lvl-{{d.level}}" t-attf-style="height:{{pct(d.count, demandMax)}}%;"/>
                                     </div>
                                     <div class="aq_col_label" t-esc="d.label"/>
                                 </div>
                             </t>
                         </div>
                     </div>
-                </div>
 
-                <!-- Row: top products + utilization by product -->
-                <div class="aq_kpi_grid2">
-                    <div class="aq_kpi_panel">
+                    <!-- productos -->
+                    <div class="aq_card aq_col_6 aq_kpi_panel">
                         <div class="aq_panel_title"><i class="fa fa-cube me-2"/>Productos más solicitados</div>
                         <div t-if="!state.data.top_products.length" class="aq_panel_empty">Sin datos en el periodo.</div>
                         <div class="aq_bars">
                             <t t-foreach="state.data.top_products" t-as="p" t-key="p.name">
-                                <div class="aq_bar_row">
-                                    <div class="aq_bar_label" t-esc="p.name"/>
+                                <div class="aq_bar_block aq_clickable" t-on-click="() => this.openProduct(p)">
+                                    <div class="aq_bar_block_head">
+                                        <span class="aq_bar_block_name" t-esc="p.name"/>
+                                        <span class="aq_bar_block_meta"><t t-esc="p.count"/> items · <t t-esc="p.orders"/> evento(s)</span>
+                                    </div>
                                     <div class="aq_bar_track">
                                         <div class="aq_bar_fill aq_accent" t-attf-style="width:{{pct(p.count, productsMax)}}%;"/>
                                     </div>
-                                    <div class="aq_bar_value" t-esc="p.count"/>
                                 </div>
                             </t>
                         </div>
+                        <div t-if="state.data.products_more" class="aq_more">+ <t t-esc="state.data.products_more"/> productos más</div>
                     </div>
 
-                    <div class="aq_kpi_panel">
+                    <!-- ocupación -->
+                    <div class="aq_card aq_col_6 aq_kpi_panel">
                         <div class="aq_panel_title"><i class="fa fa-tachometer me-2"/>Ocupación por producto (ahora)</div>
                         <div t-if="!state.data.util_by_product.length" class="aq_panel_empty">Sin items gestionados.</div>
                         <div class="aq_bars">
                             <t t-foreach="state.data.util_by_product" t-as="p" t-key="p.name">
-                                <div class="aq_bar_row">
-                                    <div class="aq_bar_label" t-esc="p.name"/>
-                                    <div class="aq_bar_track">
-                                        <div class="aq_bar_fill" t-attf-style="width:{{p.pct}}%;background:{{utilColor(p.pct)}};"/>
+                                <div class="aq_bar_block aq_product_occupancy aq_clickable" t-att-class="occLevel(p.pct)" t-on-click="() => this.openProduct(p)">
+                                    <div class="aq_bar_block_head">
+                                        <span class="aq_bar_block_name" t-esc="p.name"/>
+                                        <span class="aq_bar_block_meta"><t t-esc="p.pct"/>% ocupado · <t t-esc="p.available"/> disp. de <t t-esc="p.total"/></span>
                                     </div>
-                                    <div class="aq_bar_value"><t t-esc="p.pct"/>%</div>
+                                    <div class="aq_bar_track">
+                                        <div class="aq_bar_fill" t-attf-style="width:{{p.pct}}%;"/>
+                                    </div>
                                 </div>
                             </t>
                         </div>
                     </div>
-                </div>
 
-                <!-- Top customers -->
-                <div class="aq_kpi_panel">
-                    <div class="aq_panel_title"><i class="fa fa-users me-2"/>Clientes con más reservas</div>
-                    <div t-if="!state.data.top_customers.length" class="aq_panel_empty">Sin clientes con reservas.</div>
-                    <div class="aq_bars">
-                        <t t-foreach="state.data.top_customers" t-as="c" t-key="c.name">
-                            <div class="aq_bar_row">
-                                <div class="aq_bar_label" t-esc="c.name"/>
-                                <div class="aq_bar_track">
-                                    <div class="aq_bar_fill aq_accent2" t-attf-style="width:{{pct(c.count, customersMax)}}%;"/>
-                                </div>
-                                <div class="aq_bar_value" t-esc="c.count"/>
+                    <!-- clientes -->
+                    <div class="aq_card aq_col_12 aq_kpi_panel">
+                        <div class="aq_panel_title">
+                            <i class="fa fa-users me-2"/>Clientes con más reservas
+                            <div class="btn-group aq_client_toggle ms-auto">
+                                <button class="btn btn-sm" t-att-class="state.clientBy === 'count' ? 'btn-primary' : 'btn-light'" t-on-click="() => this.setClientBy('count')">Reservas</button>
+                                <button class="btn btn-sm" t-att-class="state.clientBy === 'items' ? 'btn-primary' : 'btn-light'" t-on-click="() => this.setClientBy('items')">Items</button>
+                                <button class="btn btn-sm" t-att-class="state.clientBy === 'value' ? 'btn-primary' : 'btn-light'" t-on-click="() => this.setClientBy('value')">Valor</button>
                             </div>
-                        </t>
+                        </div>
+                        <div t-if="!clients.length" class="aq_panel_empty">Sin clientes con reservas.</div>
+                        <div class="aq_bars">
+                            <t t-foreach="clients" t-as="c" t-key="c.partner_id">
+                                <div class="aq_bar_block aq_clickable" t-on-click="() => this.openCustomer(c)">
+                                    <div class="aq_bar_block_head">
+                                        <span class="aq_bar_block_name" t-esc="c.name"/>
+                                        <span class="aq_bar_block_meta" t-esc="clientSub(c)"/>
+                                    </div>
+                                    <div class="aq_bar_track">
+                                        <div class="aq_bar_fill aq_accent2" t-attf-style="width:{{pct(c[state.clientBy], clientsMax)}}%;"/>
+                                    </div>
+                                </div>
+                            </t>
+                        </div>
+                        <div t-if="state.data.customers_more" class="aq_more">+ <t t-esc="state.data.customers_more"/> clientes más</div>
                     </div>
                 </div>
             </div>
