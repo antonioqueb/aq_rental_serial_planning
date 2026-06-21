@@ -90,8 +90,11 @@
             <div class="aq_planning_kpis">
                 <t t-foreach="kpis" t-as="k" t-key="k.key">
                     <span class="aq_kpi_chip" t-att-class="k.cls">
-                        <span class="aq_kpi_value" t-esc="k.value"/>
-                        <span class="aq_kpi_label" t-esc="k.label"/>
+                        <i t-attf-class="aq_kpi_icon fa {{k.icon}}"/>
+                        <span class="aq_kpi_text">
+                            <span class="aq_kpi_value" t-esc="k.value"/>
+                            <span class="aq_kpi_label" t-esc="k.label"/>
+                        </span>
                     </span>
                 </t>
             </div>
@@ -180,7 +183,7 @@
                                 </t>
                             </t>
                         </t>
-                        <div t-if="!filteredProducts.length" class="aq_pb_noresult">Ningún producto coincide con la búsqueda o los filtros.</div>
+                        <div t-if="!filteredProducts.length" class="aq_pb_noresult"><i class="fa fa-search"/><span>Ningún producto coincide con la búsqueda o los filtros.</span></div>
                     </div>
                 </div>
 
@@ -200,7 +203,10 @@
                             <div class="aq_product_row" t-att-class="group.isMaint ? 'is-maint' : ''">
                                 <div class="aq_resource_column aq_product_summary">
                                     <span class="aq_product_name">
-                                        <i t-att-class="group.isMaint ? 'fa fa-wrench' : 'fa fa-user'"/>
+                                        <span class="aq_customer_avatar" t-attf-style="background:{{group.avatarColor}};">
+                                            <t t-if="group.isMaint"><i class="fa fa-wrench"/></t>
+                                            <t t-else="" t-esc="group.initials"/>
+                                        </span>
                                         <strong t-esc="group.title"/>
                                     </span>
                                     <span class="aq_product_availability_badge"><t t-esc="group.serials.length"/> series</span>
@@ -229,7 +235,7 @@
                                 </div>
                             </t>
                         </t>
-                        <div t-if="!customerGroups.length" class="aq_pb_noresult">No hay reservas en el periodo seleccionado.</div>
+                        <div t-if="!customerGroups.length" class="aq_pb_noresult"><i class="fa fa-users"/><span>No hay reservas en el periodo seleccionado.</span></div>
                     </div>
                 </div>
 
@@ -297,7 +303,8 @@
                                     <div t-else="" t-att-class="cell.cls"
                                          t-on-click="() => this.monthDayDrill()">
                                         <div class="aq_month_daynum" t-esc="cell.day"/>
-                                        <div class="aq_month_free"><t t-esc="cell.free"/>/<t t-esc="cell.total"/></div>
+                                        <div class="aq_month_free"><t t-esc="cell.free"/><small>/<t t-esc="cell.total"/></small></div>
+                                        <div class="aq_month_bar"><span t-attf-style="width:{{cell.pct}}%;"/></div>
                                         <div class="aq_month_freelabel">libres</div>
                                     </div>
                                 </t>
@@ -337,7 +344,7 @@
                             </div>
                         </div>
                     </t>
-                    <div t-if="!agendaDays.length" class="aq_pb_noresult">No hay movimientos en el periodo seleccionado.</div>
+                    <div t-if="!agendaDays.length" class="aq_pb_noresult"><i class="fa fa-calendar-check-o"/><span>No hay movimientos en el periodo seleccionado.</span></div>
                 </div>
             </t>
 

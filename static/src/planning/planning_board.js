@@ -101,6 +101,20 @@ function formatRentalDate(dt) {
 function formatRentalDateRange(a, b) {
     return `${formatRentalDateTime(a)} → ${formatRentalDateTime(b)}`;
 }
+const AVATAR_COLORS = ["#0E7C86", "#7c3aed", "#2563eb", "#db2777", "#ea580c",
+                       "#0891b2", "#65a30d", "#9333ea", "#dc2626", "#0d9488"];
+function avatarInitials(name) {
+    const parts = (name || "?").trim().split(/\s+/).filter(Boolean);
+    if (!parts.length) return "?";
+    if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+    return (parts[0][0] + parts[1][0]).toUpperCase();
+}
+function avatarColor(name) {
+    let h = 0;
+    for (let i = 0; i < (name || "").length; i++) h = (h * 31 + name.charCodeAt(i)) >>> 0;
+    return AVATAR_COLORS[h % AVATAR_COLORS.length];
+}
+
 function getRentalDurationLabel(a, b) {
     let ms = b - a;
     if (ms < 0) ms = 0;
@@ -336,12 +350,12 @@ export class RentalPlanningBoard extends Component {
             }
         }
         return [
-            { key: "visible", label: "Seriales visibles", value: visible, cls: "" },
-            { key: "available", label: "Disponibles", value: available, cls: "is-ok" },
-            { key: "occupied", label: "Ocupados", value: occupied, cls: "is-busy" },
-            { key: "soft", label: "Apartados", value: soft, cls: "is-warn" },
-            { key: "conflict", label: "Conflictos", value: conflict, cls: conflict ? "is-danger" : "" },
-            { key: "maint", label: "Mantenimiento", value: maint, cls: maint ? "is-muted" : "" },
+            { key: "visible", label: "Seriales visibles", value: visible, cls: "", icon: "fa-barcode" },
+            { key: "available", label: "Disponibles", value: available, cls: "is-ok", icon: "fa-check-circle" },
+            { key: "occupied", label: "Ocupados", value: occupied, cls: "is-busy", icon: "fa-cube" },
+            { key: "soft", label: "Apartados", value: soft, cls: "is-warn", icon: "fa-hourglass-half" },
+            { key: "conflict", label: "Conflictos", value: conflict, cls: conflict ? "is-danger" : "", icon: "fa-exclamation-triangle" },
+            { key: "maint", label: "Mantenimiento", value: maint, cls: maint ? "is-muted" : "", icon: "fa-wrench" },
         ];
     }
 
@@ -534,6 +548,7 @@ export class RentalPlanningBoard extends Component {
             cells.push({
                 key: `${year}-${month}-${day}`, day,
                 total, busy, free: total - busy, level, isToday, isWeekend,
+                pct: total ? Math.round((busy / total) * 100) : 0,
                 cls: `aq_month_cell lvl-${level}`
                     + (isToday ? " is-today" : "")
                     + (isWeekend ? " is-weekend" : ""),
@@ -645,7 +660,12 @@ export class RentalPlanningBoard extends Component {
             }
         }
         return [...groups.values()]
-            .map((g) => ({ key: g.key, title: g.title, isMaint: g.isMaint, serials: [...g.serials.values()] }))
+            .map((g) => ({
+                key: g.key, title: g.title, isMaint: g.isMaint,
+                initials: g.isMaint ? "" : avatarInitials(g.title),
+                avatarColor: g.isMaint ? "#64748b" : avatarColor(g.title),
+                serials: [...g.serials.values()],
+            }))
             .sort((a, b) => (a.isMaint ? 1 : 0) - (b.isMaint ? 1 : 0) || a.title.localeCompare(b.title));
     }
 

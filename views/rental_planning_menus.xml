@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <menuitem id="menu_rental_planning_root" name="Planeación de Renta"
+    <menuitem id="menu_rental_planning_root" name="Planeación"
               web_icon="aq_rental_serial_planning,static/description/icon.png"
               sequence="40"
               groups="group_rental_planner_user"/>
 
-    <menuitem id="menu_rental_planning_board" name="Tablero de Planeación"
+    <menuitem id="menu_rental_planning_board" name="Tablero"
               parent="menu_rental_planning_root"
               action="action_rental_planning_board" sequence="10"/>
 
