@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="aq_rental_serial_planning.KpiDashboard">
+        <div class="aq_kpi_dashboard">
+
+            <!-- Header -->
+            <div class="aq_kpi_topbar">
+                <div class="aq_kpi_titles">
+                    <h1>Indicadores de Planeación</h1>
+                    <span class="aq_kpi_sub" t-if="state.data">Actualizado: <t t-esc="state.data.generated"/></span>
+                </div>
+                <div class="aq_kpi_controls">
+                    <div class="btn-group aq_kpi_period">
+                        <button class="btn btn-sm" t-att-class="state.days === 30 ? 'btn-primary' : 'btn-light'" t-on-click="() => this.setDays(30)">30 d</button>
+                        <button class="btn btn-sm" t-att-class="state.days === 60 ? 'btn-primary' : 'btn-light'" t-on-click="() => this.setDays(60)">60 d</button>
+                        <button class="btn btn-sm" t-att-class="state.days === 90 ? 'btn-primary' : 'btn-light'" t-on-click="() => this.setDays(90)">90 d</button>
+                    </div>
+                    <button class="btn btn-light btn-sm" t-on-click="() => this.refresh()" title="Actualizar"><i class="fa fa-refresh"/></button>
+                    <button class="btn btn-secondary btn-sm" t-on-click="() => this.openBoard()"><i class="fa fa-calendar me-1"/> Abrir tablero</button>
+                </div>
+            </div>
+
+            <div t-if="state.loading" class="aq_kpi_loading"><i class="fa fa-spinner fa-spin"/> Calculando indicadores…</div>
+
+            <div t-else="" class="aq_kpi_scroll">
+                <!-- Hero: utilization + breakdown + events value -->
+                <div class="aq_kpi_hero">
+                    <div class="aq_kpi_hero_card aq_util">
+                        <div class="aq_kpi_donut" t-att-style="donutStyle">
+                            <div class="aq_kpi_donut_hole">
+                                <span class="aq_donut_val"><t t-esc="state.data.headline.utilization"/>%</span>
+                                <span class="aq_donut_cap">Utilización</span>
+                            </div>
+                        </div>
+                        <div class="aq_util_breakdown">
+                            <div class="aq_util_row"><span class="aq_dot is-busy"/>Ocupadas <strong t-esc="state.data.headline.blocked_now"/></div>
+                            <div class="aq_util_row"><span class="aq_dot is-ok"/>Disponibles <strong t-esc="state.data.headline.available_now"/></div>
+                            <div class="aq_util_row"><span class="aq_dot is-muted"/>Mantenimiento <strong t-esc="state.data.headline.maint_now"/></div>
+                            <div class="aq_util_total">Total <strong t-esc="state.data.headline.total_serials"/> series</div>
+                        </div>
+                    </div>
+                    <div class="aq_kpi_hero_card aq_value">
+                        <div class="aq_value_icon"><i class="fa fa-star"/></div>
+                        <div class="aq_value_amount" t-esc="money(state.data.headline.events_value)"/>
+                        <div class="aq_value_label">Valor de eventos próximos</div>
+                        <div class="aq_value_sub"><t t-esc="state.data.headline.upcoming_events"/> eventos activos</div>
+                    </div>
+                </div>
+
+                <!-- KPI cards -->
+                <div class="aq_kpi_cards">
+                    <t t-foreach="cards" t-as="c" t-key="c.key">
+                        <div class="aq_kpi_card" t-att-class="c.cls">
+                            <div class="aq_kpi_card_icon"><i t-attf-class="fa {{c.icon}}"/></div>
+                            <div class="aq_kpi_card_body">
+                                <div class="aq_kpi_card_value" t-esc="c.value"/>
+                                <div class="aq_kpi_card_label" t-esc="c.label"/>
+                                <div class="aq_kpi_card_sub" t-if="c.sub" t-esc="c.sub"/>
+                            </div>
+                        </div>
+                    </t>
+                </div>
+
+                <!-- Row: state funnel + demand -->
+                <div class="aq_kpi_grid2">
+                    <div class="aq_kpi_panel">
+                        <div class="aq_panel_title"><i class="fa fa-bars me-2"/>Reservas por estado</div>
+                        <div class="aq_bars">
+                            <t t-foreach="state.data.reservations_by_state" t-as="s" t-key="s.key">
+                                <div class="aq_bar_row">
+                                    <div class="aq_bar_label" t-esc="s.label"/>
+                                    <div class="aq_bar_track">
+                                        <div class="aq_bar_fill" t-attf-style="width:{{pct(s.count, stateMax)}}%;background:{{stateColor(s.key)}};"/>
+                                    </div>
+                                    <div class="aq_bar_value" t-esc="s.count"/>
+                                </div>
+                            </t>
+                        </div>
+                    </div>
+
+                    <div class="aq_kpi_panel">
+                        <div class="aq_panel_title"><i class="fa fa-line-chart me-2"/>Demanda próximas 8 semanas</div>
+                        <div class="aq_columns">
+                            <t t-foreach="state.data.demand" t-as="d" t-key="d.label">
+                                <div class="aq_col">
+                                    <div class="aq_col_val" t-esc="d.count"/>
+                                    <div class="aq_col_bar_wrap">
+                                        <div class="aq_col_bar" t-attf-style="height:{{pct(d.count, demandMax)}}%;"/>
+                                    </div>
+                                    <div class="aq_col_label" t-esc="d.label"/>
+                                </div>
+                            </t>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Row: top products + utilization by product -->
+                <div class="aq_kpi_grid2">
+                    <div class="aq_kpi_panel">
+                        <div class="aq_panel_title"><i class="fa fa-cube me-2"/>Productos más solicitados</div>
+                        <div t-if="!state.data.top_products.length" class="aq_panel_empty">Sin datos en el periodo.</div>
+                        <div class="aq_bars">
+                            <t t-foreach="state.data.top_products" t-as="p" t-key="p.name">
+                                <div class="aq_bar_row">
+                                    <div class="aq_bar_label" t-esc="p.name"/>
+                                    <div class="aq_bar_track">
+                                        <div class="aq_bar_fill aq_accent" t-attf-style="width:{{pct(p.count, productsMax)}}%;"/>
+                                    </div>
+                                    <div class="aq_bar_value" t-esc="p.count"/>
+                                </div>
+                            </t>
+                        </div>
+                    </div>
+
+                    <div class="aq_kpi_panel">
+                        <div class="aq_panel_title"><i class="fa fa-tachometer me-2"/>Ocupación por producto (ahora)</div>
+                        <div t-if="!state.data.util_by_product.length" class="aq_panel_empty">Sin series gestionadas.</div>
+                        <div class="aq_bars">
+                            <t t-foreach="state.data.util_by_product" t-as="p" t-key="p.name">
+                                <div class="aq_bar_row">
+                                    <div class="aq_bar_label" t-esc="p.name"/>
+                                    <div class="aq_bar_track">
+                                        <div class="aq_bar_fill" t-attf-style="width:{{p.pct}}%;background:{{utilColor(p.pct)}};"/>
+                                    </div>
+                                    <div class="aq_bar_value"><t t-esc="p.pct"/>%</div>
+                                </div>
+                            </t>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Top customers -->
+                <div class="aq_kpi_panel">
+                    <div class="aq_panel_title"><i class="fa fa-users me-2"/>Clientes con más reservas</div>
+                    <div t-if="!state.data.top_customers.length" class="aq_panel_empty">Sin clientes con reservas.</div>
+                    <div class="aq_bars">
+                        <t t-foreach="state.data.top_customers" t-as="c" t-key="c.name">
+                            <div class="aq_bar_row">
+                                <div class="aq_bar_label" t-esc="c.name"/>
+                                <div class="aq_bar_track">
+                                    <div class="aq_bar_fill aq_accent2" t-attf-style="width:{{pct(c.count, customersMax)}}%;"/>
+                                </div>
+                                <div class="aq_bar_value" t-esc="c.count"/>
+                            </div>
+                        </t>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </t>
+</templates>

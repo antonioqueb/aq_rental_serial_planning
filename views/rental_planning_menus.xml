@@ -5,6 +5,10 @@
               sequence="40"
               groups="group_rental_planner_user"/>
 
+    <menuitem id="menu_rental_kpi_dashboard" name="Indicadores"
+              parent="menu_rental_planning_root"
+              action="action_rental_kpi_dashboard" sequence="5"/>
+
     <menuitem id="menu_rental_planning_board" name="Tablero"
               parent="menu_rental_planning_root"
               action="action_rental_planning_board" sequence="10"/>
