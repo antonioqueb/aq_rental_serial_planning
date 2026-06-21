@@ -136,24 +136,23 @@
         <field name="model">rental.serial.reservation</field>
         <field name="arch" type="xml">
             <search>
-                <field name="name"/>
+                <field name="name" string="Reference"/>
                 <field name="product_id"/>
                 <field name="lot_id"/>
                 <field name="partner_id"/>
                 <field name="sale_order_id"/>
                 <filter name="conflicts" string="Conflicts"
-                        domain="[('conflict_status','=','conflict')]"/>
+                        domain="[('conflict_status', '=', 'conflict')]"/>
                 <filter name="active_blocks" string="Active Blocks"
-                        domain="[('state','in',['soft_hold','reserved','prepared','picked_up','delivered','in_use','returned'])]"/>
+                        domain="[('state', 'in', ['soft_hold', 'reserved', 'prepared', 'picked_up', 'delivered', 'in_use', 'returned'])]"/>
                 <separator/>
-                <filter name="soft_hold" string="Soft Holds" domain="[('state','=','soft_hold')]"/>
-                <filter name="released" string="Released" domain="[('state','=','released')]"/>
-                <group string="Group By">
-                    <filter name="g_product" string="Product" context="{'group_by':'product_id'}"/>
-                    <filter name="g_lot" string="Serial" context="{'group_by':'lot_id'}"/>
-                    <filter name="g_state" string="State" context="{'group_by':'state'}"/>
-                    <filter name="g_partner" string="Customer" context="{'group_by':'partner_id'}"/>
-                </group>
+                <filter name="soft_hold" string="Soft Holds" domain="[('state', '=', 'soft_hold')]"/>
+                <filter name="released" string="Released" domain="[('state', '=', 'released')]"/>
+                <separator/>
+                <filter name="g_product" string="Product" context="{'group_by': 'product_id'}"/>
+                <filter name="g_lot" string="Serial" context="{'group_by': 'lot_id'}"/>
+                <filter name="g_state" string="State" context="{'group_by': 'state'}"/>
+                <filter name="g_partner" string="Customer" context="{'group_by': 'partner_id'}"/>
             </search>
         </field>
     </record>
