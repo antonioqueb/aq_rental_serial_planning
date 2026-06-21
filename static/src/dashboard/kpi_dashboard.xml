@@ -36,7 +36,7 @@
                             <div class="aq_util_row"><span class="aq_dot is-busy"/>Ocupadas <strong t-esc="state.data.headline.blocked_now"/></div>
                             <div class="aq_util_row"><span class="aq_dot is-ok"/>Disponibles <strong t-esc="state.data.headline.available_now"/></div>
                             <div class="aq_util_row"><span class="aq_dot is-muted"/>Mantenimiento <strong t-esc="state.data.headline.maint_now"/></div>
-                            <div class="aq_util_total">Total <strong t-esc="state.data.headline.total_serials"/> series</div>
+                            <div class="aq_util_total">Total <strong t-esc="state.data.headline.total_serials"/> items</div>
                         </div>
                     </div>
                     <div class="aq_kpi_hero_card aq_value">
@@ -114,7 +114,7 @@
 
                     <div class="aq_kpi_panel">
                         <div class="aq_panel_title"><i class="fa fa-tachometer me-2"/>Ocupación por producto (ahora)</div>
-                        <div t-if="!state.data.util_by_product.length" class="aq_panel_empty">Sin series gestionadas.</div>
+                        <div t-if="!state.data.util_by_product.length" class="aq_panel_empty">Sin items gestionados.</div>
                         <div class="aq_bars">
                             <t t-foreach="state.data.util_by_product" t-as="p" t-key="p.name">
                                 <div class="aq_bar_row">

@@ -4,10 +4,11 @@ import { registry } from "@web/core/registry";
 import { useService } from "@web/core/utils/hooks";
 import { Component, useState, onWillStart } from "@odoo/owl";
 
+// Getting Ready palette — warm editorial funnel (champagne -> caramel)
 const STATE_COLORS = {
-    quotation: "#94a3b8", soft_hold: "#f59e0b", reserved: "#38bdf8",
-    prepared: "#7c3aed", picked_up: "#2563eb", delivered: "#10b981",
-    in_use: "#15803d", returned: "#f97316", released: "#cbd5e1",
+    quotation: "#E0D5C2", soft_hold: "#D8B98C", reserved: "#CBB596",
+    prepared: "#C7A578", picked_up: "#BE9466", delivered: "#B07F50",
+    in_use: "#9E6A3E", returned: "#C79A6B", released: "#CFCABF",
 };
 
 export class RentalKpiDashboard extends Component {
@@ -41,25 +42,26 @@ export class RentalKpiDashboard extends Component {
     stateColor(key) { return STATE_COLORS[key] || "#cbd5e1"; }
     pct(value, max) { return max > 0 ? Math.round((value / max) * 100) : 0; }
     utilColor(pct) {
-        return pct >= 85 ? "#dc2626" : pct >= 60 ? "#ea580c" : pct >= 30 ? "#d97706" : "#10b981";
+        // warm scale: taupe -> gold -> caramel -> warm brick
+        return pct >= 85 ? "#A8442E" : pct >= 60 ? "#A86F45" : pct >= 30 ? "#C79A6B" : "#B8A995";
     }
 
     get donutStyle() {
         const u = this.state.data.headline.utilization;
-        return `background: conic-gradient(#0e7c86 0 ${u}%, #e8eef4 ${u}% 100%);`;
+        return `background: conic-gradient(#C79A6B 0 ${u}%, #E8DFD0 ${u}% 100%);`;
     }
 
     get cards() {
         const h = this.state.data.headline;
         return [
-            { key: "serials", icon: "fa-barcode", label: "Series gestionadas", value: h.total_serials, cls: "" },
+            { key: "serials", icon: "fa-barcode", label: "Items gestionados", value: h.total_serials, cls: "" },
             { key: "active", icon: "fa-calendar-check-o", label: "Reservas activas", value: h.active_reservations, cls: "is-busy" },
             { key: "deliv", icon: "fa-truck", label: "Salidas (7 días)", value: h.deliveries_7d, cls: "is-info" },
             { key: "ret", icon: "fa-undo", label: "Retornos (7 días)", value: h.returns_7d, cls: "is-info" },
             { key: "overdue", icon: "fa-clock-o", label: "Atrasadas", value: h.overdue, cls: h.overdue ? "is-danger" : "is-ok" },
             { key: "conflicts", icon: "fa-exclamation-triangle", label: "Conflictos", value: h.conflicts, cls: h.conflicts ? "is-danger" : "is-ok" },
             { key: "soft", icon: "fa-hourglass-half", label: "Apartados temporales", value: h.soft_holds, cls: "is-warn", sub: h.soft_expiring ? h.soft_expiring + " por expirar" : "" },
-            { key: "maint", icon: "fa-wrench", label: "En mantenimiento", value: h.maint_now, cls: "is-muted", sub: h.damaged_lost ? h.damaged_lost + " dañadas/perdidas" : "" },
+            { key: "maint", icon: "fa-wrench", label: "En mantenimiento", value: h.maint_now, cls: "is-muted", sub: h.damaged_lost ? h.damaged_lost + " dañados/perdidos" : "" },
         ];
     }
 

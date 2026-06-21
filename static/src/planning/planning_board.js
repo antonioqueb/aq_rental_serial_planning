@@ -350,7 +350,7 @@ export class RentalPlanningBoard extends Component {
             }
         }
         return [
-            { key: "visible", label: "Seriales visibles", value: visible, cls: "", icon: "fa-barcode" },
+            { key: "visible", label: "Items visibles", value: visible, cls: "", icon: "fa-barcode" },
             { key: "available", label: "Disponibles", value: available, cls: "is-ok", icon: "fa-check-circle" },
             { key: "occupied", label: "Ocupados", value: occupied, cls: "is-busy", icon: "fa-cube" },
             { key: "soft", label: "Apartados", value: soft, cls: "is-warn", icon: "fa-hourglass-half" },

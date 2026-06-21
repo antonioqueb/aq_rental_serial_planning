@@ -22,8 +22,8 @@ $aq-light-states: (draft, quotation, released, available);
 $aq-occ: (free: (#dcfce7, #166534), low: (#bbf7d0, #166534), mid: (#fef9c3, #854d0e),
           high: (#fed7aa, #9a3412), full: (#fecaca, #991b1b), none: (#f1f5f9, #94a3b8));
 
-$aq-label-w: 268px;
-$aq-label-w-compact: 212px;
+$aq-label-w: 296px;
+$aq-label-w-compact: 240px;
 $aq-shadow-sm: 0 1px 2px rgba(15, 23, 42, .06);
 $aq-shadow-md: 0 4px 14px rgba(15, 23, 42, .1);
 $aq-shadow-lg: 0 12px 34px rgba(15, 23, 42, .16);
@@ -236,9 +236,13 @@ $aq-shadow-lg: 0 12px 34px rgba(15, 23, 42, .16);
     }
     .aq_product_summary {
         display: flex; align-items: center; justify-content: space-between; gap: 8px;
-        .aq_product_name { display: flex; align-items: center; gap: 7px; overflow: hidden; white-space: nowrap; }
+        // Full names, never truncated -> wrap onto multiple lines.
+        .aq_product_name { display: flex; align-items: flex-start; gap: 7px; flex: 1; min-width: 0;
+            white-space: normal; overflow: visible; line-height: 1.25; word-break: break-word;
+            i { margin-top: 3px; flex: 0 0 auto; } }
     }
     .aq_product_availability_badge {
+        flex: 0 0 auto; align-self: center;
         font-size: 10px; font-weight: 800; padding: 3px 9px; border-radius: 999px;
         background: #e5e7eb; color: $aq-text; white-space: nowrap; letter-spacing: .2px;
         &.is-ok { background: #dcfce7; color: #15803d; }
@@ -253,13 +257,15 @@ $aq-shadow-lg: 0 12px 34px rgba(15, 23, 42, .16);
     }
 
     .aq_serial_row {
-        display: flex; height: 40px; border-bottom: 1px solid #f1f5f9; background: $aq-surface;
+        display: flex; min-height: 40px; border-bottom: 1px solid #f1f5f9; background: $aq-surface;
         transition: background .1s;
         &:hover { background: #f8fbfd; }
         &.aq_empty { color: $aq-faint; }
     }
-    .aq_serial_label { display: flex; align-items: center; gap: 7px;
-        .aq_serial_name { display: inline-flex; align-items: center; min-width: 64px; font-weight: 600; color: #334155; font-variant-numeric: tabular-nums; } }
+    .aq_serial_label { display: flex; align-items: center; gap: 7px; flex-wrap: wrap;
+        .aq_serial_name { display: inline-flex; align-items: center; font-weight: 600; color: #334155;
+            font-variant-numeric: tabular-nums; white-space: normal; word-break: break-word; }
+        small { white-space: normal; word-break: break-word; } }
     .aq_serial_badge {
         font-size: 9.5px; font-weight: 700; padding: 2px 8px; border-radius: 999px;
         background: #eef2f7; color: #475569; white-space: nowrap; letter-spacing: .2px;
@@ -276,7 +282,7 @@ $aq-shadow-lg: 0 12px 34px rgba(15, 23, 42, .16);
 
     // ----- reservation blocks
     .aq_reservation_block {
-        position: absolute; top: 4px; height: calc(100% - 8px);
+        position: absolute; top: 5px; height: 30px;
         border-radius: 8px; padding: 4px 9px;
         font-size: 12px; line-height: 1.15; color: #fff;
         overflow: hidden; cursor: pointer; z-index: 2;
@@ -327,9 +333,9 @@ $aq-shadow-lg: 0 12px 34px rgba(15, 23, 42, .16);
     .aq_hm_row { display: flex; align-items: center; gap: 4px; padding: 2px 0; }
     .aq_hm_row.aq_hm_head { position: sticky; top: 0; z-index: 5; background: $aq-surface; padding-bottom: 6px; }
     .aq_hm_label {
-        width: 220px; min-width: 220px; padding: 6px 12px; font-size: 13px;
+        width: 240px; min-width: 240px; padding: 6px 12px; font-size: 13px;
         position: sticky; left: 0; background: $aq-surface; z-index: 2; cursor: pointer; border-radius: 8px;
-        white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        white-space: normal; word-break: break-word; line-height: 1.25;
         &:hover { background: #f1f5f9; }
     }
     .aq_hm_colhead { flex: 1; min-width: 34px; text-align: center; font-size: 11px; font-weight: 700; color: $aq-muted; padding: 4px 2px;
@@ -408,8 +414,8 @@ $aq-shadow-lg: 0 12px 34px rgba(15, 23, 42, .16);
     // ===================================================== density
     &.is-density-compact {
         font-size: 12px;
-        .aq_serial_row { height: 30px; }
-        .aq_reservation_block { font-size: 11px; padding: 2px 7px; border-radius: 6px; }
+        .aq_serial_row { min-height: 30px; }
+        .aq_reservation_block { font-size: 11px; padding: 2px 7px; border-radius: 6px; top: 4px; height: 24px; }
         .aq_resource_column, .aq_resource_column_header { width: $aq-label-w-compact; min-width: $aq-label-w-compact; }
         .aq_planning_kpis { padding: 8px 14px; .aq_kpi_value { font-size: 16px; } }
     }

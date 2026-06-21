@@ -129,7 +129,7 @@
                 <!-- ============================== TIMELINE ============================== -->
                 <div t-if="state.viewMode === 'timeline'" class="aq_pb_grid">
                     <div class="aq_timeline_header">
-                        <div class="aq_resource_column_header">Producto / Serie</div>
+                        <div class="aq_resource_column_header">Producto / Item</div>
                         <div class="aq_pb_timeline">
                             <t t-foreach="columns" t-as="col" t-key="col.key">
                                 <div class="aq_colhead" t-att-class="{'aq_timeline_weekend': col.isWeekend, 'aq_timeline_today': col.isToday}"
@@ -144,7 +144,6 @@
                                     <span class="aq_product_name">
                                         <i t-att-class="isExpanded(product) ? 'fa fa-caret-down' : 'fa fa-caret-right'"/>
                                         <strong t-esc="product.product_name"/>
-                                        <small t-if="product.sku" class="text-muted ms-1" t-esc="product.sku"/>
                                     </span>
                                     <span class="aq_product_availability_badge" t-att-class="product._summary.badge">
                                         <t t-esc="product._summary.available"/>/<t t-esc="product._summary.total"/> disp.
@@ -190,7 +189,7 @@
                 <!-- ============================== CLIENTE ============================== -->
                 <div t-if="state.viewMode === 'customer'" class="aq_pb_grid">
                     <div class="aq_timeline_header">
-                        <div class="aq_resource_column_header">Cliente / Serie</div>
+                        <div class="aq_resource_column_header">Cliente / Item</div>
                         <div class="aq_pb_timeline">
                             <t t-foreach="columns" t-as="col" t-key="col.key">
                                 <div class="aq_colhead" t-att-class="{'aq_timeline_weekend': col.isWeekend, 'aq_timeline_today': col.isToday}"
@@ -209,7 +208,7 @@
                                         </span>
                                         <strong t-esc="group.title"/>
                                     </span>
-                                    <span class="aq_product_availability_badge"><t t-esc="group.serials.length"/> series</span>
+                                    <span class="aq_product_availability_badge"><t t-esc="group.serials.length"/> items</span>
                                 </div>
                                 <div class="aq_pb_timeline aq_gridlines">
                                     <t t-foreach="columns" t-as="col" t-key="col.key">

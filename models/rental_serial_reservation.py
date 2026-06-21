@@ -483,7 +483,7 @@ class RentalSerialReservation(models.Model):
                 "state": r.state, "partner": r.partner_id.display_name,
                 "sale_order_id": r.sale_order_id.id,
                 "sale_order": r.sale_order_id.name,
-                "product_name": r.product_id.display_name,
+                "product_name": r.product_id.name,
                 "lot_name": r.lot_id.name,
                 "billable_start": r.rental_billable_start and r.rental_billable_start.isoformat(),
                 "billable_end": r.rental_billable_end and r.rental_billable_end.isoformat(),
@@ -498,7 +498,7 @@ class RentalSerialReservation(models.Model):
                 "id": d.id, "type": "downtime", "name": d.name,
                 "state": "maintenance", "reason": d.reason,
                 "lot_name": d.lot_id.name,
-                "product_name": d.product_id.display_name,
+                "product_name": d.product_id.name,
                 "start": d.start_datetime.isoformat(),
                 "end": (d.end_datetime or end).isoformat(),
                 "open_ended": not d.end_datetime,
@@ -516,7 +516,7 @@ class RentalSerialReservation(models.Model):
                 })
             result.append({
                 "product_id": product.id,
-                "product_name": product.display_name,
+                "product_name": product.name,
                 "sku": product.default_code or "",
                 "serial_count": len(product_lots),
                 "serials": serial_rows,
@@ -610,7 +610,7 @@ class RentalSerialReservation(models.Model):
             ("reservation_block_end", ">", now),
         ], ["product_id"], ["__count"])
         top_products = sorted(
-            [{"name": p.display_name, "count": c} for p, c in pg if p],
+            [{"name": p.name, "count": c} for p, c in pg if p],
             key=lambda x: -x["count"])[:8]
 
         # --- top customers ---
@@ -638,7 +638,7 @@ class RentalSerialReservation(models.Model):
                 continue
             bl = prod_blocked.get(p.id, 0)
             util_by_product.append({
-                "name": p.display_name, "total": tot, "blocked": bl,
+                "name": p.name, "total": tot, "blocked": bl,
                 "pct": round(100 * bl / tot)})
         util_by_product = sorted(util_by_product, key=lambda x: -x["pct"])[:8]
 
@@ -681,7 +681,7 @@ class RentalSerialReservation(models.Model):
         return {
             "warehouses": [{"id": w.id, "name": w.name}
                            for w in env["stock.warehouse"].search([])],
-            "products": [{"id": p.id, "name": p.display_name}
+            "products": [{"id": p.id, "name": p.name}
                          for p in env["product.product"].search(
                              [("tracking", "=", "serial"),
                               ("x_rental_serial_planning", "=", True)])],
