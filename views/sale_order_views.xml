@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_order_form_serial_planning" model="ir.ui.view">
+        <field name="name">sale.order.form.serial.planning</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <!-- Smart buttons -->
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_view_serial_reservations" type="object"
+                        class="oe_stat_button" icon="fa-barcode"
+                        invisible="x_reservation_count == 0">
+                    <field name="x_reservation_count" widget="statinfo" string="Serials"/>
+                </button>
+                <button name="action_view_serial_pickings" type="object"
+                        class="oe_stat_button" icon="fa-truck"
+                        invisible="x_serial_picking_count == 0">
+                    <field name="x_serial_picking_count" widget="statinfo" string="Transfers"/>
+                </button>
+            </xpath>
+
+            <!-- Event header toggle -->
+            <xpath expr="//field[@name='partner_id']" position="after">
+                <field name="x_is_event_rental"/>
+            </xpath>
+
+            <!-- Header actions -->
+            <xpath expr="//header" position="inside">
+                <button name="action_explode_packages" type="object"
+                        string="Explode Packages" invisible="not x_is_event_rental"/>
+                <button name="action_open_planning_board" type="object"
+                        string="Planning Board" invisible="not x_is_event_rental"/>
+            </xpath>
+
+            <!-- Order line columns -->
+            <xpath expr="//field[@name='order_line']/list/field[@name='product_uom_qty']" position="after">
+                <field name="x_requires_serial_assignment" column_invisible="1"/>
+                <field name="x_reserved_serial_count" string="Serials"
+                       invisible="not x_requires_serial_assignment"/>
+                <field name="x_available_qty_for_period" string="Avail."
+                       invisible="not x_requires_serial_assignment"/>
+                <field name="x_conflict_warning" class="text-danger"
+                       invisible="not x_conflict_warning"/>
+                <button name="action_auto_assign_serials" type="object"
+                        string="Auto" icon="fa-magic"
+                        invisible="not x_requires_serial_assignment"/>
+                <button name="action_open_manual_assign" type="object"
+                        string="Assign" icon="fa-barcode"
+                        invisible="not x_requires_serial_assignment"/>
+            </xpath>
+
+            <!-- Event & periods page -->
+            <xpath expr="//notebook" position="inside">
+                <page string="Event &amp; Periods" name="event_periods"
+                      invisible="not x_is_event_rental">
+                    <group>
+                        <group string="Event">
+                            <field name="x_event_name"/>
+                            <field name="x_event_location"/>
+                            <field name="x_event_start"/>
+                            <field name="x_event_end"/>
+                        </group>
+                        <group string="Periods">
+                            <label for="x_billable_start" string="Billable Period"/>
+                            <div class="o_row">
+                                <field name="x_billable_start" nolabel="1"/>
+                                <span class="mx-2">→</span>
+                                <field name="x_billable_end" nolabel="1"/>
+                            </div>
+                            <label for="x_block_start" string="Operational Block"/>
+                            <div class="o_row">
+                                <field name="x_block_start" nolabel="1"/>
+                                <span class="mx-2">→</span>
+                                <field name="x_block_end" nolabel="1"/>
+                            </div>
+                            <field name="x_reservation_conflict_count"
+                                   invisible="x_reservation_conflict_count == 0"
+                                   class="text-danger"/>
+                        </group>
+                    </group>
+                    <field name="x_logistics_notes" placeholder="Logistics notes..."/>
+                </page>
+            </xpath>
+
+            <!-- Notebook page with reservations -->
+            <xpath expr="//notebook" position="inside">
+                <page string="Serial Reservations" name="serial_reservations"
+                      invisible="x_reservation_count == 0">
+                    <field name="x_reservation_ids" readonly="1">
+                        <list decoration-danger="conflict_status == 'conflict'">
+                            <field name="product_id"/>
+                            <field name="lot_id"/>
+                            <field name="reservation_block_start"/>
+                            <field name="reservation_block_end"/>
+                            <field name="state" widget="badge"/>
+                            <field name="conflict_status"/>
+                        </list>
+                    </field>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>

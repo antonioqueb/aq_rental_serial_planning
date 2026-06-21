@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_rental_planning_board" model="ir.actions.client">
+        <field name="name">Rental Planning Board</field>
+        <field name="tag">aq_rental_planning_board</field>
+    </record>
+</odoo>

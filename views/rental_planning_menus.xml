@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem id="menu_rental_planning_root" name="Rental Planning"
+              web_icon="aq_rental_serial_planning,static/description/icon.png"
+              sequence="40"
+              groups="group_rental_planner_user"/>
+
+    <menuitem id="menu_rental_planning_board" name="Planning Board"
+              parent="menu_rental_planning_root"
+              action="action_rental_planning_board" sequence="10"/>
+
+    <menuitem id="menu_rental_reservations" name="Serial Reservations"
+              parent="menu_rental_planning_root"
+              action="action_rental_serial_reservation" sequence="20"/>
+
+    <menuitem id="menu_rental_downtime" name="Downtime / Maintenance"
+              parent="menu_rental_planning_root"
+              action="action_rental_downtime" sequence="30"
+              groups="group_rental_warehouse_user"/>
+
+    <menuitem id="menu_rental_config" name="Configuration"
+              parent="menu_rental_planning_root" sequence="90"
+              groups="group_rental_administrator"/>
+
+    <menuitem id="menu_rental_packages" name="Packages"
+              parent="menu_rental_config"
+              action="action_rental_package" sequence="10"/>
+</odoo>

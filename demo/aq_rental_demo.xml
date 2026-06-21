@@ -1,0 +1,2117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ============================================================ -->
+    <!-- DEMO: integral dataset covering every section of the module  -->
+    <!-- Dates are install-relative so the board is always populated. -->
+    <!-- ============================================================ -->
+
+    <record id="categ_event_rental" model="product.category">
+        <field name="name">Renta de Eventos</field>
+    </record>
+
+    <!-- ===== Sillas Manhattan (20 serials) ===== -->
+    <record id="prod_chair" model="product.product">
+        <field name="name">Sillas Manhattan</field>
+        <field name="type">consu</field>
+        <field name="is_storable" eval="True"/>
+        <field name="tracking">serial</field>
+        <field name="rent_ok" eval="True"/>
+        <field name="list_price">45.0</field>
+        <field name="categ_id" ref="categ_event_rental"/>
+        <field name="x_rental_serial_planning" eval="True"/>
+        <field name="x_requires_serial_reservation" eval="True"/>
+        <field name="x_rental_package_eligible" eval="True"/>
+        <field name="x_allow_auto_serial_assignment" eval="True"/>
+        <field name="x_allow_manual_serial_assignment" eval="True"/>
+        <field name="x_default_preparation_hours">4</field>
+        <field name="x_default_delivery_buffer_hours">12</field>
+        <field name="x_default_return_buffer_hours">12</field>
+        <field name="x_default_cleaning_hours">6</field>
+    </record>
+    <record id="lot_chair_1" model="stock.lot">
+        <field name="name">SILLA-001</field>
+        <field name="product_id" ref="prod_chair"/>
+        <field name="company_id" ref="base.main_company"/>
+    </record>
+    <record id="quant_chair_1" model="stock.quant">
+        <field name="product_id" ref="prod_chair"/>
+        <field name="lot_id" ref="lot_chair_1"/>
+        <field name="location_id" ref="stock.stock_location_stock"/>
+        <field name="quantity">1</field>
+    </record>
+    <record id="lot_chair_2" model="stock.lot">
+        <field name="name">SILLA-002</field>
+        <field name="product_id" ref="prod_chair"/>
+        <field name="company_id" ref="base.main_company"/>
+    </record>
+    <record id="quant_chair_2" model="stock.quant">
+        <field name="product_id" ref="prod_chair"/>
+        <field name="lot_id" ref="lot_chair_2"/>
+        <field name="location_id" ref="stock.stock_location_stock"/>
+        <field name="quantity">1</field>
+    </record>
+    <record id="lot_chair_3" model="stock.lot">
+        <field name="name">SILLA-003</field>
+        <field name="product_id" ref="prod_chair"/>
+        <field name="company_id" ref="base.main_company"/>
+    </record>
+    <record id="quant_chair_3" model="stock.quant">
+        <field name="product_id" ref="prod_chair"/>
+        <field name="lot_id" ref="lot_chair_3"/>
+        <field name="location_id" ref="stock.stock_location_stock"/>
+        <field name="quantity">1</field>
+    </record>
+    <record id="lot_chair_4" model="stock.lot">
+        <field name="name">SILLA-004</field>
+        <field name="product_id" ref="prod_chair"/>
+        <field name="company_id" ref="base.main_company"/>
+    </record>
+    <record id="quant_chair_4" model="stock.quant">
+        <field name="product_id" ref="prod_chair"/>
+        <field name="lot_id" ref="lot_chair_4"/>
+        <field name="location_id" ref="stock.stock_location_stock"/>
+        <field name="quantity">1</field>
+    </record>
+    <record id="lot_chair_5" model="stock.lot">
+        <field name="name">SILLA-005</field>
+        <field name="product_id" ref="prod_chair"/>
+        <field name="company_id" ref="base.main_company"/>
+    </record>
+    <record id="quant_chair_5" model="stock.quant">
+        <field name="product_id" ref="prod_chair"/>
+        <field name="lot_id" ref="lot_chair_5"/>
+        <field name="location_id" ref="stock.stock_location_stock"/>
+        <field name="quantity">1</field>
+    </record>
+    <record id="lot_chair_6" model="stock.lot">
+        <field name="name">SILLA-006</field>
+        <field name="product_id" ref="prod_chair"/>
+        <field name="company_id" ref="base.main_company"/>
+    </record>
+    <record id="quant_chair_6" model="stock.quant">
+        <field name="product_id" ref="prod_chair"/>
+        <field name="lot_id" ref="lot_chair_6"/>
+        <field name="location_id" ref="stock.stock_location_stock"/>
+        <field name="quantity">1</field>
+    </record>
+    <record id="lot_chair_7" model="stock.lot">
+        <field name="name">SILLA-007</field>
+        <field name="product_id" ref="prod_chair"/>
+        <field name="company_id" ref="base.main_company"/>
+    </record>
+    <record id="quant_chair_7" model="stock.quant">
+        <field name="product_id" ref="prod_chair"/>
+        <field name="lot_id" ref="lot_chair_7"/>
+        <field name="location_id" ref="stock.stock_location_stock"/>
+        <field name="quantity">1</field>
+    </record>
+    <record id="lot_chair_8" model="stock.lot">
+        <field name="name">SILLA-008</field>
+        <field name="product_id" ref="prod_chair"/>
+        <field name="company_id" ref="base.main_company"/>
+    </record>
+    <record id="quant_chair_8" model="stock.quant">
+        <field name="product_id" ref="prod_chair"/>
+        <field name="lot_id" ref="lot_chair_8"/>
+        <field name="location_id" ref="stock.stock_location_stock"/>
+        <field name="quantity">1</field>
+    </record>
+    <record id="lot_chair_9" model="stock.lot">
+        <field name="name">SILLA-009</field>
+        <field name="product_id" ref="prod_chair"/>
+        <field name="company_id" ref="base.main_company"/>
+    </record>
+    <record id="quant_chair_9" model="stock.quant">
+        <field name="product_id" ref="prod_chair"/>
+        <field name="lot_id" ref="lot_chair_9"/>
+        <field name="location_id" ref="stock.stock_location_stock"/>
+        <field name="quantity">1</field>
+    </record>
+    <record id="lot_chair_10" model="stock.lot">
+        <field name="name">SILLA-010</field>
+        <field name="product_id" ref="prod_chair"/>
+        <field name="company_id" ref="base.main_company"/>
+    </record>
+    <record id="quant_chair_10" model="stock.quant">
+        <field name="product_id" ref="prod_chair"/>
+        <field name="lot_id" ref="lot_chair_10"/>
+        <field name="location_id" ref="stock.stock_location_stock"/>
+        <field name="quantity">1</field>
+    </record>
+    <record id="lot_chair_11" model="stock.lot">
+        <field name="name">SILLA-011</field>
+        <field name="product_id" ref="prod_chair"/>
+        <field name="company_id" ref="base.main_company"/>
+    </record>
+    <record id="quant_chair_11" model="stock.quant">
+        <field name="product_id" ref="prod_chair"/>
+        <field name="lot_id" ref="lot_chair_11"/>
+        <field name="location_id" ref="stock.stock_location_stock"/>
+        <field name="quantity">1</field>
+    </record>
+    <record id="lot_chair_12" model="stock.lot">
+        <field name="name">SILLA-012</field>
+        <field name="product_id" ref="prod_chair"/>
+        <field name="company_id" ref="base.main_company"/>
+    </record>
+    <record id="quant_chair_12" model="stock.quant">
+        <field name="product_id" ref="prod_chair"/>
+        <field name="lot_id" ref="lot_chair_12"/>
+        <field name="location_id" ref="stock.stock_location_stock"/>
+        <field name="quantity">1</field>
+    </record>
+    <record id="lot_chair_13" model="stock.lot">
+        <field name="name">SILLA-013</field>
+        <field name="product_id" ref="prod_chair"/>
+        <field name="company_id" ref="base.main_company"/>
+    </record>
+    <record id="quant_chair_13" model="stock.quant">
+        <field name="product_id" ref="prod_chair"/>
+        <field name="lot_id" ref="lot_chair_13"/>
+        <field name="location_id" ref="stock.stock_location_stock"/>
+        <field name="quantity">1</field>
+    </record>
+    <record id="lot_chair_14" model="stock.lot">
+        <field name="name">SILLA-014</field>
+        <field name="product_id" ref="prod_chair"/>
+        <field name="company_id" ref="base.main_company"/>
+    </record>
+    <record id="quant_chair_14" model="stock.quant">
+        <field name="product_id" ref="prod_chair"/>
+        <field name="lot_id" ref="lot_chair_14"/>
+        <field name="location_id" ref="stock.stock_location_stock"/>
+        <field name="quantity">1</field>
+    </record>
+    <record id="lot_chair_15" model="stock.lot">
+        <field name="name">SILLA-015</field>
+        <field name="product_id" ref="prod_chair"/>
+        <field name="company_id" ref="base.main_company"/>
+    </record>
+    <record id="quant_chair_15" model="stock.quant">
+        <field name="product_id" ref="prod_chair"/>
+        <field name="lot_id" ref="lot_chair_15"/>
+        <field name="location_id" ref="stock.stock_location_stock"/>
+        <field name="quantity">1</field>
+    </record>
+    <record id="lot_chair_16" model="stock.lot">
+        <field name="name">SILLA-016</field>
+        <field name="product_id" ref="prod_chair"/>
+        <field name="company_id" ref="base.main_company"/>
+    </record>
+    <record id="quant_chair_16" model="stock.quant">
+        <field name="product_id" ref="prod_chair"/>
+        <field name="lot_id" ref="lot_chair_16"/>
+        <field name="location_id" ref="stock.stock_location_stock"/>
+        <field name="quantity">1</field>
+    </record>
+    <record id="lot_chair_17" model="stock.lot">
+        <field name="name">SILLA-017</field>
+        <field name="product_id" ref="prod_chair"/>
+        <field name="company_id" ref="base.main_company"/>
+    </record>
+    <record id="quant_chair_17" model="stock.quant">
+        <field name="product_id" ref="prod_chair"/>
+        <field name="lot_id" ref="lot_chair_17"/>
+        <field name="location_id" ref="stock.stock_location_stock"/>
+        <field name="quantity">1</field>
+    </record>
+    <record id="lot_chair_18" model="stock.lot">
+        <field name="name">SILLA-018</field>
+        <field name="product_id" ref="prod_chair"/>
+        <field name="company_id" ref="base.main_company"/>
+    </record>
+    <record id="quant_chair_18" model="stock.quant">
+        <field name="product_id" ref="prod_chair"/>
+        <field name="lot_id" ref="lot_chair_18"/>
+        <field name="location_id" ref="stock.stock_location_stock"/>
+        <field name="quantity">1</field>
+    </record>
+    <record id="lot_chair_19" model="stock.lot">
+        <field name="name">SILLA-019</field>
+        <field name="product_id" ref="prod_chair"/>
+        <field name="company_id" ref="base.main_company"/>
+    </record>
+    <record id="quant_chair_19" model="stock.quant">
+        <field name="product_id" ref="prod_chair"/>
+        <field name="lot_id" ref="lot_chair_19"/>
+        <field name="location_id" ref="stock.stock_location_stock"/>
+        <field name="quantity">1</field>
+    </record>
+    <record id="lot_chair_20" model="stock.lot">
+        <field name="name">SILLA-020</field>
+        <field name="product_id" ref="prod_chair"/>
+        <field name="company_id" ref="base.main_company"/>
+    </record>
+    <record id="quant_chair_20" model="stock.quant">
+        <field name="product_id" ref="prod_chair"/>
+        <field name="lot_id" ref="lot_chair_20"/>
+        <field name="location_id" ref="stock.stock_location_stock"/>
+        <field name="quantity">1</field>
+    </record>
+
+    <!-- ===== Mesa Banquete Redonda (8 serials) ===== -->
+    <record id="prod_table" model="product.product">
+        <field name="name">Mesa Banquete Redonda</field>
+        <field name="type">consu</field>
+        <field name="is_storable" eval="True"/>
+        <field name="tracking">serial</field>
+        <field name="rent_ok" eval="True"/>
+        <field name="list_price">120.0</field>
+        <field name="categ_id" ref="categ_event_rental"/>
+        <field name="x_rental_serial_planning" eval="True"/>
+        <field name="x_requires_serial_reservation" eval="True"/>
+        <field name="x_rental_package_eligible" eval="True"/>
+        <field name="x_allow_auto_serial_assignment" eval="True"/>
+        <field name="x_allow_manual_serial_assignment" eval="True"/>
+        <field name="x_default_preparation_hours">4</field>
+        <field name="x_default_delivery_buffer_hours">12</field>
+        <field name="x_default_return_buffer_hours">12</field>
+        <field name="x_default_cleaning_hours">8</field>
+    </record>
+    <record id="lot_table_1" model="stock.lot">
+        <field name="name">MESA-001</field>
+        <field name="product_id" ref="prod_table"/>
+        <field name="company_id" ref="base.main_company"/>
+    </record>
+    <record id="quant_table_1" model="stock.quant">
+        <field name="product_id" ref="prod_table"/>
+        <field name="lot_id" ref="lot_table_1"/>
+        <field name="location_id" ref="stock.stock_location_stock"/>
+        <field name="quantity">1</field>
+    </record>
+    <record id="lot_table_2" model="stock.lot">
+        <field name="name">MESA-002</field>
+        <field name="product_id" ref="prod_table"/>
+        <field name="company_id" ref="base.main_company"/>
+    </record>
+    <record id="quant_table_2" model="stock.quant">
+        <field name="product_id" ref="prod_table"/>
+        <field name="lot_id" ref="lot_table_2"/>
+        <field name="location_id" ref="stock.stock_location_stock"/>
+        <field name="quantity">1</field>
+    </record>
+    <record id="lot_table_3" model="stock.lot">
+        <field name="name">MESA-003</field>
+        <field name="product_id" ref="prod_table"/>
+        <field name="company_id" ref="base.main_company"/>
+    </record>
+    <record id="quant_table_3" model="stock.quant">
+        <field name="product_id" ref="prod_table"/>
+        <field name="lot_id" ref="lot_table_3"/>
+        <field name="location_id" ref="stock.stock_location_stock"/>
+        <field name="quantity">1</field>
+    </record>
+    <record id="lot_table_4" model="stock.lot">
+        <field name="name">MESA-004</field>
+        <field name="product_id" ref="prod_table"/>
+        <field name="company_id" ref="base.main_company"/>
+    </record>
+    <record id="quant_table_4" model="stock.quant">
+        <field name="product_id" ref="prod_table"/>
+        <field name="lot_id" ref="lot_table_4"/>
+        <field name="location_id" ref="stock.stock_location_stock"/>
+        <field name="quantity">1</field>
+    </record>
+    <record id="lot_table_5" model="stock.lot">
+        <field name="name">MESA-005</field>
+        <field name="product_id" ref="prod_table"/>
+        <field name="company_id" ref="base.main_company"/>
+    </record>
+    <record id="quant_table_5" model="stock.quant">
+        <field name="product_id" ref="prod_table"/>
+        <field name="lot_id" ref="lot_table_5"/>
+        <field name="location_id" ref="stock.stock_location_stock"/>
+        <field name="quantity">1</field>
+    </record>
+    <record id="lot_table_6" model="stock.lot">
+        <field name="name">MESA-006</field>
+        <field name="product_id" ref="prod_table"/>
+        <field name="company_id" ref="base.main_company"/>
+    </record>
+    <record id="quant_table_6" model="stock.quant">
+        <field name="product_id" ref="prod_table"/>
+        <field name="lot_id" ref="lot_table_6"/>
+        <field name="location_id" ref="stock.stock_location_stock"/>
+        <field name="quantity">1</field>
+    </record>
+    <record id="lot_table_7" model="stock.lot">
+        <field name="name">MESA-007</field>
+        <field name="product_id" ref="prod_table"/>
+        <field name="company_id" ref="base.main_company"/>
+    </record>
+    <record id="quant_table_7" model="stock.quant">
+        <field name="product_id" ref="prod_table"/>
+        <field name="lot_id" ref="lot_table_7"/>
+        <field name="location_id" ref="stock.stock_location_stock"/>
+        <field name="quantity">1</field>
+    </record>
+    <record id="lot_table_8" model="stock.lot">
+        <field name="name">MESA-008</field>
+        <field name="product_id" ref="prod_table"/>
+        <field name="company_id" ref="base.main_company"/>
+    </record>
+    <record id="quant_table_8" model="stock.quant">
+        <field name="product_id" ref="prod_table"/>
+        <field name="lot_id" ref="lot_table_8"/>
+        <field name="location_id" ref="stock.stock_location_stock"/>
+        <field name="quantity">1</field>
+    </record>
+
+    <!-- ===== Bocina JBL EON 715 (6 serials) ===== -->
+    <record id="prod_speaker" model="product.product">
+        <field name="name">Bocina JBL EON 715</field>
+        <field name="type">consu</field>
+        <field name="is_storable" eval="True"/>
+        <field name="tracking">serial</field>
+        <field name="rent_ok" eval="True"/>
+        <field name="list_price">260.0</field>
+        <field name="categ_id" ref="categ_event_rental"/>
+        <field name="x_rental_serial_planning" eval="True"/>
+        <field name="x_requires_serial_reservation" eval="True"/>
+        <field name="x_rental_package_eligible" eval="True"/>
+        <field name="x_allow_auto_serial_assignment" eval="True"/>
+        <field name="x_allow_manual_serial_assignment" eval="True"/>
+        <field name="x_default_preparation_hours">2</field>
+        <field name="x_default_delivery_buffer_hours">6</field>
+        <field name="x_default_return_buffer_hours">6</field>
+        <field name="x_default_cleaning_hours">4</field>
+    </record>
+    <record id="lot_speaker_1" model="stock.lot">
+        <field name="name">BOC-001</field>
+        <field name="product_id" ref="prod_speaker"/>
+        <field name="company_id" ref="base.main_company"/>
+    </record>
+    <record id="quant_speaker_1" model="stock.quant">
+        <field name="product_id" ref="prod_speaker"/>
+        <field name="lot_id" ref="lot_speaker_1"/>
+        <field name="location_id" ref="stock.stock_location_stock"/>
+        <field name="quantity">1</field>
+    </record>
+    <record id="lot_speaker_2" model="stock.lot">
+        <field name="name">BOC-002</field>
+        <field name="product_id" ref="prod_speaker"/>
+        <field name="company_id" ref="base.main_company"/>
+    </record>
+    <record id="quant_speaker_2" model="stock.quant">
+        <field name="product_id" ref="prod_speaker"/>
+        <field name="lot_id" ref="lot_speaker_2"/>
+        <field name="location_id" ref="stock.stock_location_stock"/>
+        <field name="quantity">1</field>
+    </record>
+    <record id="lot_speaker_3" model="stock.lot">
+        <field name="name">BOC-003</field>
+        <field name="product_id" ref="prod_speaker"/>
+        <field name="company_id" ref="base.main_company"/>
+    </record>
+    <record id="quant_speaker_3" model="stock.quant">
+        <field name="product_id" ref="prod_speaker"/>
+        <field name="lot_id" ref="lot_speaker_3"/>
+        <field name="location_id" ref="stock.stock_location_stock"/>
+        <field name="quantity">1</field>
+    </record>
+    <record id="lot_speaker_4" model="stock.lot">
+        <field name="name">BOC-004</field>
+        <field name="product_id" ref="prod_speaker"/>
+        <field name="company_id" ref="base.main_company"/>
+    </record>
+    <record id="quant_speaker_4" model="stock.quant">
+        <field name="product_id" ref="prod_speaker"/>
+        <field name="lot_id" ref="lot_speaker_4"/>
+        <field name="location_id" ref="stock.stock_location_stock"/>
+        <field name="quantity">1</field>
+    </record>
+    <record id="lot_speaker_5" model="stock.lot">
+        <field name="name">BOC-005</field>
+        <field name="product_id" ref="prod_speaker"/>
+        <field name="company_id" ref="base.main_company"/>
+    </record>
+    <record id="quant_speaker_5" model="stock.quant">
+        <field name="product_id" ref="prod_speaker"/>
+        <field name="lot_id" ref="lot_speaker_5"/>
+        <field name="location_id" ref="stock.stock_location_stock"/>
+        <field name="quantity">1</field>
+    </record>
+    <record id="lot_speaker_6" model="stock.lot">
+        <field name="name">BOC-006</field>
+        <field name="product_id" ref="prod_speaker"/>
+        <field name="company_id" ref="base.main_company"/>
+    </record>
+    <record id="quant_speaker_6" model="stock.quant">
+        <field name="product_id" ref="prod_speaker"/>
+        <field name="lot_id" ref="lot_speaker_6"/>
+        <field name="location_id" ref="stock.stock_location_stock"/>
+        <field name="quantity">1</field>
+    </record>
+
+    <!-- ===== Luz PAR LED RGB (12 serials) ===== -->
+    <record id="prod_light" model="product.product">
+        <field name="name">Luz PAR LED RGB</field>
+        <field name="type">consu</field>
+        <field name="is_storable" eval="True"/>
+        <field name="tracking">serial</field>
+        <field name="rent_ok" eval="True"/>
+        <field name="list_price">80.0</field>
+        <field name="categ_id" ref="categ_event_rental"/>
+        <field name="x_rental_serial_planning" eval="True"/>
+        <field name="x_requires_serial_reservation" eval="True"/>
+        <field name="x_rental_package_eligible" eval="True"/>
+        <field name="x_allow_auto_serial_assignment" eval="True"/>
+        <field name="x_allow_manual_serial_assignment" eval="True"/>
+        <field name="x_default_preparation_hours">2</field>
+        <field name="x_default_delivery_buffer_hours">6</field>
+        <field name="x_default_return_buffer_hours">6</field>
+        <field name="x_default_cleaning_hours">3</field>
+    </record>
+    <record id="lot_light_1" model="stock.lot">
+        <field name="name">PAR-001</field>
+        <field name="product_id" ref="prod_light"/>
+        <field name="company_id" ref="base.main_company"/>
+    </record>
+    <record id="quant_light_1" model="stock.quant">
+        <field name="product_id" ref="prod_light"/>
+        <field name="lot_id" ref="lot_light_1"/>
+        <field name="location_id" ref="stock.stock_location_stock"/>
+        <field name="quantity">1</field>
+    </record>
+    <record id="lot_light_2" model="stock.lot">
+        <field name="name">PAR-002</field>
+        <field name="product_id" ref="prod_light"/>
+        <field name="company_id" ref="base.main_company"/>
+    </record>
+    <record id="quant_light_2" model="stock.quant">
+        <field name="product_id" ref="prod_light"/>
+        <field name="lot_id" ref="lot_light_2"/>
+        <field name="location_id" ref="stock.stock_location_stock"/>
+        <field name="quantity">1</field>
+    </record>
+    <record id="lot_light_3" model="stock.lot">
+        <field name="name">PAR-003</field>
+        <field name="product_id" ref="prod_light"/>
+        <field name="company_id" ref="base.main_company"/>
+    </record>
+    <record id="quant_light_3" model="stock.quant">
+        <field name="product_id" ref="prod_light"/>
+        <field name="lot_id" ref="lot_light_3"/>
+        <field name="location_id" ref="stock.stock_location_stock"/>
+        <field name="quantity">1</field>
+    </record>
+    <record id="lot_light_4" model="stock.lot">
+        <field name="name">PAR-004</field>
+        <field name="product_id" ref="prod_light"/>
+        <field name="company_id" ref="base.main_company"/>
+    </record>
+    <record id="quant_light_4" model="stock.quant">
+        <field name="product_id" ref="prod_light"/>
+        <field name="lot_id" ref="lot_light_4"/>
+        <field name="location_id" ref="stock.stock_location_stock"/>
+        <field name="quantity">1</field>
+    </record>
+    <record id="lot_light_5" model="stock.lot">
+        <field name="name">PAR-005</field>
+        <field name="product_id" ref="prod_light"/>
+        <field name="company_id" ref="base.main_company"/>
+    </record>
+    <record id="quant_light_5" model="stock.quant">
+        <field name="product_id" ref="prod_light"/>
+        <field name="lot_id" ref="lot_light_5"/>
+        <field name="location_id" ref="stock.stock_location_stock"/>
+        <field name="quantity">1</field>
+    </record>
+    <record id="lot_light_6" model="stock.lot">
+        <field name="name">PAR-006</field>
+        <field name="product_id" ref="prod_light"/>
+        <field name="company_id" ref="base.main_company"/>
+    </record>
+    <record id="quant_light_6" model="stock.quant">
+        <field name="product_id" ref="prod_light"/>
+        <field name="lot_id" ref="lot_light_6"/>
+        <field name="location_id" ref="stock.stock_location_stock"/>
+        <field name="quantity">1</field>
+    </record>
+    <record id="lot_light_7" model="stock.lot">
+        <field name="name">PAR-007</field>
+        <field name="product_id" ref="prod_light"/>
+        <field name="company_id" ref="base.main_company"/>
+    </record>
+    <record id="quant_light_7" model="stock.quant">
+        <field name="product_id" ref="prod_light"/>
+        <field name="lot_id" ref="lot_light_7"/>
+        <field name="location_id" ref="stock.stock_location_stock"/>
+        <field name="quantity">1</field>
+    </record>
+    <record id="lot_light_8" model="stock.lot">
+        <field name="name">PAR-008</field>
+        <field name="product_id" ref="prod_light"/>
+        <field name="company_id" ref="base.main_company"/>
+    </record>
+    <record id="quant_light_8" model="stock.quant">
+        <field name="product_id" ref="prod_light"/>
+        <field name="lot_id" ref="lot_light_8"/>
+        <field name="location_id" ref="stock.stock_location_stock"/>
+        <field name="quantity">1</field>
+    </record>
+    <record id="lot_light_9" model="stock.lot">
+        <field name="name">PAR-009</field>
+        <field name="product_id" ref="prod_light"/>
+        <field name="company_id" ref="base.main_company"/>
+    </record>
+    <record id="quant_light_9" model="stock.quant">
+        <field name="product_id" ref="prod_light"/>
+        <field name="lot_id" ref="lot_light_9"/>
+        <field name="location_id" ref="stock.stock_location_stock"/>
+        <field name="quantity">1</field>
+    </record>
+    <record id="lot_light_10" model="stock.lot">
+        <field name="name">PAR-010</field>
+        <field name="product_id" ref="prod_light"/>
+        <field name="company_id" ref="base.main_company"/>
+    </record>
+    <record id="quant_light_10" model="stock.quant">
+        <field name="product_id" ref="prod_light"/>
+        <field name="lot_id" ref="lot_light_10"/>
+        <field name="location_id" ref="stock.stock_location_stock"/>
+        <field name="quantity">1</field>
+    </record>
+    <record id="lot_light_11" model="stock.lot">
+        <field name="name">PAR-011</field>
+        <field name="product_id" ref="prod_light"/>
+        <field name="company_id" ref="base.main_company"/>
+    </record>
+    <record id="quant_light_11" model="stock.quant">
+        <field name="product_id" ref="prod_light"/>
+        <field name="lot_id" ref="lot_light_11"/>
+        <field name="location_id" ref="stock.stock_location_stock"/>
+        <field name="quantity">1</field>
+    </record>
+    <record id="lot_light_12" model="stock.lot">
+        <field name="name">PAR-012</field>
+        <field name="product_id" ref="prod_light"/>
+        <field name="company_id" ref="base.main_company"/>
+    </record>
+    <record id="quant_light_12" model="stock.quant">
+        <field name="product_id" ref="prod_light"/>
+        <field name="lot_id" ref="lot_light_12"/>
+        <field name="location_id" ref="stock.stock_location_stock"/>
+        <field name="quantity">1</field>
+    </record>
+
+    <!-- ===== Carpa 6x6 Cristal (3 serials) ===== -->
+    <record id="prod_tent" model="product.product">
+        <field name="name">Carpa 6x6 Cristal</field>
+        <field name="type">consu</field>
+        <field name="is_storable" eval="True"/>
+        <field name="tracking">serial</field>
+        <field name="rent_ok" eval="True"/>
+        <field name="list_price">1500.0</field>
+        <field name="categ_id" ref="categ_event_rental"/>
+        <field name="x_rental_serial_planning" eval="True"/>
+        <field name="x_requires_serial_reservation" eval="True"/>
+        <field name="x_rental_package_eligible" eval="True"/>
+        <field name="x_allow_auto_serial_assignment" eval="True"/>
+        <field name="x_allow_manual_serial_assignment" eval="True"/>
+        <field name="x_default_preparation_hours">24</field>
+        <field name="x_default_delivery_buffer_hours">24</field>
+        <field name="x_default_return_buffer_hours">24</field>
+        <field name="x_default_cleaning_hours">24</field>
+    </record>
+    <record id="lot_tent_1" model="stock.lot">
+        <field name="name">CARPA-001</field>
+        <field name="product_id" ref="prod_tent"/>
+        <field name="company_id" ref="base.main_company"/>
+    </record>
+    <record id="quant_tent_1" model="stock.quant">
+        <field name="product_id" ref="prod_tent"/>
+        <field name="lot_id" ref="lot_tent_1"/>
+        <field name="location_id" ref="stock.stock_location_stock"/>
+        <field name="quantity">1</field>
+    </record>
+    <record id="lot_tent_2" model="stock.lot">
+        <field name="name">CARPA-002</field>
+        <field name="product_id" ref="prod_tent"/>
+        <field name="company_id" ref="base.main_company"/>
+    </record>
+    <record id="quant_tent_2" model="stock.quant">
+        <field name="product_id" ref="prod_tent"/>
+        <field name="lot_id" ref="lot_tent_2"/>
+        <field name="location_id" ref="stock.stock_location_stock"/>
+        <field name="quantity">1</field>
+    </record>
+    <record id="lot_tent_3" model="stock.lot">
+        <field name="name">CARPA-003</field>
+        <field name="product_id" ref="prod_tent"/>
+        <field name="company_id" ref="base.main_company"/>
+    </record>
+    <record id="quant_tent_3" model="stock.quant">
+        <field name="product_id" ref="prod_tent"/>
+        <field name="lot_id" ref="lot_tent_3"/>
+        <field name="location_id" ref="stock.stock_location_stock"/>
+        <field name="quantity">1</field>
+    </record>
+
+    <!-- ===== Proyector Epson 5000L (4 serials) ===== -->
+    <record id="prod_projector" model="product.product">
+        <field name="name">Proyector Epson 5000L</field>
+        <field name="type">consu</field>
+        <field name="is_storable" eval="True"/>
+        <field name="tracking">serial</field>
+        <field name="rent_ok" eval="True"/>
+        <field name="list_price">450.0</field>
+        <field name="categ_id" ref="categ_event_rental"/>
+        <field name="x_rental_serial_planning" eval="True"/>
+        <field name="x_requires_serial_reservation" eval="True"/>
+        <field name="x_rental_package_eligible" eval="True"/>
+        <field name="x_allow_auto_serial_assignment" eval="True"/>
+        <field name="x_allow_manual_serial_assignment" eval="True"/>
+        <field name="x_default_preparation_hours">3</field>
+        <field name="x_default_delivery_buffer_hours">6</field>
+        <field name="x_default_return_buffer_hours">6</field>
+        <field name="x_default_cleaning_hours">4</field>
+    </record>
+    <record id="lot_projector_1" model="stock.lot">
+        <field name="name">PROY-001</field>
+        <field name="product_id" ref="prod_projector"/>
+        <field name="company_id" ref="base.main_company"/>
+    </record>
+    <record id="quant_projector_1" model="stock.quant">
+        <field name="product_id" ref="prod_projector"/>
+        <field name="lot_id" ref="lot_projector_1"/>
+        <field name="location_id" ref="stock.stock_location_stock"/>
+        <field name="quantity">1</field>
+    </record>
+    <record id="lot_projector_2" model="stock.lot">
+        <field name="name">PROY-002</field>
+        <field name="product_id" ref="prod_projector"/>
+        <field name="company_id" ref="base.main_company"/>
+    </record>
+    <record id="quant_projector_2" model="stock.quant">
+        <field name="product_id" ref="prod_projector"/>
+        <field name="lot_id" ref="lot_projector_2"/>
+        <field name="location_id" ref="stock.stock_location_stock"/>
+        <field name="quantity">1</field>
+    </record>
+    <record id="lot_projector_3" model="stock.lot">
+        <field name="name">PROY-003</field>
+        <field name="product_id" ref="prod_projector"/>
+        <field name="company_id" ref="base.main_company"/>
+    </record>
+    <record id="quant_projector_3" model="stock.quant">
+        <field name="product_id" ref="prod_projector"/>
+        <field name="lot_id" ref="lot_projector_3"/>
+        <field name="location_id" ref="stock.stock_location_stock"/>
+        <field name="quantity">1</field>
+    </record>
+    <record id="lot_projector_4" model="stock.lot">
+        <field name="name">PROY-004</field>
+        <field name="product_id" ref="prod_projector"/>
+        <field name="company_id" ref="base.main_company"/>
+    </record>
+    <record id="quant_projector_4" model="stock.quant">
+        <field name="product_id" ref="prod_projector"/>
+        <field name="lot_id" ref="lot_projector_4"/>
+        <field name="location_id" ref="stock.stock_location_stock"/>
+        <field name="quantity">1</field>
+    </record>
+
+    <!-- ===== Pantalla Proyeccion 120in (4 serials) ===== -->
+    <record id="prod_screen" model="product.product">
+        <field name="name">Pantalla Proyeccion 120in</field>
+        <field name="type">consu</field>
+        <field name="is_storable" eval="True"/>
+        <field name="tracking">serial</field>
+        <field name="rent_ok" eval="True"/>
+        <field name="list_price">180.0</field>
+        <field name="categ_id" ref="categ_event_rental"/>
+        <field name="x_rental_serial_planning" eval="True"/>
+        <field name="x_requires_serial_reservation" eval="True"/>
+        <field name="x_rental_package_eligible" eval="True"/>
+        <field name="x_allow_auto_serial_assignment" eval="True"/>
+        <field name="x_allow_manual_serial_assignment" eval="True"/>
+        <field name="x_default_preparation_hours">3</field>
+        <field name="x_default_delivery_buffer_hours">6</field>
+        <field name="x_default_return_buffer_hours">6</field>
+        <field name="x_default_cleaning_hours">2</field>
+    </record>
+    <record id="lot_screen_1" model="stock.lot">
+        <field name="name">PANT-001</field>
+        <field name="product_id" ref="prod_screen"/>
+        <field name="company_id" ref="base.main_company"/>
+    </record>
+    <record id="quant_screen_1" model="stock.quant">
+        <field name="product_id" ref="prod_screen"/>
+        <field name="lot_id" ref="lot_screen_1"/>
+        <field name="location_id" ref="stock.stock_location_stock"/>
+        <field name="quantity">1</field>
+    </record>
+    <record id="lot_screen_2" model="stock.lot">
+        <field name="name">PANT-002</field>
+        <field name="product_id" ref="prod_screen"/>
+        <field name="company_id" ref="base.main_company"/>
+    </record>
+    <record id="quant_screen_2" model="stock.quant">
+        <field name="product_id" ref="prod_screen"/>
+        <field name="lot_id" ref="lot_screen_2"/>
+        <field name="location_id" ref="stock.stock_location_stock"/>
+        <field name="quantity">1</field>
+    </record>
+    <record id="lot_screen_3" model="stock.lot">
+        <field name="name">PANT-003</field>
+        <field name="product_id" ref="prod_screen"/>
+        <field name="company_id" ref="base.main_company"/>
+    </record>
+    <record id="quant_screen_3" model="stock.quant">
+        <field name="product_id" ref="prod_screen"/>
+        <field name="lot_id" ref="lot_screen_3"/>
+        <field name="location_id" ref="stock.stock_location_stock"/>
+        <field name="quantity">1</field>
+    </record>
+    <record id="lot_screen_4" model="stock.lot">
+        <field name="name">PANT-004</field>
+        <field name="product_id" ref="prod_screen"/>
+        <field name="company_id" ref="base.main_company"/>
+    </record>
+    <record id="quant_screen_4" model="stock.quant">
+        <field name="product_id" ref="prod_screen"/>
+        <field name="lot_id" ref="lot_screen_4"/>
+        <field name="location_id" ref="stock.stock_location_stock"/>
+        <field name="quantity">1</field>
+    </record>
+
+    <!-- ===== Pista de Baile Modulo (10 serials) ===== -->
+    <record id="prod_floor" model="product.product">
+        <field name="name">Pista de Baile Modulo</field>
+        <field name="type">consu</field>
+        <field name="is_storable" eval="True"/>
+        <field name="tracking">serial</field>
+        <field name="rent_ok" eval="True"/>
+        <field name="list_price">150.0</field>
+        <field name="categ_id" ref="categ_event_rental"/>
+        <field name="x_rental_serial_planning" eval="True"/>
+        <field name="x_requires_serial_reservation" eval="True"/>
+        <field name="x_rental_package_eligible" eval="True"/>
+        <field name="x_allow_auto_serial_assignment" eval="True"/>
+        <field name="x_allow_manual_serial_assignment" eval="True"/>
+        <field name="x_default_preparation_hours">8</field>
+        <field name="x_default_delivery_buffer_hours">12</field>
+        <field name="x_default_return_buffer_hours">12</field>
+        <field name="x_default_cleaning_hours">10</field>
+    </record>
+    <record id="lot_floor_1" model="stock.lot">
+        <field name="name">PISTA-001</field>
+        <field name="product_id" ref="prod_floor"/>
+        <field name="company_id" ref="base.main_company"/>
+    </record>
+    <record id="quant_floor_1" model="stock.quant">
+        <field name="product_id" ref="prod_floor"/>
+        <field name="lot_id" ref="lot_floor_1"/>
+        <field name="location_id" ref="stock.stock_location_stock"/>
+        <field name="quantity">1</field>
+    </record>
+    <record id="lot_floor_2" model="stock.lot">
+        <field name="name">PISTA-002</field>
+        <field name="product_id" ref="prod_floor"/>
+        <field name="company_id" ref="base.main_company"/>
+    </record>
+    <record id="quant_floor_2" model="stock.quant">
+        <field name="product_id" ref="prod_floor"/>
+        <field name="lot_id" ref="lot_floor_2"/>
+        <field name="location_id" ref="stock.stock_location_stock"/>
+        <field name="quantity">1</field>
+    </record>
+    <record id="lot_floor_3" model="stock.lot">
+        <field name="name">PISTA-003</field>
+        <field name="product_id" ref="prod_floor"/>
+        <field name="company_id" ref="base.main_company"/>
+    </record>
+    <record id="quant_floor_3" model="stock.quant">
+        <field name="product_id" ref="prod_floor"/>
+        <field name="lot_id" ref="lot_floor_3"/>
+        <field name="location_id" ref="stock.stock_location_stock"/>
+        <field name="quantity">1</field>
+    </record>
+    <record id="lot_floor_4" model="stock.lot">
+        <field name="name">PISTA-004</field>
+        <field name="product_id" ref="prod_floor"/>
+        <field name="company_id" ref="base.main_company"/>
+    </record>
+    <record id="quant_floor_4" model="stock.quant">
+        <field name="product_id" ref="prod_floor"/>
+        <field name="lot_id" ref="lot_floor_4"/>
+        <field name="location_id" ref="stock.stock_location_stock"/>
+        <field name="quantity">1</field>
+    </record>
+    <record id="lot_floor_5" model="stock.lot">
+        <field name="name">PISTA-005</field>
+        <field name="product_id" ref="prod_floor"/>
+        <field name="company_id" ref="base.main_company"/>
+    </record>
+    <record id="quant_floor_5" model="stock.quant">
+        <field name="product_id" ref="prod_floor"/>
+        <field name="lot_id" ref="lot_floor_5"/>
+        <field name="location_id" ref="stock.stock_location_stock"/>
+        <field name="quantity">1</field>
+    </record>
+    <record id="lot_floor_6" model="stock.lot">
+        <field name="name">PISTA-006</field>
+        <field name="product_id" ref="prod_floor"/>
+        <field name="company_id" ref="base.main_company"/>
+    </record>
+    <record id="quant_floor_6" model="stock.quant">
+        <field name="product_id" ref="prod_floor"/>
+        <field name="lot_id" ref="lot_floor_6"/>
+        <field name="location_id" ref="stock.stock_location_stock"/>
+        <field name="quantity">1</field>
+    </record>
+    <record id="lot_floor_7" model="stock.lot">
+        <field name="name">PISTA-007</field>
+        <field name="product_id" ref="prod_floor"/>
+        <field name="company_id" ref="base.main_company"/>
+    </record>
+    <record id="quant_floor_7" model="stock.quant">
+        <field name="product_id" ref="prod_floor"/>
+        <field name="lot_id" ref="lot_floor_7"/>
+        <field name="location_id" ref="stock.stock_location_stock"/>
+        <field name="quantity">1</field>
+    </record>
+    <record id="lot_floor_8" model="stock.lot">
+        <field name="name">PISTA-008</field>
+        <field name="product_id" ref="prod_floor"/>
+        <field name="company_id" ref="base.main_company"/>
+    </record>
+    <record id="quant_floor_8" model="stock.quant">
+        <field name="product_id" ref="prod_floor"/>
+        <field name="lot_id" ref="lot_floor_8"/>
+        <field name="location_id" ref="stock.stock_location_stock"/>
+        <field name="quantity">1</field>
+    </record>
+    <record id="lot_floor_9" model="stock.lot">
+        <field name="name">PISTA-009</field>
+        <field name="product_id" ref="prod_floor"/>
+        <field name="company_id" ref="base.main_company"/>
+    </record>
+    <record id="quant_floor_9" model="stock.quant">
+        <field name="product_id" ref="prod_floor"/>
+        <field name="lot_id" ref="lot_floor_9"/>
+        <field name="location_id" ref="stock.stock_location_stock"/>
+        <field name="quantity">1</field>
+    </record>
+    <record id="lot_floor_10" model="stock.lot">
+        <field name="name">PISTA-010</field>
+        <field name="product_id" ref="prod_floor"/>
+        <field name="company_id" ref="base.main_company"/>
+    </record>
+    <record id="quant_floor_10" model="stock.quant">
+        <field name="product_id" ref="prod_floor"/>
+        <field name="lot_id" ref="lot_floor_10"/>
+        <field name="location_id" ref="stock.stock_location_stock"/>
+        <field name="quantity">1</field>
+    </record>
+
+    <!-- ===== Calentador de Patio (5 serials) ===== -->
+    <record id="prod_heater" model="product.product">
+        <field name="name">Calentador de Patio</field>
+        <field name="type">consu</field>
+        <field name="is_storable" eval="True"/>
+        <field name="tracking">serial</field>
+        <field name="rent_ok" eval="True"/>
+        <field name="list_price">140.0</field>
+        <field name="categ_id" ref="categ_event_rental"/>
+        <field name="x_rental_serial_planning" eval="True"/>
+        <field name="x_requires_serial_reservation" eval="True"/>
+        <field name="x_rental_package_eligible" eval="True"/>
+        <field name="x_allow_auto_serial_assignment" eval="True"/>
+        <field name="x_allow_manual_serial_assignment" eval="True"/>
+        <field name="x_default_preparation_hours">2</field>
+        <field name="x_default_delivery_buffer_hours">6</field>
+        <field name="x_default_return_buffer_hours">6</field>
+        <field name="x_default_cleaning_hours">4</field>
+    </record>
+    <record id="lot_heater_1" model="stock.lot">
+        <field name="name">CALEN-001</field>
+        <field name="product_id" ref="prod_heater"/>
+        <field name="company_id" ref="base.main_company"/>
+    </record>
+    <record id="quant_heater_1" model="stock.quant">
+        <field name="product_id" ref="prod_heater"/>
+        <field name="lot_id" ref="lot_heater_1"/>
+        <field name="location_id" ref="stock.stock_location_stock"/>
+        <field name="quantity">1</field>
+    </record>
+    <record id="lot_heater_2" model="stock.lot">
+        <field name="name">CALEN-002</field>
+        <field name="product_id" ref="prod_heater"/>
+        <field name="company_id" ref="base.main_company"/>
+    </record>
+    <record id="quant_heater_2" model="stock.quant">
+        <field name="product_id" ref="prod_heater"/>
+        <field name="lot_id" ref="lot_heater_2"/>
+        <field name="location_id" ref="stock.stock_location_stock"/>
+        <field name="quantity">1</field>
+    </record>
+    <record id="lot_heater_3" model="stock.lot">
+        <field name="name">CALEN-003</field>
+        <field name="product_id" ref="prod_heater"/>
+        <field name="company_id" ref="base.main_company"/>
+    </record>
+    <record id="quant_heater_3" model="stock.quant">
+        <field name="product_id" ref="prod_heater"/>
+        <field name="lot_id" ref="lot_heater_3"/>
+        <field name="location_id" ref="stock.stock_location_stock"/>
+        <field name="quantity">1</field>
+    </record>
+    <record id="lot_heater_4" model="stock.lot">
+        <field name="name">CALEN-004</field>
+        <field name="product_id" ref="prod_heater"/>
+        <field name="company_id" ref="base.main_company"/>
+    </record>
+    <record id="quant_heater_4" model="stock.quant">
+        <field name="product_id" ref="prod_heater"/>
+        <field name="lot_id" ref="lot_heater_4"/>
+        <field name="location_id" ref="stock.stock_location_stock"/>
+        <field name="quantity">1</field>
+    </record>
+    <record id="lot_heater_5" model="stock.lot">
+        <field name="name">CALEN-005</field>
+        <field name="product_id" ref="prod_heater"/>
+        <field name="company_id" ref="base.main_company"/>
+    </record>
+    <record id="quant_heater_5" model="stock.quant">
+        <field name="product_id" ref="prod_heater"/>
+        <field name="lot_id" ref="lot_heater_5"/>
+        <field name="location_id" ref="stock.stock_location_stock"/>
+        <field name="quantity">1</field>
+    </record>
+
+    <!-- ===== Microfono Inalambrico Shure (8 serials) ===== -->
+    <record id="prod_mic" model="product.product">
+        <field name="name">Microfono Inalambrico Shure</field>
+        <field name="type">consu</field>
+        <field name="is_storable" eval="True"/>
+        <field name="tracking">serial</field>
+        <field name="rent_ok" eval="True"/>
+        <field name="list_price">90.0</field>
+        <field name="categ_id" ref="categ_event_rental"/>
+        <field name="x_rental_serial_planning" eval="True"/>
+        <field name="x_requires_serial_reservation" eval="True"/>
+        <field name="x_rental_package_eligible" eval="True"/>
+        <field name="x_allow_auto_serial_assignment" eval="True"/>
+        <field name="x_allow_manual_serial_assignment" eval="True"/>
+        <field name="x_default_preparation_hours">1</field>
+        <field name="x_default_delivery_buffer_hours">4</field>
+        <field name="x_default_return_buffer_hours">4</field>
+        <field name="x_default_cleaning_hours">2</field>
+    </record>
+    <record id="lot_mic_1" model="stock.lot">
+        <field name="name">MIC-001</field>
+        <field name="product_id" ref="prod_mic"/>
+        <field name="company_id" ref="base.main_company"/>
+    </record>
+    <record id="quant_mic_1" model="stock.quant">
+        <field name="product_id" ref="prod_mic"/>
+        <field name="lot_id" ref="lot_mic_1"/>
+        <field name="location_id" ref="stock.stock_location_stock"/>
+        <field name="quantity">1</field>
+    </record>
+    <record id="lot_mic_2" model="stock.lot">
+        <field name="name">MIC-002</field>
+        <field name="product_id" ref="prod_mic"/>
+        <field name="company_id" ref="base.main_company"/>
+    </record>
+    <record id="quant_mic_2" model="stock.quant">
+        <field name="product_id" ref="prod_mic"/>
+        <field name="lot_id" ref="lot_mic_2"/>
+        <field name="location_id" ref="stock.stock_location_stock"/>
+        <field name="quantity">1</field>
+    </record>
+    <record id="lot_mic_3" model="stock.lot">
+        <field name="name">MIC-003</field>
+        <field name="product_id" ref="prod_mic"/>
+        <field name="company_id" ref="base.main_company"/>
+    </record>
+    <record id="quant_mic_3" model="stock.quant">
+        <field name="product_id" ref="prod_mic"/>
+        <field name="lot_id" ref="lot_mic_3"/>
+        <field name="location_id" ref="stock.stock_location_stock"/>
+        <field name="quantity">1</field>
+    </record>
+    <record id="lot_mic_4" model="stock.lot">
+        <field name="name">MIC-004</field>
+        <field name="product_id" ref="prod_mic"/>
+        <field name="company_id" ref="base.main_company"/>
+    </record>
+    <record id="quant_mic_4" model="stock.quant">
+        <field name="product_id" ref="prod_mic"/>
+        <field name="lot_id" ref="lot_mic_4"/>
+        <field name="location_id" ref="stock.stock_location_stock"/>
+        <field name="quantity">1</field>
+    </record>
+    <record id="lot_mic_5" model="stock.lot">
+        <field name="name">MIC-005</field>
+        <field name="product_id" ref="prod_mic"/>
+        <field name="company_id" ref="base.main_company"/>
+    </record>
+    <record id="quant_mic_5" model="stock.quant">
+        <field name="product_id" ref="prod_mic"/>
+        <field name="lot_id" ref="lot_mic_5"/>
+        <field name="location_id" ref="stock.stock_location_stock"/>
+        <field name="quantity">1</field>
+    </record>
+    <record id="lot_mic_6" model="stock.lot">
+        <field name="name">MIC-006</field>
+        <field name="product_id" ref="prod_mic"/>
+        <field name="company_id" ref="base.main_company"/>
+    </record>
+    <record id="quant_mic_6" model="stock.quant">
+        <field name="product_id" ref="prod_mic"/>
+        <field name="lot_id" ref="lot_mic_6"/>
+        <field name="location_id" ref="stock.stock_location_stock"/>
+        <field name="quantity">1</field>
+    </record>
+    <record id="lot_mic_7" model="stock.lot">
+        <field name="name">MIC-007</field>
+        <field name="product_id" ref="prod_mic"/>
+        <field name="company_id" ref="base.main_company"/>
+    </record>
+    <record id="quant_mic_7" model="stock.quant">
+        <field name="product_id" ref="prod_mic"/>
+        <field name="lot_id" ref="lot_mic_7"/>
+        <field name="location_id" ref="stock.stock_location_stock"/>
+        <field name="quantity">1</field>
+    </record>
+    <record id="lot_mic_8" model="stock.lot">
+        <field name="name">MIC-008</field>
+        <field name="product_id" ref="prod_mic"/>
+        <field name="company_id" ref="base.main_company"/>
+    </record>
+    <record id="quant_mic_8" model="stock.quant">
+        <field name="product_id" ref="prod_mic"/>
+        <field name="lot_id" ref="lot_mic_8"/>
+        <field name="location_id" ref="stock.stock_location_stock"/>
+        <field name="quantity">1</field>
+    </record>
+
+    <!-- ===== Mantel Premium Blanco (non-serial) ===== -->
+    <record id="prod_linen" model="product.product">
+        <field name="name">Mantel Premium Blanco</field>
+        <field name="type">consu</field>
+        <field name="is_storable" eval="True"/>
+        <field name="rent_ok" eval="True"/>
+        <field name="list_price">25.0</field>
+        <field name="categ_id" ref="categ_event_rental"/>
+        <field name="x_rental_package_eligible" eval="True"/>
+    </record>
+    <record id="prod_linen_alt" model="product.product">
+        <field name="name">Mantel Premium Negro</field>
+        <field name="type">consu</field>
+        <field name="is_storable" eval="True"/>
+        <field name="rent_ok" eval="True"/>
+        <field name="list_price">25.0</field>
+        <field name="categ_id" ref="categ_event_rental"/>
+        <field name="x_rental_package_eligible" eval="True"/>
+    </record>
+
+    <!-- ===== Customers ===== -->
+    <record id="partner_aurora" model="res.partner">
+        <field name="name">Bodas Aurora</field>
+        <field name="email">contacto@bodasaurora.mx</field>
+        <field name="is_company" eval="True"/>
+        <field name="customer_rank">1</field>
+    </record>
+    <record id="partner_zenith" model="res.partner">
+        <field name="name">Corporativo Zenith</field>
+        <field name="email">eventos@zenith.com</field>
+        <field name="is_company" eval="True"/>
+        <field name="customer_rank">1</field>
+    </record>
+    <record id="partner_luna" model="res.partner">
+        <field name="name">Eventos Luna</field>
+        <field name="email">hola@eventosluna.mx</field>
+        <field name="is_company" eval="True"/>
+        <field name="customer_rank">1</field>
+    </record>
+    <record id="partner_granvia" model="res.partner">
+        <field name="name">Hotel Gran Via</field>
+        <field name="email">banquetes@granvia.mx</field>
+        <field name="is_company" eval="True"/>
+        <field name="customer_rank">1</field>
+    </record>
+    <record id="partner_cumbre" model="res.partner">
+        <field name="name">Productora Cumbre</field>
+        <field name="email">produccion@cumbre.tv</field>
+        <field name="is_company" eval="True"/>
+        <field name="customer_rank">1</field>
+    </record>
+
+    <!-- ===== Rental Packages ===== -->
+    <record id="pkg_boda" model="rental.package.template">
+        <field name="name">Paquete Boda Premium</field>
+        <field name="code">PKG-BODA</field>
+        <field name="pricing_policy">sum_components</field>
+        <field name="description">Mobiliario y audio para boda de hasta 100 invitados.</field>
+    </record>
+    <record id="pkgl_boda_chair" model="rental.package.template.line">
+        <field name="package_id" ref="pkg_boda"/>
+        <field name="product_id" ref="prod_chair"/>
+        <field name="quantity">10</field>
+        <field name="required" eval="True"/>
+        <field name="sequence">10</field>
+    </record>
+    <record id="pkgl_boda_table" model="rental.package.template.line">
+        <field name="package_id" ref="pkg_boda"/>
+        <field name="product_id" ref="prod_table"/>
+        <field name="quantity">2</field>
+        <field name="required" eval="True"/>
+        <field name="sequence">20</field>
+    </record>
+    <record id="pkgl_boda_speaker" model="rental.package.template.line">
+        <field name="package_id" ref="pkg_boda"/>
+        <field name="product_id" ref="prod_speaker"/>
+        <field name="quantity">2</field>
+        <field name="required" eval="True"/>
+        <field name="sequence">30</field>
+    </record>
+    <record id="pkgl_boda_light" model="rental.package.template.line">
+        <field name="package_id" ref="pkg_boda"/>
+        <field name="product_id" ref="prod_light"/>
+        <field name="quantity">4</field>
+        <field name="required" eval="True"/>
+        <field name="sequence">40</field>
+    </record>
+    <record id="pkgl_boda_floor" model="rental.package.template.line">
+        <field name="package_id" ref="pkg_boda"/>
+        <field name="product_id" ref="prod_floor"/>
+        <field name="quantity">1</field>
+        <field name="required" eval="False"/>
+        <field name="sequence">50</field>
+    </record>
+    <record id="pkgl_boda_linen" model="rental.package.template.line">
+        <field name="package_id" ref="pkg_boda"/>
+        <field name="product_id" ref="prod_linen"/>
+        <field name="quantity">12</field>
+        <field name="required" eval="True"/>
+        <field name="allow_substitution" eval="True"/>
+        <field name="allowed_substitute_product_ids" eval="[(6,0,[ref('prod_linen_alt')])]"/>
+        <field name="sequence">60</field>
+    </record>
+    <record id="pkg_conf" model="rental.package.template">
+        <field name="name">Paquete Conferencia Corporativa</field>
+        <field name="code">PKG-CONF</field>
+        <field name="pricing_policy">fixed_package_price</field>
+        <field name="fixed_price">3500.0</field>
+        <field name="hide_components_on_quote" eval="True"/>
+        <field name="description">Proyeccion, audio y asientos para conferencia.</field>
+    </record>
+    <record id="pkgl_conf_projector" model="rental.package.template.line">
+        <field name="package_id" ref="pkg_conf"/>
+        <field name="product_id" ref="prod_projector"/>
+        <field name="quantity">1</field>
+        <field name="required" eval="True"/>
+        <field name="sequence">10</field>
+    </record>
+    <record id="pkgl_conf_screen" model="rental.package.template.line">
+        <field name="package_id" ref="pkg_conf"/>
+        <field name="product_id" ref="prod_screen"/>
+        <field name="quantity">1</field>
+        <field name="required" eval="True"/>
+        <field name="sequence">20</field>
+    </record>
+    <record id="pkgl_conf_speaker" model="rental.package.template.line">
+        <field name="package_id" ref="pkg_conf"/>
+        <field name="product_id" ref="prod_speaker"/>
+        <field name="quantity">2</field>
+        <field name="required" eval="True"/>
+        <field name="sequence">30</field>
+    </record>
+    <record id="pkgl_conf_mic" model="rental.package.template.line">
+        <field name="package_id" ref="pkg_conf"/>
+        <field name="product_id" ref="prod_mic"/>
+        <field name="quantity">2</field>
+        <field name="required" eval="True"/>
+        <field name="sequence">40</field>
+    </record>
+    <record id="pkgl_conf_chair" model="rental.package.template.line">
+        <field name="package_id" ref="pkg_conf"/>
+        <field name="product_id" ref="prod_chair"/>
+        <field name="quantity">15</field>
+        <field name="required" eval="True"/>
+        <field name="sequence">50</field>
+    </record>
+    <record id="pkg_terraza" model="rental.package.template">
+        <field name="name">Paquete Terraza Otono</field>
+        <field name="code">PKG-TERR</field>
+        <field name="pricing_policy">discount_components</field>
+        <field name="description">Carpa, calefaccion y mesas para terraza.</field>
+    </record>
+    <record id="pkgl_terr_tent" model="rental.package.template.line">
+        <field name="package_id" ref="pkg_terraza"/>
+        <field name="product_id" ref="prod_tent"/>
+        <field name="quantity">1</field>
+        <field name="required" eval="True"/>
+        <field name="discount_percentage">0</field>
+        <field name="sequence">10</field>
+    </record>
+    <record id="pkgl_terr_heater" model="rental.package.template.line">
+        <field name="package_id" ref="pkg_terraza"/>
+        <field name="product_id" ref="prod_heater"/>
+        <field name="quantity">4</field>
+        <field name="required" eval="True"/>
+        <field name="discount_percentage">10</field>
+        <field name="sequence">20</field>
+    </record>
+    <record id="pkgl_terr_table" model="rental.package.template.line">
+        <field name="package_id" ref="pkg_terraza"/>
+        <field name="product_id" ref="prod_table"/>
+        <field name="quantity">4</field>
+        <field name="required" eval="True"/>
+        <field name="discount_percentage">5</field>
+        <field name="sequence">30</field>
+    </record>
+    <record id="pkgl_terr_light" model="rental.package.template.line">
+        <field name="package_id" ref="pkg_terraza"/>
+        <field name="product_id" ref="prod_light"/>
+        <field name="quantity">6</field>
+        <field name="required" eval="False"/>
+        <field name="discount_percentage">0</field>
+        <field name="sequence">40</field>
+    </record>
+
+    <!-- ===== Event Sale Orders ===== -->
+    <record id="so_boda" model="sale.order">
+        <field name="partner_id" ref="partner_aurora"/>
+        <field name="x_is_event_rental" eval="True"/>
+        <field name="x_event_name">Boda Garcia-Lopez</field>
+        <field name="x_event_location">Hacienda San Angel</field>
+        <field name="x_event_start" eval="(datetime.datetime.now() + relativedelta(days=8, hour=10, minute=0, second=0, microsecond=0))"/>
+        <field name="x_event_end" eval="(datetime.datetime.now() + relativedelta(days=8, hour=23, minute=0, second=0, microsecond=0))"/>
+        <field name="x_billable_start" eval="(datetime.datetime.now() + relativedelta(days=8, hour=10, minute=0, second=0, microsecond=0))"/>
+        <field name="x_billable_end" eval="(datetime.datetime.now() + relativedelta(days=8, hour=23, minute=0, second=0, microsecond=0))"/>
+        <field name="x_block_start" eval="(datetime.datetime.now() + relativedelta(days=6, hour=8, minute=0, second=0, microsecond=0))"/>
+        <field name="x_block_end" eval="(datetime.datetime.now() + relativedelta(days=10, hour=18, minute=0, second=0, microsecond=0))"/>
+        <field name="x_logistics_notes">Montaje T-2, desmontaje T+1, revision T+2.</field>
+    </record>
+    <record id="so_boda_l0" model="sale.order.line">
+        <field name="order_id" ref="so_boda"/>
+        <field name="product_id" ref="prod_chair"/>
+        <field name="product_uom_qty">10</field>
+        <field name="x_billable_start" eval="(datetime.datetime.now() + relativedelta(days=8, hour=10, minute=0, second=0, microsecond=0))"/>
+        <field name="x_billable_end" eval="(datetime.datetime.now() + relativedelta(days=8, hour=23, minute=0, second=0, microsecond=0))"/>
+        <field name="x_block_start" eval="(datetime.datetime.now() + relativedelta(days=6, hour=8, minute=0, second=0, microsecond=0))"/>
+        <field name="x_block_end" eval="(datetime.datetime.now() + relativedelta(days=10, hour=18, minute=0, second=0, microsecond=0))"/>
+    </record>
+    <record id="so_boda_l1" model="sale.order.line">
+        <field name="order_id" ref="so_boda"/>
+        <field name="product_id" ref="prod_table"/>
+        <field name="product_uom_qty">2</field>
+        <field name="x_billable_start" eval="(datetime.datetime.now() + relativedelta(days=8, hour=10, minute=0, second=0, microsecond=0))"/>
+        <field name="x_billable_end" eval="(datetime.datetime.now() + relativedelta(days=8, hour=23, minute=0, second=0, microsecond=0))"/>
+        <field name="x_block_start" eval="(datetime.datetime.now() + relativedelta(days=6, hour=8, minute=0, second=0, microsecond=0))"/>
+        <field name="x_block_end" eval="(datetime.datetime.now() + relativedelta(days=10, hour=18, minute=0, second=0, microsecond=0))"/>
+    </record>
+    <record id="so_boda_l2" model="sale.order.line">
+        <field name="order_id" ref="so_boda"/>
+        <field name="product_id" ref="prod_speaker"/>
+        <field name="product_uom_qty">2</field>
+        <field name="x_billable_start" eval="(datetime.datetime.now() + relativedelta(days=8, hour=10, minute=0, second=0, microsecond=0))"/>
+        <field name="x_billable_end" eval="(datetime.datetime.now() + relativedelta(days=8, hour=23, minute=0, second=0, microsecond=0))"/>
+        <field name="x_block_start" eval="(datetime.datetime.now() + relativedelta(days=6, hour=8, minute=0, second=0, microsecond=0))"/>
+        <field name="x_block_end" eval="(datetime.datetime.now() + relativedelta(days=10, hour=18, minute=0, second=0, microsecond=0))"/>
+    </record>
+    <record id="so_boda_l3" model="sale.order.line">
+        <field name="order_id" ref="so_boda"/>
+        <field name="product_id" ref="prod_light"/>
+        <field name="product_uom_qty">4</field>
+        <field name="x_billable_start" eval="(datetime.datetime.now() + relativedelta(days=8, hour=10, minute=0, second=0, microsecond=0))"/>
+        <field name="x_billable_end" eval="(datetime.datetime.now() + relativedelta(days=8, hour=23, minute=0, second=0, microsecond=0))"/>
+        <field name="x_block_start" eval="(datetime.datetime.now() + relativedelta(days=6, hour=8, minute=0, second=0, microsecond=0))"/>
+        <field name="x_block_end" eval="(datetime.datetime.now() + relativedelta(days=10, hour=18, minute=0, second=0, microsecond=0))"/>
+    </record>
+    <record id="so_conf" model="sale.order">
+        <field name="partner_id" ref="partner_zenith"/>
+        <field name="x_is_event_rental" eval="True"/>
+        <field name="x_event_name">Summit Anual Zenith</field>
+        <field name="x_event_location">Centro de Convenciones</field>
+        <field name="x_event_start" eval="(datetime.datetime.now() + relativedelta(days=5, hour=10, minute=0, second=0, microsecond=0))"/>
+        <field name="x_event_end" eval="(datetime.datetime.now() + relativedelta(days=5, hour=23, minute=0, second=0, microsecond=0))"/>
+        <field name="x_billable_start" eval="(datetime.datetime.now() + relativedelta(days=5, hour=10, minute=0, second=0, microsecond=0))"/>
+        <field name="x_billable_end" eval="(datetime.datetime.now() + relativedelta(days=5, hour=23, minute=0, second=0, microsecond=0))"/>
+        <field name="x_block_start" eval="(datetime.datetime.now() + relativedelta(days=3, hour=8, minute=0, second=0, microsecond=0))"/>
+        <field name="x_block_end" eval="(datetime.datetime.now() + relativedelta(days=7, hour=18, minute=0, second=0, microsecond=0))"/>
+        <field name="x_logistics_notes">Montaje T-2, desmontaje T+1, revision T+2.</field>
+    </record>
+    <record id="so_conf_l0" model="sale.order.line">
+        <field name="order_id" ref="so_conf"/>
+        <field name="product_id" ref="prod_projector"/>
+        <field name="product_uom_qty">1</field>
+        <field name="x_billable_start" eval="(datetime.datetime.now() + relativedelta(days=5, hour=10, minute=0, second=0, microsecond=0))"/>
+        <field name="x_billable_end" eval="(datetime.datetime.now() + relativedelta(days=5, hour=23, minute=0, second=0, microsecond=0))"/>
+        <field name="x_block_start" eval="(datetime.datetime.now() + relativedelta(days=3, hour=8, minute=0, second=0, microsecond=0))"/>
+        <field name="x_block_end" eval="(datetime.datetime.now() + relativedelta(days=7, hour=18, minute=0, second=0, microsecond=0))"/>
+    </record>
+    <record id="so_conf_l1" model="sale.order.line">
+        <field name="order_id" ref="so_conf"/>
+        <field name="product_id" ref="prod_screen"/>
+        <field name="product_uom_qty">1</field>
+        <field name="x_billable_start" eval="(datetime.datetime.now() + relativedelta(days=5, hour=10, minute=0, second=0, microsecond=0))"/>
+        <field name="x_billable_end" eval="(datetime.datetime.now() + relativedelta(days=5, hour=23, minute=0, second=0, microsecond=0))"/>
+        <field name="x_block_start" eval="(datetime.datetime.now() + relativedelta(days=3, hour=8, minute=0, second=0, microsecond=0))"/>
+        <field name="x_block_end" eval="(datetime.datetime.now() + relativedelta(days=7, hour=18, minute=0, second=0, microsecond=0))"/>
+    </record>
+    <record id="so_conf_l2" model="sale.order.line">
+        <field name="order_id" ref="so_conf"/>
+        <field name="product_id" ref="prod_mic"/>
+        <field name="product_uom_qty">2</field>
+        <field name="x_billable_start" eval="(datetime.datetime.now() + relativedelta(days=5, hour=10, minute=0, second=0, microsecond=0))"/>
+        <field name="x_billable_end" eval="(datetime.datetime.now() + relativedelta(days=5, hour=23, minute=0, second=0, microsecond=0))"/>
+        <field name="x_block_start" eval="(datetime.datetime.now() + relativedelta(days=3, hour=8, minute=0, second=0, microsecond=0))"/>
+        <field name="x_block_end" eval="(datetime.datetime.now() + relativedelta(days=7, hour=18, minute=0, second=0, microsecond=0))"/>
+    </record>
+    <record id="so_conf_l3" model="sale.order.line">
+        <field name="order_id" ref="so_conf"/>
+        <field name="product_id" ref="prod_chair"/>
+        <field name="product_uom_qty">15</field>
+        <field name="x_billable_start" eval="(datetime.datetime.now() + relativedelta(days=5, hour=10, minute=0, second=0, microsecond=0))"/>
+        <field name="x_billable_end" eval="(datetime.datetime.now() + relativedelta(days=5, hour=23, minute=0, second=0, microsecond=0))"/>
+        <field name="x_block_start" eval="(datetime.datetime.now() + relativedelta(days=3, hour=8, minute=0, second=0, microsecond=0))"/>
+        <field name="x_block_end" eval="(datetime.datetime.now() + relativedelta(days=7, hour=18, minute=0, second=0, microsecond=0))"/>
+    </record>
+    <record id="so_gala" model="sale.order">
+        <field name="partner_id" ref="partner_granvia"/>
+        <field name="x_is_event_rental" eval="True"/>
+        <field name="x_event_name">Gala Hotel Gran Via</field>
+        <field name="x_event_location">Salon Imperial</field>
+        <field name="x_event_start" eval="(datetime.datetime.now() + relativedelta(days=12, hour=10, minute=0, second=0, microsecond=0))"/>
+        <field name="x_event_end" eval="(datetime.datetime.now() + relativedelta(days=12, hour=23, minute=0, second=0, microsecond=0))"/>
+        <field name="x_billable_start" eval="(datetime.datetime.now() + relativedelta(days=12, hour=10, minute=0, second=0, microsecond=0))"/>
+        <field name="x_billable_end" eval="(datetime.datetime.now() + relativedelta(days=12, hour=23, minute=0, second=0, microsecond=0))"/>
+        <field name="x_block_start" eval="(datetime.datetime.now() + relativedelta(days=10, hour=8, minute=0, second=0, microsecond=0))"/>
+        <field name="x_block_end" eval="(datetime.datetime.now() + relativedelta(days=14, hour=18, minute=0, second=0, microsecond=0))"/>
+        <field name="x_logistics_notes">Montaje T-2, desmontaje T+1, revision T+2.</field>
+    </record>
+    <record id="so_gala_l0" model="sale.order.line">
+        <field name="order_id" ref="so_gala"/>
+        <field name="product_id" ref="prod_floor"/>
+        <field name="product_uom_qty">1</field>
+        <field name="x_billable_start" eval="(datetime.datetime.now() + relativedelta(days=12, hour=10, minute=0, second=0, microsecond=0))"/>
+        <field name="x_billable_end" eval="(datetime.datetime.now() + relativedelta(days=12, hour=23, minute=0, second=0, microsecond=0))"/>
+        <field name="x_block_start" eval="(datetime.datetime.now() + relativedelta(days=10, hour=8, minute=0, second=0, microsecond=0))"/>
+        <field name="x_block_end" eval="(datetime.datetime.now() + relativedelta(days=14, hour=18, minute=0, second=0, microsecond=0))"/>
+    </record>
+    <record id="so_gala_l1" model="sale.order.line">
+        <field name="order_id" ref="so_gala"/>
+        <field name="product_id" ref="prod_light"/>
+        <field name="product_uom_qty">4</field>
+        <field name="x_billable_start" eval="(datetime.datetime.now() + relativedelta(days=12, hour=10, minute=0, second=0, microsecond=0))"/>
+        <field name="x_billable_end" eval="(datetime.datetime.now() + relativedelta(days=12, hour=23, minute=0, second=0, microsecond=0))"/>
+        <field name="x_block_start" eval="(datetime.datetime.now() + relativedelta(days=10, hour=8, minute=0, second=0, microsecond=0))"/>
+        <field name="x_block_end" eval="(datetime.datetime.now() + relativedelta(days=14, hour=18, minute=0, second=0, microsecond=0))"/>
+    </record>
+    <record id="so_gala_l2" model="sale.order.line">
+        <field name="order_id" ref="so_gala"/>
+        <field name="product_id" ref="prod_speaker"/>
+        <field name="product_uom_qty">2</field>
+        <field name="x_billable_start" eval="(datetime.datetime.now() + relativedelta(days=12, hour=10, minute=0, second=0, microsecond=0))"/>
+        <field name="x_billable_end" eval="(datetime.datetime.now() + relativedelta(days=12, hour=23, minute=0, second=0, microsecond=0))"/>
+        <field name="x_block_start" eval="(datetime.datetime.now() + relativedelta(days=10, hour=8, minute=0, second=0, microsecond=0))"/>
+        <field name="x_block_end" eval="(datetime.datetime.now() + relativedelta(days=14, hour=18, minute=0, second=0, microsecond=0))"/>
+    </record>
+    <record id="so_terr" model="sale.order">
+        <field name="partner_id" ref="partner_luna"/>
+        <field name="x_is_event_rental" eval="True"/>
+        <field name="x_event_name">Terraza Aniversario</field>
+        <field name="x_event_location">Roof Garden Luna</field>
+        <field name="x_event_start" eval="(datetime.datetime.now() + relativedelta(days=3, hour=10, minute=0, second=0, microsecond=0))"/>
+        <field name="x_event_end" eval="(datetime.datetime.now() + relativedelta(days=3, hour=23, minute=0, second=0, microsecond=0))"/>
+        <field name="x_billable_start" eval="(datetime.datetime.now() + relativedelta(days=3, hour=10, minute=0, second=0, microsecond=0))"/>
+        <field name="x_billable_end" eval="(datetime.datetime.now() + relativedelta(days=3, hour=23, minute=0, second=0, microsecond=0))"/>
+        <field name="x_block_start" eval="(datetime.datetime.now() + relativedelta(days=1, hour=8, minute=0, second=0, microsecond=0))"/>
+        <field name="x_block_end" eval="(datetime.datetime.now() + relativedelta(days=5, hour=18, minute=0, second=0, microsecond=0))"/>
+        <field name="x_logistics_notes">Montaje T-2, desmontaje T+1, revision T+2.</field>
+    </record>
+    <record id="so_terr_l0" model="sale.order.line">
+        <field name="order_id" ref="so_terr"/>
+        <field name="product_id" ref="prod_tent"/>
+        <field name="product_uom_qty">1</field>
+        <field name="x_billable_start" eval="(datetime.datetime.now() + relativedelta(days=3, hour=10, minute=0, second=0, microsecond=0))"/>
+        <field name="x_billable_end" eval="(datetime.datetime.now() + relativedelta(days=3, hour=23, minute=0, second=0, microsecond=0))"/>
+        <field name="x_block_start" eval="(datetime.datetime.now() + relativedelta(days=1, hour=8, minute=0, second=0, microsecond=0))"/>
+        <field name="x_block_end" eval="(datetime.datetime.now() + relativedelta(days=5, hour=18, minute=0, second=0, microsecond=0))"/>
+    </record>
+    <record id="so_terr_l1" model="sale.order.line">
+        <field name="order_id" ref="so_terr"/>
+        <field name="product_id" ref="prod_heater"/>
+        <field name="product_uom_qty">4</field>
+        <field name="x_billable_start" eval="(datetime.datetime.now() + relativedelta(days=3, hour=10, minute=0, second=0, microsecond=0))"/>
+        <field name="x_billable_end" eval="(datetime.datetime.now() + relativedelta(days=3, hour=23, minute=0, second=0, microsecond=0))"/>
+        <field name="x_block_start" eval="(datetime.datetime.now() + relativedelta(days=1, hour=8, minute=0, second=0, microsecond=0))"/>
+        <field name="x_block_end" eval="(datetime.datetime.now() + relativedelta(days=5, hour=18, minute=0, second=0, microsecond=0))"/>
+    </record>
+    <record id="so_terr_l2" model="sale.order.line">
+        <field name="order_id" ref="so_terr"/>
+        <field name="product_id" ref="prod_table"/>
+        <field name="product_uom_qty">3</field>
+        <field name="x_billable_start" eval="(datetime.datetime.now() + relativedelta(days=3, hour=10, minute=0, second=0, microsecond=0))"/>
+        <field name="x_billable_end" eval="(datetime.datetime.now() + relativedelta(days=3, hour=23, minute=0, second=0, microsecond=0))"/>
+        <field name="x_block_start" eval="(datetime.datetime.now() + relativedelta(days=1, hour=8, minute=0, second=0, microsecond=0))"/>
+        <field name="x_block_end" eval="(datetime.datetime.now() + relativedelta(days=5, hour=18, minute=0, second=0, microsecond=0))"/>
+    </record>
+    <record id="so_tv" model="sale.order">
+        <field name="partner_id" ref="partner_cumbre"/>
+        <field name="x_is_event_rental" eval="True"/>
+        <field name="x_event_name">Grabacion Spot TV</field>
+        <field name="x_event_location">Foro Cumbre 2</field>
+        <field name="x_event_start" eval="(datetime.datetime.now() + relativedelta(days=1, hour=10, minute=0, second=0, microsecond=0))"/>
+        <field name="x_event_end" eval="(datetime.datetime.now() + relativedelta(days=1, hour=23, minute=0, second=0, microsecond=0))"/>
+        <field name="x_billable_start" eval="(datetime.datetime.now() + relativedelta(days=1, hour=10, minute=0, second=0, microsecond=0))"/>
+        <field name="x_billable_end" eval="(datetime.datetime.now() + relativedelta(days=1, hour=23, minute=0, second=0, microsecond=0))"/>
+        <field name="x_block_start" eval="(datetime.datetime.now() + relativedelta(days=-1, hour=8, minute=0, second=0, microsecond=0))"/>
+        <field name="x_block_end" eval="(datetime.datetime.now() + relativedelta(days=3, hour=18, minute=0, second=0, microsecond=0))"/>
+        <field name="x_logistics_notes">Montaje T-2, desmontaje T+1, revision T+2.</field>
+    </record>
+    <record id="so_tv_l0" model="sale.order.line">
+        <field name="order_id" ref="so_tv"/>
+        <field name="product_id" ref="prod_light"/>
+        <field name="product_uom_qty">6</field>
+        <field name="x_billable_start" eval="(datetime.datetime.now() + relativedelta(days=1, hour=10, minute=0, second=0, microsecond=0))"/>
+        <field name="x_billable_end" eval="(datetime.datetime.now() + relativedelta(days=1, hour=23, minute=0, second=0, microsecond=0))"/>
+        <field name="x_block_start" eval="(datetime.datetime.now() + relativedelta(days=-1, hour=8, minute=0, second=0, microsecond=0))"/>
+        <field name="x_block_end" eval="(datetime.datetime.now() + relativedelta(days=3, hour=18, minute=0, second=0, microsecond=0))"/>
+    </record>
+    <record id="so_tv_l1" model="sale.order.line">
+        <field name="order_id" ref="so_tv"/>
+        <field name="product_id" ref="prod_mic"/>
+        <field name="product_uom_qty">3</field>
+        <field name="x_billable_start" eval="(datetime.datetime.now() + relativedelta(days=1, hour=10, minute=0, second=0, microsecond=0))"/>
+        <field name="x_billable_end" eval="(datetime.datetime.now() + relativedelta(days=1, hour=23, minute=0, second=0, microsecond=0))"/>
+        <field name="x_block_start" eval="(datetime.datetime.now() + relativedelta(days=-1, hour=8, minute=0, second=0, microsecond=0))"/>
+        <field name="x_block_end" eval="(datetime.datetime.now() + relativedelta(days=3, hour=18, minute=0, second=0, microsecond=0))"/>
+    </record>
+
+    <!-- ===== Serial Reservations (all states, no overlaps) ===== -->
+    <record id="resv_1" model="rental.serial.reservation">
+        <field name="product_id" ref="prod_chair"/>
+        <field name="lot_id" ref="lot_chair_1"/>
+        <field name="partner_id" ref="partner_aurora"/>
+        <field name="company_id" ref="base.main_company"/>
+        <field name="state">released</field>
+        <field name="auto_release_policy">on_block_end</field>
+        <field name="reservation_block_start" eval="(datetime.datetime.now() + relativedelta(days=-22, hour=8, minute=0, second=0, microsecond=0))"/>
+        <field name="reservation_block_end" eval="(datetime.datetime.now() + relativedelta(days=-15, hour=18, minute=0, second=0, microsecond=0))"/>
+    </record>
+    <record id="resv_2" model="rental.serial.reservation">
+        <field name="product_id" ref="prod_chair"/>
+        <field name="lot_id" ref="lot_chair_2"/>
+        <field name="partner_id" ref="partner_aurora"/>
+        <field name="company_id" ref="base.main_company"/>
+        <field name="state">released</field>
+        <field name="auto_release_policy">on_block_end</field>
+        <field name="reservation_block_start" eval="(datetime.datetime.now() + relativedelta(days=-22, hour=8, minute=0, second=0, microsecond=0))"/>
+        <field name="reservation_block_end" eval="(datetime.datetime.now() + relativedelta(days=-15, hour=18, minute=0, second=0, microsecond=0))"/>
+    </record>
+    <record id="resv_3" model="rental.serial.reservation">
+        <field name="product_id" ref="prod_chair"/>
+        <field name="lot_id" ref="lot_chair_3"/>
+        <field name="partner_id" ref="partner_aurora"/>
+        <field name="company_id" ref="base.main_company"/>
+        <field name="state">released</field>
+        <field name="auto_release_policy">on_block_end</field>
+        <field name="reservation_block_start" eval="(datetime.datetime.now() + relativedelta(days=-22, hour=8, minute=0, second=0, microsecond=0))"/>
+        <field name="reservation_block_end" eval="(datetime.datetime.now() + relativedelta(days=-15, hour=18, minute=0, second=0, microsecond=0))"/>
+    </record>
+    <record id="resv_4" model="rental.serial.reservation">
+        <field name="product_id" ref="prod_speaker"/>
+        <field name="lot_id" ref="lot_speaker_1"/>
+        <field name="partner_id" ref="partner_zenith"/>
+        <field name="company_id" ref="base.main_company"/>
+        <field name="state">released</field>
+        <field name="auto_release_policy">on_block_end</field>
+        <field name="reservation_block_start" eval="(datetime.datetime.now() + relativedelta(days=-20, hour=8, minute=0, second=0, microsecond=0))"/>
+        <field name="reservation_block_end" eval="(datetime.datetime.now() + relativedelta(days=-16, hour=18, minute=0, second=0, microsecond=0))"/>
+    </record>
+    <record id="resv_5" model="rental.serial.reservation">
+        <field name="product_id" ref="prod_table"/>
+        <field name="lot_id" ref="lot_table_1"/>
+        <field name="partner_id" ref="partner_granvia"/>
+        <field name="company_id" ref="base.main_company"/>
+        <field name="state">returned</field>
+        <field name="auto_release_policy">on_return_validation</field>
+        <field name="reservation_block_start" eval="(datetime.datetime.now() + relativedelta(days=-4, hour=8, minute=0, second=0, microsecond=0))"/>
+        <field name="reservation_block_end" eval="(datetime.datetime.now() + relativedelta(days=-1, hour=18, minute=0, second=0, microsecond=0))"/>
+    </record>
+    <record id="resv_6" model="rental.serial.reservation">
+        <field name="product_id" ref="prod_mic"/>
+        <field name="lot_id" ref="lot_mic_1"/>
+        <field name="partner_id" ref="partner_cumbre"/>
+        <field name="company_id" ref="base.main_company"/>
+        <field name="state">returned</field>
+        <field name="auto_release_policy">on_return_validation</field>
+        <field name="reservation_block_start" eval="(datetime.datetime.now() + relativedelta(days=-3, hour=8, minute=0, second=0, microsecond=0))"/>
+        <field name="reservation_block_end" eval="(datetime.datetime.now() + relativedelta(days=-1, hour=12, minute=0, second=0, microsecond=0))"/>
+    </record>
+    <record id="resv_7" model="rental.serial.reservation">
+        <field name="product_id" ref="prod_light"/>
+        <field name="lot_id" ref="lot_light_1"/>
+        <field name="partner_id" ref="partner_cumbre"/>
+        <field name="company_id" ref="base.main_company"/>
+        <field name="state">in_use</field>
+        <field name="auto_release_policy">on_return_validation</field>
+        <field name="sale_order_id" ref="so_tv"/>
+        <field name="sale_order_line_id" ref="so_tv_l0"/>
+        <field name="rental_billable_start" eval="(datetime.datetime.now() + relativedelta(days=0, hour=10, minute=0, second=0, microsecond=0))"/>
+        <field name="rental_billable_end" eval="(datetime.datetime.now() + relativedelta(days=0, hour=23, minute=0, second=0, microsecond=0))"/>
+        <field name="reservation_block_start" eval="(datetime.datetime.now() + relativedelta(days=-1, hour=8, minute=0, second=0, microsecond=0))"/>
+        <field name="reservation_block_end" eval="(datetime.datetime.now() + relativedelta(days=2, hour=20, minute=0, second=0, microsecond=0))"/>
+    </record>
+    <record id="resv_8" model="rental.serial.reservation">
+        <field name="product_id" ref="prod_light"/>
+        <field name="lot_id" ref="lot_light_2"/>
+        <field name="partner_id" ref="partner_cumbre"/>
+        <field name="company_id" ref="base.main_company"/>
+        <field name="state">in_use</field>
+        <field name="auto_release_policy">on_return_validation</field>
+        <field name="sale_order_id" ref="so_tv"/>
+        <field name="sale_order_line_id" ref="so_tv_l0"/>
+        <field name="rental_billable_start" eval="(datetime.datetime.now() + relativedelta(days=0, hour=10, minute=0, second=0, microsecond=0))"/>
+        <field name="rental_billable_end" eval="(datetime.datetime.now() + relativedelta(days=0, hour=23, minute=0, second=0, microsecond=0))"/>
+        <field name="reservation_block_start" eval="(datetime.datetime.now() + relativedelta(days=-1, hour=8, minute=0, second=0, microsecond=0))"/>
+        <field name="reservation_block_end" eval="(datetime.datetime.now() + relativedelta(days=2, hour=20, minute=0, second=0, microsecond=0))"/>
+    </record>
+    <record id="resv_9" model="rental.serial.reservation">
+        <field name="product_id" ref="prod_floor"/>
+        <field name="lot_id" ref="lot_floor_1"/>
+        <field name="partner_id" ref="partner_granvia"/>
+        <field name="company_id" ref="base.main_company"/>
+        <field name="state">in_use</field>
+        <field name="auto_release_policy">on_return_validation</field>
+        <field name="reservation_block_start" eval="(datetime.datetime.now() + relativedelta(days=-1, hour=8, minute=0, second=0, microsecond=0))"/>
+        <field name="reservation_block_end" eval="(datetime.datetime.now() + relativedelta(days=3, hour=18, minute=0, second=0, microsecond=0))"/>
+    </record>
+    <record id="resv_10" model="rental.serial.reservation">
+        <field name="product_id" ref="prod_heater"/>
+        <field name="lot_id" ref="lot_heater_1"/>
+        <field name="partner_id" ref="partner_luna"/>
+        <field name="company_id" ref="base.main_company"/>
+        <field name="state">delivered</field>
+        <field name="auto_release_policy">on_return_validation</field>
+        <field name="sale_order_id" ref="so_terr"/>
+        <field name="sale_order_line_id" ref="so_terr_l1"/>
+        <field name="reservation_block_start" eval="(datetime.datetime.now() + relativedelta(days=0, hour=8, minute=0, second=0, microsecond=0))"/>
+        <field name="reservation_block_end" eval="(datetime.datetime.now() + relativedelta(days=4, hour=18, minute=0, second=0, microsecond=0))"/>
+    </record>
+    <record id="resv_11" model="rental.serial.reservation">
+        <field name="product_id" ref="prod_heater"/>
+        <field name="lot_id" ref="lot_heater_2"/>
+        <field name="partner_id" ref="partner_luna"/>
+        <field name="company_id" ref="base.main_company"/>
+        <field name="state">delivered</field>
+        <field name="auto_release_policy">on_return_validation</field>
+        <field name="sale_order_id" ref="so_terr"/>
+        <field name="sale_order_line_id" ref="so_terr_l1"/>
+        <field name="reservation_block_start" eval="(datetime.datetime.now() + relativedelta(days=0, hour=8, minute=0, second=0, microsecond=0))"/>
+        <field name="reservation_block_end" eval="(datetime.datetime.now() + relativedelta(days=4, hour=18, minute=0, second=0, microsecond=0))"/>
+    </record>
+    <record id="resv_12" model="rental.serial.reservation">
+        <field name="product_id" ref="prod_speaker"/>
+        <field name="lot_id" ref="lot_speaker_2"/>
+        <field name="partner_id" ref="partner_granvia"/>
+        <field name="company_id" ref="base.main_company"/>
+        <field name="state">picked_up</field>
+        <field name="auto_release_policy">on_return_validation</field>
+        <field name="sale_order_id" ref="so_gala"/>
+        <field name="sale_order_line_id" ref="so_gala_l2"/>
+        <field name="reservation_block_start" eval="(datetime.datetime.now() + relativedelta(days=1, hour=8, minute=0, second=0, microsecond=0))"/>
+        <field name="reservation_block_end" eval="(datetime.datetime.now() + relativedelta(days=5, hour=18, minute=0, second=0, microsecond=0))"/>
+    </record>
+    <record id="resv_13" model="rental.serial.reservation">
+        <field name="product_id" ref="prod_speaker"/>
+        <field name="lot_id" ref="lot_speaker_3"/>
+        <field name="partner_id" ref="partner_granvia"/>
+        <field name="company_id" ref="base.main_company"/>
+        <field name="state">picked_up</field>
+        <field name="auto_release_policy">on_return_validation</field>
+        <field name="sale_order_id" ref="so_gala"/>
+        <field name="sale_order_line_id" ref="so_gala_l2"/>
+        <field name="reservation_block_start" eval="(datetime.datetime.now() + relativedelta(days=1, hour=8, minute=0, second=0, microsecond=0))"/>
+        <field name="reservation_block_end" eval="(datetime.datetime.now() + relativedelta(days=5, hour=18, minute=0, second=0, microsecond=0))"/>
+    </record>
+    <record id="resv_14" model="rental.serial.reservation">
+        <field name="product_id" ref="prod_chair"/>
+        <field name="lot_id" ref="lot_chair_4"/>
+        <field name="partner_id" ref="partner_aurora"/>
+        <field name="company_id" ref="base.main_company"/>
+        <field name="state">prepared</field>
+        <field name="auto_release_policy">on_return_validation</field>
+        <field name="sale_order_id" ref="so_boda"/>
+        <field name="sale_order_line_id" ref="so_boda_l0"/>
+        <field name="rental_billable_start" eval="(datetime.datetime.now() + relativedelta(days=8, hour=10, minute=0, second=0, microsecond=0))"/>
+        <field name="rental_billable_end" eval="(datetime.datetime.now() + relativedelta(days=8, hour=23, minute=0, second=0, microsecond=0))"/>
+        <field name="reservation_block_start" eval="(datetime.datetime.now() + relativedelta(days=6, hour=8, minute=0, second=0, microsecond=0))"/>
+        <field name="reservation_block_end" eval="(datetime.datetime.now() + relativedelta(days=10, hour=18, minute=0, second=0, microsecond=0))"/>
+    </record>
+    <record id="resv_15" model="rental.serial.reservation">
+        <field name="product_id" ref="prod_chair"/>
+        <field name="lot_id" ref="lot_chair_5"/>
+        <field name="partner_id" ref="partner_aurora"/>
+        <field name="company_id" ref="base.main_company"/>
+        <field name="state">prepared</field>
+        <field name="auto_release_policy">on_return_validation</field>
+        <field name="sale_order_id" ref="so_boda"/>
+        <field name="sale_order_line_id" ref="so_boda_l0"/>
+        <field name="rental_billable_start" eval="(datetime.datetime.now() + relativedelta(days=8, hour=10, minute=0, second=0, microsecond=0))"/>
+        <field name="rental_billable_end" eval="(datetime.datetime.now() + relativedelta(days=8, hour=23, minute=0, second=0, microsecond=0))"/>
+        <field name="reservation_block_start" eval="(datetime.datetime.now() + relativedelta(days=6, hour=8, minute=0, second=0, microsecond=0))"/>
+        <field name="reservation_block_end" eval="(datetime.datetime.now() + relativedelta(days=10, hour=18, minute=0, second=0, microsecond=0))"/>
+    </record>
+    <record id="resv_16" model="rental.serial.reservation">
+        <field name="product_id" ref="prod_chair"/>
+        <field name="lot_id" ref="lot_chair_6"/>
+        <field name="partner_id" ref="partner_aurora"/>
+        <field name="company_id" ref="base.main_company"/>
+        <field name="state">prepared</field>
+        <field name="auto_release_policy">on_return_validation</field>
+        <field name="sale_order_id" ref="so_boda"/>
+        <field name="sale_order_line_id" ref="so_boda_l0"/>
+        <field name="rental_billable_start" eval="(datetime.datetime.now() + relativedelta(days=8, hour=10, minute=0, second=0, microsecond=0))"/>
+        <field name="rental_billable_end" eval="(datetime.datetime.now() + relativedelta(days=8, hour=23, minute=0, second=0, microsecond=0))"/>
+        <field name="reservation_block_start" eval="(datetime.datetime.now() + relativedelta(days=6, hour=8, minute=0, second=0, microsecond=0))"/>
+        <field name="reservation_block_end" eval="(datetime.datetime.now() + relativedelta(days=10, hour=18, minute=0, second=0, microsecond=0))"/>
+    </record>
+    <record id="resv_17" model="rental.serial.reservation">
+        <field name="product_id" ref="prod_chair"/>
+        <field name="lot_id" ref="lot_chair_7"/>
+        <field name="partner_id" ref="partner_aurora"/>
+        <field name="company_id" ref="base.main_company"/>
+        <field name="state">prepared</field>
+        <field name="auto_release_policy">on_return_validation</field>
+        <field name="sale_order_id" ref="so_boda"/>
+        <field name="sale_order_line_id" ref="so_boda_l0"/>
+        <field name="rental_billable_start" eval="(datetime.datetime.now() + relativedelta(days=8, hour=10, minute=0, second=0, microsecond=0))"/>
+        <field name="rental_billable_end" eval="(datetime.datetime.now() + relativedelta(days=8, hour=23, minute=0, second=0, microsecond=0))"/>
+        <field name="reservation_block_start" eval="(datetime.datetime.now() + relativedelta(days=6, hour=8, minute=0, second=0, microsecond=0))"/>
+        <field name="reservation_block_end" eval="(datetime.datetime.now() + relativedelta(days=10, hour=18, minute=0, second=0, microsecond=0))"/>
+    </record>
+    <record id="resv_18" model="rental.serial.reservation">
+        <field name="product_id" ref="prod_chair"/>
+        <field name="lot_id" ref="lot_chair_8"/>
+        <field name="partner_id" ref="partner_aurora"/>
+        <field name="company_id" ref="base.main_company"/>
+        <field name="state">prepared</field>
+        <field name="auto_release_policy">on_return_validation</field>
+        <field name="sale_order_id" ref="so_boda"/>
+        <field name="sale_order_line_id" ref="so_boda_l0"/>
+        <field name="rental_billable_start" eval="(datetime.datetime.now() + relativedelta(days=8, hour=10, minute=0, second=0, microsecond=0))"/>
+        <field name="rental_billable_end" eval="(datetime.datetime.now() + relativedelta(days=8, hour=23, minute=0, second=0, microsecond=0))"/>
+        <field name="reservation_block_start" eval="(datetime.datetime.now() + relativedelta(days=6, hour=8, minute=0, second=0, microsecond=0))"/>
+        <field name="reservation_block_end" eval="(datetime.datetime.now() + relativedelta(days=10, hour=18, minute=0, second=0, microsecond=0))"/>
+    </record>
+    <record id="resv_19" model="rental.serial.reservation">
+        <field name="product_id" ref="prod_chair"/>
+        <field name="lot_id" ref="lot_chair_9"/>
+        <field name="partner_id" ref="partner_aurora"/>
+        <field name="company_id" ref="base.main_company"/>
+        <field name="state">prepared</field>
+        <field name="auto_release_policy">on_return_validation</field>
+        <field name="sale_order_id" ref="so_boda"/>
+        <field name="sale_order_line_id" ref="so_boda_l0"/>
+        <field name="rental_billable_start" eval="(datetime.datetime.now() + relativedelta(days=8, hour=10, minute=0, second=0, microsecond=0))"/>
+        <field name="rental_billable_end" eval="(datetime.datetime.now() + relativedelta(days=8, hour=23, minute=0, second=0, microsecond=0))"/>
+        <field name="reservation_block_start" eval="(datetime.datetime.now() + relativedelta(days=6, hour=8, minute=0, second=0, microsecond=0))"/>
+        <field name="reservation_block_end" eval="(datetime.datetime.now() + relativedelta(days=10, hour=18, minute=0, second=0, microsecond=0))"/>
+    </record>
+    <record id="resv_20" model="rental.serial.reservation">
+        <field name="product_id" ref="prod_chair"/>
+        <field name="lot_id" ref="lot_chair_10"/>
+        <field name="partner_id" ref="partner_aurora"/>
+        <field name="company_id" ref="base.main_company"/>
+        <field name="state">prepared</field>
+        <field name="auto_release_policy">on_return_validation</field>
+        <field name="sale_order_id" ref="so_boda"/>
+        <field name="sale_order_line_id" ref="so_boda_l0"/>
+        <field name="rental_billable_start" eval="(datetime.datetime.now() + relativedelta(days=8, hour=10, minute=0, second=0, microsecond=0))"/>
+        <field name="rental_billable_end" eval="(datetime.datetime.now() + relativedelta(days=8, hour=23, minute=0, second=0, microsecond=0))"/>
+        <field name="reservation_block_start" eval="(datetime.datetime.now() + relativedelta(days=6, hour=8, minute=0, second=0, microsecond=0))"/>
+        <field name="reservation_block_end" eval="(datetime.datetime.now() + relativedelta(days=10, hour=18, minute=0, second=0, microsecond=0))"/>
+    </record>
+    <record id="resv_21" model="rental.serial.reservation">
+        <field name="product_id" ref="prod_chair"/>
+        <field name="lot_id" ref="lot_chair_11"/>
+        <field name="partner_id" ref="partner_aurora"/>
+        <field name="company_id" ref="base.main_company"/>
+        <field name="state">prepared</field>
+        <field name="auto_release_policy">on_return_validation</field>
+        <field name="sale_order_id" ref="so_boda"/>
+        <field name="sale_order_line_id" ref="so_boda_l0"/>
+        <field name="rental_billable_start" eval="(datetime.datetime.now() + relativedelta(days=8, hour=10, minute=0, second=0, microsecond=0))"/>
+        <field name="rental_billable_end" eval="(datetime.datetime.now() + relativedelta(days=8, hour=23, minute=0, second=0, microsecond=0))"/>
+        <field name="reservation_block_start" eval="(datetime.datetime.now() + relativedelta(days=6, hour=8, minute=0, second=0, microsecond=0))"/>
+        <field name="reservation_block_end" eval="(datetime.datetime.now() + relativedelta(days=10, hour=18, minute=0, second=0, microsecond=0))"/>
+    </record>
+    <record id="resv_22" model="rental.serial.reservation">
+        <field name="product_id" ref="prod_chair"/>
+        <field name="lot_id" ref="lot_chair_12"/>
+        <field name="partner_id" ref="partner_aurora"/>
+        <field name="company_id" ref="base.main_company"/>
+        <field name="state">prepared</field>
+        <field name="auto_release_policy">on_return_validation</field>
+        <field name="sale_order_id" ref="so_boda"/>
+        <field name="sale_order_line_id" ref="so_boda_l0"/>
+        <field name="rental_billable_start" eval="(datetime.datetime.now() + relativedelta(days=8, hour=10, minute=0, second=0, microsecond=0))"/>
+        <field name="rental_billable_end" eval="(datetime.datetime.now() + relativedelta(days=8, hour=23, minute=0, second=0, microsecond=0))"/>
+        <field name="reservation_block_start" eval="(datetime.datetime.now() + relativedelta(days=6, hour=8, minute=0, second=0, microsecond=0))"/>
+        <field name="reservation_block_end" eval="(datetime.datetime.now() + relativedelta(days=10, hour=18, minute=0, second=0, microsecond=0))"/>
+    </record>
+    <record id="resv_23" model="rental.serial.reservation">
+        <field name="product_id" ref="prod_chair"/>
+        <field name="lot_id" ref="lot_chair_13"/>
+        <field name="partner_id" ref="partner_aurora"/>
+        <field name="company_id" ref="base.main_company"/>
+        <field name="state">prepared</field>
+        <field name="auto_release_policy">on_return_validation</field>
+        <field name="sale_order_id" ref="so_boda"/>
+        <field name="sale_order_line_id" ref="so_boda_l0"/>
+        <field name="rental_billable_start" eval="(datetime.datetime.now() + relativedelta(days=8, hour=10, minute=0, second=0, microsecond=0))"/>
+        <field name="rental_billable_end" eval="(datetime.datetime.now() + relativedelta(days=8, hour=23, minute=0, second=0, microsecond=0))"/>
+        <field name="reservation_block_start" eval="(datetime.datetime.now() + relativedelta(days=6, hour=8, minute=0, second=0, microsecond=0))"/>
+        <field name="reservation_block_end" eval="(datetime.datetime.now() + relativedelta(days=10, hour=18, minute=0, second=0, microsecond=0))"/>
+    </record>
+    <record id="resv_24" model="rental.serial.reservation">
+        <field name="product_id" ref="prod_table"/>
+        <field name="lot_id" ref="lot_table_2"/>
+        <field name="partner_id" ref="partner_aurora"/>
+        <field name="company_id" ref="base.main_company"/>
+        <field name="state">prepared</field>
+        <field name="auto_release_policy">on_return_validation</field>
+        <field name="sale_order_id" ref="so_boda"/>
+        <field name="sale_order_line_id" ref="so_boda_l1"/>
+        <field name="rental_billable_start" eval="(datetime.datetime.now() + relativedelta(days=8, hour=10, minute=0, second=0, microsecond=0))"/>
+        <field name="rental_billable_end" eval="(datetime.datetime.now() + relativedelta(days=8, hour=23, minute=0, second=0, microsecond=0))"/>
+        <field name="reservation_block_start" eval="(datetime.datetime.now() + relativedelta(days=6, hour=8, minute=0, second=0, microsecond=0))"/>
+        <field name="reservation_block_end" eval="(datetime.datetime.now() + relativedelta(days=10, hour=18, minute=0, second=0, microsecond=0))"/>
+    </record>
+    <record id="resv_25" model="rental.serial.reservation">
+        <field name="product_id" ref="prod_table"/>
+        <field name="lot_id" ref="lot_table_3"/>
+        <field name="partner_id" ref="partner_aurora"/>
+        <field name="company_id" ref="base.main_company"/>
+        <field name="state">prepared</field>
+        <field name="auto_release_policy">on_return_validation</field>
+        <field name="sale_order_id" ref="so_boda"/>
+        <field name="sale_order_line_id" ref="so_boda_l1"/>
+        <field name="rental_billable_start" eval="(datetime.datetime.now() + relativedelta(days=8, hour=10, minute=0, second=0, microsecond=0))"/>
+        <field name="rental_billable_end" eval="(datetime.datetime.now() + relativedelta(days=8, hour=23, minute=0, second=0, microsecond=0))"/>
+        <field name="reservation_block_start" eval="(datetime.datetime.now() + relativedelta(days=6, hour=8, minute=0, second=0, microsecond=0))"/>
+        <field name="reservation_block_end" eval="(datetime.datetime.now() + relativedelta(days=10, hour=18, minute=0, second=0, microsecond=0))"/>
+    </record>
+    <record id="resv_26" model="rental.serial.reservation">
+        <field name="product_id" ref="prod_light"/>
+        <field name="lot_id" ref="lot_light_3"/>
+        <field name="partner_id" ref="partner_aurora"/>
+        <field name="company_id" ref="base.main_company"/>
+        <field name="state">reserved</field>
+        <field name="auto_release_policy">on_return_validation</field>
+        <field name="sale_order_id" ref="so_boda"/>
+        <field name="sale_order_line_id" ref="so_boda_l3"/>
+        <field name="reservation_block_start" eval="(datetime.datetime.now() + relativedelta(days=6, hour=8, minute=0, second=0, microsecond=0))"/>
+        <field name="reservation_block_end" eval="(datetime.datetime.now() + relativedelta(days=10, hour=18, minute=0, second=0, microsecond=0))"/>
+    </record>
+    <record id="resv_27" model="rental.serial.reservation">
+        <field name="product_id" ref="prod_light"/>
+        <field name="lot_id" ref="lot_light_4"/>
+        <field name="partner_id" ref="partner_aurora"/>
+        <field name="company_id" ref="base.main_company"/>
+        <field name="state">reserved</field>
+        <field name="auto_release_policy">on_return_validation</field>
+        <field name="sale_order_id" ref="so_boda"/>
+        <field name="sale_order_line_id" ref="so_boda_l3"/>
+        <field name="reservation_block_start" eval="(datetime.datetime.now() + relativedelta(days=6, hour=8, minute=0, second=0, microsecond=0))"/>
+        <field name="reservation_block_end" eval="(datetime.datetime.now() + relativedelta(days=10, hour=18, minute=0, second=0, microsecond=0))"/>
+    </record>
+    <record id="resv_28" model="rental.serial.reservation">
+        <field name="product_id" ref="prod_light"/>
+        <field name="lot_id" ref="lot_light_5"/>
+        <field name="partner_id" ref="partner_aurora"/>
+        <field name="company_id" ref="base.main_company"/>
+        <field name="state">reserved</field>
+        <field name="auto_release_policy">on_return_validation</field>
+        <field name="sale_order_id" ref="so_boda"/>
+        <field name="sale_order_line_id" ref="so_boda_l3"/>
+        <field name="reservation_block_start" eval="(datetime.datetime.now() + relativedelta(days=6, hour=8, minute=0, second=0, microsecond=0))"/>
+        <field name="reservation_block_end" eval="(datetime.datetime.now() + relativedelta(days=10, hour=18, minute=0, second=0, microsecond=0))"/>
+    </record>
+    <record id="resv_29" model="rental.serial.reservation">
+        <field name="product_id" ref="prod_light"/>
+        <field name="lot_id" ref="lot_light_6"/>
+        <field name="partner_id" ref="partner_aurora"/>
+        <field name="company_id" ref="base.main_company"/>
+        <field name="state">reserved</field>
+        <field name="auto_release_policy">on_return_validation</field>
+        <field name="sale_order_id" ref="so_boda"/>
+        <field name="sale_order_line_id" ref="so_boda_l3"/>
+        <field name="reservation_block_start" eval="(datetime.datetime.now() + relativedelta(days=6, hour=8, minute=0, second=0, microsecond=0))"/>
+        <field name="reservation_block_end" eval="(datetime.datetime.now() + relativedelta(days=10, hour=18, minute=0, second=0, microsecond=0))"/>
+    </record>
+    <record id="resv_30" model="rental.serial.reservation">
+        <field name="product_id" ref="prod_chair"/>
+        <field name="lot_id" ref="lot_chair_14"/>
+        <field name="partner_id" ref="partner_zenith"/>
+        <field name="company_id" ref="base.main_company"/>
+        <field name="state">reserved</field>
+        <field name="auto_release_policy">on_return_validation</field>
+        <field name="sale_order_id" ref="so_conf"/>
+        <field name="sale_order_line_id" ref="so_conf_l3"/>
+        <field name="reservation_block_start" eval="(datetime.datetime.now() + relativedelta(days=3, hour=8, minute=0, second=0, microsecond=0))"/>
+        <field name="reservation_block_end" eval="(datetime.datetime.now() + relativedelta(days=7, hour=18, minute=0, second=0, microsecond=0))"/>
+    </record>
+    <record id="resv_31" model="rental.serial.reservation">
+        <field name="product_id" ref="prod_chair"/>
+        <field name="lot_id" ref="lot_chair_15"/>
+        <field name="partner_id" ref="partner_zenith"/>
+        <field name="company_id" ref="base.main_company"/>
+        <field name="state">reserved</field>
+        <field name="auto_release_policy">on_return_validation</field>
+        <field name="sale_order_id" ref="so_conf"/>
+        <field name="sale_order_line_id" ref="so_conf_l3"/>
+        <field name="reservation_block_start" eval="(datetime.datetime.now() + relativedelta(days=3, hour=8, minute=0, second=0, microsecond=0))"/>
+        <field name="reservation_block_end" eval="(datetime.datetime.now() + relativedelta(days=7, hour=18, minute=0, second=0, microsecond=0))"/>
+    </record>
+    <record id="resv_32" model="rental.serial.reservation">
+        <field name="product_id" ref="prod_chair"/>
+        <field name="lot_id" ref="lot_chair_16"/>
+        <field name="partner_id" ref="partner_zenith"/>
+        <field name="company_id" ref="base.main_company"/>
+        <field name="state">reserved</field>
+        <field name="auto_release_policy">on_return_validation</field>
+        <field name="sale_order_id" ref="so_conf"/>
+        <field name="sale_order_line_id" ref="so_conf_l3"/>
+        <field name="reservation_block_start" eval="(datetime.datetime.now() + relativedelta(days=3, hour=8, minute=0, second=0, microsecond=0))"/>
+        <field name="reservation_block_end" eval="(datetime.datetime.now() + relativedelta(days=7, hour=18, minute=0, second=0, microsecond=0))"/>
+    </record>
+    <record id="resv_33" model="rental.serial.reservation">
+        <field name="product_id" ref="prod_chair"/>
+        <field name="lot_id" ref="lot_chair_17"/>
+        <field name="partner_id" ref="partner_zenith"/>
+        <field name="company_id" ref="base.main_company"/>
+        <field name="state">reserved</field>
+        <field name="auto_release_policy">on_return_validation</field>
+        <field name="sale_order_id" ref="so_conf"/>
+        <field name="sale_order_line_id" ref="so_conf_l3"/>
+        <field name="reservation_block_start" eval="(datetime.datetime.now() + relativedelta(days=3, hour=8, minute=0, second=0, microsecond=0))"/>
+        <field name="reservation_block_end" eval="(datetime.datetime.now() + relativedelta(days=7, hour=18, minute=0, second=0, microsecond=0))"/>
+    </record>
+    <record id="resv_34" model="rental.serial.reservation">
+        <field name="product_id" ref="prod_chair"/>
+        <field name="lot_id" ref="lot_chair_18"/>
+        <field name="partner_id" ref="partner_zenith"/>
+        <field name="company_id" ref="base.main_company"/>
+        <field name="state">reserved</field>
+        <field name="auto_release_policy">on_return_validation</field>
+        <field name="sale_order_id" ref="so_conf"/>
+        <field name="sale_order_line_id" ref="so_conf_l3"/>
+        <field name="reservation_block_start" eval="(datetime.datetime.now() + relativedelta(days=3, hour=8, minute=0, second=0, microsecond=0))"/>
+        <field name="reservation_block_end" eval="(datetime.datetime.now() + relativedelta(days=7, hour=18, minute=0, second=0, microsecond=0))"/>
+    </record>
+    <record id="resv_35" model="rental.serial.reservation">
+        <field name="product_id" ref="prod_projector"/>
+        <field name="lot_id" ref="lot_projector_1"/>
+        <field name="partner_id" ref="partner_zenith"/>
+        <field name="company_id" ref="base.main_company"/>
+        <field name="state">reserved</field>
+        <field name="auto_release_policy">on_return_validation</field>
+        <field name="sale_order_id" ref="so_conf"/>
+        <field name="sale_order_line_id" ref="so_conf_l0"/>
+        <field name="reservation_block_start" eval="(datetime.datetime.now() + relativedelta(days=3, hour=8, minute=0, second=0, microsecond=0))"/>
+        <field name="reservation_block_end" eval="(datetime.datetime.now() + relativedelta(days=7, hour=18, minute=0, second=0, microsecond=0))"/>
+    </record>
+    <record id="resv_36" model="rental.serial.reservation">
+        <field name="product_id" ref="prod_screen"/>
+        <field name="lot_id" ref="lot_screen_1"/>
+        <field name="partner_id" ref="partner_zenith"/>
+        <field name="company_id" ref="base.main_company"/>
+        <field name="state">reserved</field>
+        <field name="auto_release_policy">on_return_validation</field>
+        <field name="sale_order_id" ref="so_conf"/>
+        <field name="sale_order_line_id" ref="so_conf_l1"/>
+        <field name="reservation_block_start" eval="(datetime.datetime.now() + relativedelta(days=3, hour=8, minute=0, second=0, microsecond=0))"/>
+        <field name="reservation_block_end" eval="(datetime.datetime.now() + relativedelta(days=7, hour=18, minute=0, second=0, microsecond=0))"/>
+    </record>
+    <record id="resv_37" model="rental.serial.reservation">
+        <field name="product_id" ref="prod_tent"/>
+        <field name="lot_id" ref="lot_tent_1"/>
+        <field name="partner_id" ref="partner_luna"/>
+        <field name="company_id" ref="base.main_company"/>
+        <field name="state">reserved</field>
+        <field name="auto_release_policy">on_return_validation</field>
+        <field name="sale_order_id" ref="so_terr"/>
+        <field name="sale_order_line_id" ref="so_terr_l0"/>
+        <field name="reservation_block_start" eval="(datetime.datetime.now() + relativedelta(days=1, hour=8, minute=0, second=0, microsecond=0))"/>
+        <field name="reservation_block_end" eval="(datetime.datetime.now() + relativedelta(days=5, hour=18, minute=0, second=0, microsecond=0))"/>
+    </record>
+    <record id="resv_38" model="rental.serial.reservation">
+        <field name="product_id" ref="prod_mic"/>
+        <field name="lot_id" ref="lot_mic_2"/>
+        <field name="partner_id" ref="partner_zenith"/>
+        <field name="company_id" ref="base.main_company"/>
+        <field name="state">reserved</field>
+        <field name="auto_release_policy">on_return_validation</field>
+        <field name="sale_order_id" ref="so_conf"/>
+        <field name="sale_order_line_id" ref="so_conf_l2"/>
+        <field name="reservation_block_start" eval="(datetime.datetime.now() + relativedelta(days=3, hour=8, minute=0, second=0, microsecond=0))"/>
+        <field name="reservation_block_end" eval="(datetime.datetime.now() + relativedelta(days=7, hour=18, minute=0, second=0, microsecond=0))"/>
+    </record>
+    <record id="resv_39" model="rental.serial.reservation">
+        <field name="product_id" ref="prod_mic"/>
+        <field name="lot_id" ref="lot_mic_3"/>
+        <field name="partner_id" ref="partner_zenith"/>
+        <field name="company_id" ref="base.main_company"/>
+        <field name="state">reserved</field>
+        <field name="auto_release_policy">on_return_validation</field>
+        <field name="sale_order_id" ref="so_conf"/>
+        <field name="sale_order_line_id" ref="so_conf_l2"/>
+        <field name="reservation_block_start" eval="(datetime.datetime.now() + relativedelta(days=3, hour=8, minute=0, second=0, microsecond=0))"/>
+        <field name="reservation_block_end" eval="(datetime.datetime.now() + relativedelta(days=7, hour=18, minute=0, second=0, microsecond=0))"/>
+    </record>
+    <record id="resv_40" model="rental.serial.reservation">
+        <field name="product_id" ref="prod_light"/>
+        <field name="lot_id" ref="lot_light_7"/>
+        <field name="partner_id" ref="partner_luna"/>
+        <field name="company_id" ref="base.main_company"/>
+        <field name="state">soft_hold</field>
+        <field name="auto_release_policy">manual_only</field>
+        <field name="reservation_block_start" eval="(datetime.datetime.now() + relativedelta(days=9, hour=8, minute=0, second=0, microsecond=0))"/>
+        <field name="reservation_block_end" eval="(datetime.datetime.now() + relativedelta(days=14, hour=18, minute=0, second=0, microsecond=0))"/>
+        <field name="soft_hold_until" eval="(datetime.datetime.now() + relativedelta(hours=2, second=0, microsecond=0))"/>
+        <field name="soft_hold_owner_id" ref="base.user_admin"/>
+        <field name="soft_hold_reason">Apartado mientras el cliente confirma</field>
+    </record>
+    <record id="resv_41" model="rental.serial.reservation">
+        <field name="product_id" ref="prod_light"/>
+        <field name="lot_id" ref="lot_light_8"/>
+        <field name="partner_id" ref="partner_luna"/>
+        <field name="company_id" ref="base.main_company"/>
+        <field name="state">soft_hold</field>
+        <field name="auto_release_policy">manual_only</field>
+        <field name="reservation_block_start" eval="(datetime.datetime.now() + relativedelta(days=9, hour=8, minute=0, second=0, microsecond=0))"/>
+        <field name="reservation_block_end" eval="(datetime.datetime.now() + relativedelta(days=14, hour=18, minute=0, second=0, microsecond=0))"/>
+        <field name="soft_hold_until" eval="(datetime.datetime.now() + relativedelta(hours=2, second=0, microsecond=0))"/>
+        <field name="soft_hold_owner_id" ref="base.user_admin"/>
+        <field name="soft_hold_reason">Apartado mientras el cliente confirma</field>
+    </record>
+    <record id="resv_42" model="rental.serial.reservation">
+        <field name="product_id" ref="prod_light"/>
+        <field name="lot_id" ref="lot_light_9"/>
+        <field name="partner_id" ref="partner_luna"/>
+        <field name="company_id" ref="base.main_company"/>
+        <field name="state">soft_hold</field>
+        <field name="auto_release_policy">manual_only</field>
+        <field name="reservation_block_start" eval="(datetime.datetime.now() + relativedelta(days=9, hour=8, minute=0, second=0, microsecond=0))"/>
+        <field name="reservation_block_end" eval="(datetime.datetime.now() + relativedelta(days=14, hour=18, minute=0, second=0, microsecond=0))"/>
+        <field name="soft_hold_until" eval="(datetime.datetime.now() + relativedelta(hours=2, second=0, microsecond=0))"/>
+        <field name="soft_hold_owner_id" ref="base.user_admin"/>
+        <field name="soft_hold_reason">Apartado mientras el cliente confirma</field>
+    </record>
+    <record id="resv_43" model="rental.serial.reservation">
+        <field name="product_id" ref="prod_table"/>
+        <field name="lot_id" ref="lot_table_4"/>
+        <field name="partner_id" ref="partner_cumbre"/>
+        <field name="company_id" ref="base.main_company"/>
+        <field name="state">soft_hold</field>
+        <field name="auto_release_policy">manual_only</field>
+        <field name="reservation_block_start" eval="(datetime.datetime.now() + relativedelta(days=11, hour=8, minute=0, second=0, microsecond=0))"/>
+        <field name="reservation_block_end" eval="(datetime.datetime.now() + relativedelta(days=15, hour=18, minute=0, second=0, microsecond=0))"/>
+        <field name="soft_hold_until" eval="(datetime.datetime.now() + relativedelta(hours=4, second=0, microsecond=0))"/>
+        <field name="soft_hold_owner_id" ref="base.user_admin"/>
+        <field name="soft_hold_reason">Apartado mientras el cliente confirma</field>
+    </record>
+    <record id="resv_44" model="rental.serial.reservation">
+        <field name="product_id" ref="prod_table"/>
+        <field name="lot_id" ref="lot_table_5"/>
+        <field name="partner_id" ref="partner_cumbre"/>
+        <field name="company_id" ref="base.main_company"/>
+        <field name="state">soft_hold</field>
+        <field name="auto_release_policy">manual_only</field>
+        <field name="reservation_block_start" eval="(datetime.datetime.now() + relativedelta(days=11, hour=8, minute=0, second=0, microsecond=0))"/>
+        <field name="reservation_block_end" eval="(datetime.datetime.now() + relativedelta(days=15, hour=18, minute=0, second=0, microsecond=0))"/>
+        <field name="soft_hold_until" eval="(datetime.datetime.now() + relativedelta(hours=4, second=0, microsecond=0))"/>
+        <field name="soft_hold_owner_id" ref="base.user_admin"/>
+        <field name="soft_hold_reason">Apartado mientras el cliente confirma</field>
+    </record>
+    <record id="resv_45" model="rental.serial.reservation">
+        <field name="product_id" ref="prod_chair"/>
+        <field name="lot_id" ref="lot_chair_19"/>
+        <field name="partner_id" ref="partner_luna"/>
+        <field name="company_id" ref="base.main_company"/>
+        <field name="state">quotation</field>
+        <field name="auto_release_policy">on_return_validation</field>
+        <field name="reservation_block_start" eval="(datetime.datetime.now() + relativedelta(days=20, hour=8, minute=0, second=0, microsecond=0))"/>
+        <field name="reservation_block_end" eval="(datetime.datetime.now() + relativedelta(days=25, hour=18, minute=0, second=0, microsecond=0))"/>
+    </record>
+    <record id="resv_46" model="rental.serial.reservation">
+        <field name="product_id" ref="prod_chair"/>
+        <field name="lot_id" ref="lot_chair_20"/>
+        <field name="partner_id" ref="partner_luna"/>
+        <field name="company_id" ref="base.main_company"/>
+        <field name="state">quotation</field>
+        <field name="auto_release_policy">on_return_validation</field>
+        <field name="reservation_block_start" eval="(datetime.datetime.now() + relativedelta(days=20, hour=8, minute=0, second=0, microsecond=0))"/>
+        <field name="reservation_block_end" eval="(datetime.datetime.now() + relativedelta(days=25, hour=18, minute=0, second=0, microsecond=0))"/>
+    </record>
+    <record id="resv_47" model="rental.serial.reservation">
+        <field name="product_id" ref="prod_floor"/>
+        <field name="lot_id" ref="lot_floor_2"/>
+        <field name="partner_id" ref="partner_cumbre"/>
+        <field name="company_id" ref="base.main_company"/>
+        <field name="state">draft</field>
+        <field name="auto_release_policy">on_return_validation</field>
+        <field name="reservation_block_start" eval="(datetime.datetime.now() + relativedelta(days=22, hour=8, minute=0, second=0, microsecond=0))"/>
+        <field name="reservation_block_end" eval="(datetime.datetime.now() + relativedelta(days=27, hour=18, minute=0, second=0, microsecond=0))"/>
+    </record>
+    <record id="resv_48" model="rental.serial.reservation">
+        <field name="product_id" ref="prod_floor"/>
+        <field name="lot_id" ref="lot_floor_3"/>
+        <field name="partner_id" ref="partner_cumbre"/>
+        <field name="company_id" ref="base.main_company"/>
+        <field name="state">draft</field>
+        <field name="auto_release_policy">on_return_validation</field>
+        <field name="reservation_block_start" eval="(datetime.datetime.now() + relativedelta(days=22, hour=8, minute=0, second=0, microsecond=0))"/>
+        <field name="reservation_block_end" eval="(datetime.datetime.now() + relativedelta(days=27, hour=18, minute=0, second=0, microsecond=0))"/>
+    </record>
+
+    <!-- ===== Serial Downtime (maintenance / damage / lost) ===== -->
+    <record id="dt_maint" model="rental.serial.downtime">
+        <field name="lot_id" ref="lot_speaker_6"/>
+        <field name="reason">maintenance</field>
+        <field name="state">scheduled</field>
+        <field name="start_datetime" eval="(datetime.datetime.now() + relativedelta(days=-2, hour=8, minute=0, second=0, microsecond=0))"/>
+        <field name="end_datetime" eval="(datetime.datetime.now() + relativedelta(days=3, hour=18, minute=0, second=0, microsecond=0))"/>
+        <field name="notes">Revision de bocina post-evento</field>
+    </record>
+    <record id="dt_clean" model="rental.serial.downtime">
+        <field name="lot_id" ref="lot_table_8"/>
+        <field name="reason">cleaning</field>
+        <field name="state">scheduled</field>
+        <field name="start_datetime" eval="(datetime.datetime.now() + relativedelta(days=6, hour=8, minute=0, second=0, microsecond=0))"/>
+        <field name="end_datetime" eval="(datetime.datetime.now() + relativedelta(days=8, hour=18, minute=0, second=0, microsecond=0))"/>
+        <field name="notes">Limpieza profunda programada</field>
+    </record>
+    <record id="dt_repair" model="rental.serial.downtime">
+        <field name="lot_id" ref="lot_light_12"/>
+        <field name="reason">repair</field>
+        <field name="state">scheduled</field>
+        <field name="start_datetime" eval="(datetime.datetime.now() + relativedelta(days=-1, hour=8, minute=0, second=0, microsecond=0))"/>
+        <field name="end_datetime" eval="(datetime.datetime.now() + relativedelta(days=4, hour=18, minute=0, second=0, microsecond=0))"/>
+        <field name="notes">Reparacion de driver LED</field>
+    </record>
+    <record id="dt_damaged" model="rental.serial.downtime">
+        <field name="lot_id" ref="lot_chair_20"/>
+        <field name="reason">damaged</field>
+        <field name="state">in_progress</field>
+        <field name="start_datetime" eval="(datetime.datetime.now() + relativedelta(days=-5, hour=8, minute=0, second=0, microsecond=0))"/>
+        <field name="notes">Pata rota, fuera de servicio.</field>
+    </record>
+    <record id="dt_lost" model="rental.serial.downtime">
+        <field name="lot_id" ref="lot_mic_8"/>
+        <field name="reason">lost</field>
+        <field name="state">in_progress</field>
+        <field name="start_datetime" eval="(datetime.datetime.now() + relativedelta(days=-10, hour=8, minute=0, second=0, microsecond=0))"/>
+        <field name="notes">Extraviado en evento, en investigacion.</field>
+    </record>
+
+</odoo>

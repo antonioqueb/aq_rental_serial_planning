@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="seq_rental_serial_reservation" model="ir.sequence">
+            <field name="name">Rental Serial Reservation</field>
+            <field name="code">rental.serial.reservation</field>
+            <field name="prefix">RSR/%(year)s/</field>
+            <field name="padding">5</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
+        <record id="seq_rental_serial_downtime" model="ir.sequence">
+            <field name="name">Rental Serial Downtime</field>
+            <field name="code">rental.serial.downtime</field>
+            <field name="prefix">DWN/%(year)s/</field>
+            <field name="padding">5</field>
+            <field name="company_id" eval="False"/>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_stock_lot_form_serial_planning" model="ir.ui.view">
+        <field name="name">stock.lot.form.serial.planning</field>
+        <field name="model">stock.lot</field>
+        <field name="inherit_id" ref="stock.view_production_lot_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_view_reservations" type="object"
+                        class="oe_stat_button" icon="fa-calendar">
+                    <field name="x_reservation_count" widget="statinfo" string="Reservations"/>
+                </button>
+            </xpath>
+            <xpath expr="//field[@name='product_id']" position="after">
+                <field name="x_currency_id" invisible="1"/>
+                <field name="x_rental_revenue" widget="monetary"/>
+                <field name="x_downtime_count"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

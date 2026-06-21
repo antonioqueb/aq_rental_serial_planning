@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Report action (appears in the Print menu of the Sale Order) -->
+    <record id="action_report_rental_logistics" model="ir.actions.report">
+        <field name="name">Hoja de Ruta Logística</field>
+        <field name="model">sale.order</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">aq_rental_serial_planning.report_rental_logistics</field>
+        <field name="report_file">aq_rental_serial_planning.report_rental_logistics</field>
+        <field name="binding_model_id" ref="sale.model_sale_order"/>
+        <field name="binding_type">report</field>
+        <field name="print_report_name">'Ruta Logistica - %s' % (object.name)</field>
+    </record>
+
+    <!-- ================= TEMPLATE ================= -->
+    <template id="report_rental_logistics">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="web.basic_layout">
+                    <div class="article" style="font-family:Helvetica,Arial,sans-serif;color:#0B1F2A;">
+
+                        <!-- ===== AlphaQueb branded header ===== -->
+                        <table style="width:100%;border-collapse:collapse;margin-bottom:18px;">
+                            <tr>
+                                <td style="vertical-align:middle;width:60px;">
+                                    <div style="width:46px;height:46px;background-color:#0E7C86;border-radius:10px;
+                                                color:#ffffff;text-align:center;line-height:46px;
+                                                font-weight:bold;font-size:20px;letter-spacing:1px;">AQ</div>
+                                </td>
+                                <td style="vertical-align:middle;">
+                                    <div style="font-weight:bold;letter-spacing:3px;font-size:13px;color:#0B1F2A;">
+                                        ALPHA<span style="color:#0E7C86;">QUEB</span>
+                                    </div>
+                                    <div style="font-size:20px;font-weight:bold;color:#0E7C86;">Hoja de Ruta Logística</div>
+                                </td>
+                                <td style="vertical-align:middle;text-align:right;font-size:12px;color:#48606A;">
+                                    <div style="font-size:16px;font-weight:bold;color:#0B1F2A;"><span t-field="o.name"/></div>
+                                    <div><span t-field="o.partner_id"/></div>
+                                    <div t-if="o.company_id"><span t-field="o.company_id.name"/></div>
+                                </td>
+                            </tr>
+                        </table>
+                        <div style="height:4px;background-color:#0E7C86;border-radius:3px;margin-bottom:16px;"></div>
+
+                        <!-- ===== Event block ===== -->
+                        <table style="width:100%;border-collapse:collapse;margin-bottom:14px;font-size:12px;">
+                            <tr>
+                                <td style="width:50%;vertical-align:top;padding-right:10px;">
+                                    <div style="background-color:#F4F8F9;border:1px solid #E1ECEE;border-radius:8px;padding:12px;">
+                                        <div style="font-weight:bold;color:#0E7C86;margin-bottom:6px;">EVENTO</div>
+                                        <div><strong>Nombre:</strong> <span t-field="o.x_event_name"/></div>
+                                        <div><strong>Ubicación:</strong> <span t-field="o.x_event_location"/></div>
+                                        <div><strong>Cliente:</strong> <span t-field="o.partner_id"/></div>
+                                        <div><strong>Inicio:</strong> <span t-field="o.x_event_start"/></div>
+                                        <div><strong>Fin:</strong> <span t-field="o.x_event_end"/></div>
+                                    </div>
+                                </td>
+                                <td style="width:50%;vertical-align:top;padding-left:10px;">
+                                    <div style="background-color:#0B1F2A;border-radius:8px;padding:12px;color:#D7E6E9;">
+                                        <div style="font-weight:bold;color:#19C3D6;margin-bottom:6px;">PERIODOS</div>
+                                        <div style="margin-bottom:8px;">
+                                            <div style="font-size:10px;color:#8FB4BB;">FACTURABLE (lo que se cobra)</div>
+                                            <div><span t-field="o.x_billable_start"/> &#8594; <span t-field="o.x_billable_end"/></div>
+                                        </div>
+                                        <div>
+                                            <div style="font-size:10px;color:#8FB4BB;">OPERATIVO / BLOQUEO (lo que ocupa inventario)</div>
+                                            <div><span t-field="o.x_block_start"/> &#8594; <span t-field="o.x_block_end"/></div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <!-- ===== Serials roadmap ===== -->
+                        <div style="font-weight:bold;color:#0E7C86;font-size:13px;margin:8px 0 6px;">
+                            Unidades reservadas por número de serie
+                        </div>
+                        <table style="width:100%;border-collapse:collapse;font-size:11px;">
+                            <thead>
+                                <tr style="background-color:#0E7C86;color:#ffffff;">
+                                    <th style="padding:6px;text-align:left;">Producto</th>
+                                    <th style="padding:6px;text-align:left;">Serie</th>
+                                    <th style="padding:6px;text-align:left;">Bloqueo inicio</th>
+                                    <th style="padding:6px;text-align:left;">Bloqueo fin</th>
+                                    <th style="padding:6px;text-align:left;">Estado</th>
+                                    <th style="padding:6px;text-align:left;">Entrega</th>
+                                    <th style="padding:6px;text-align:left;">Retorno</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr t-foreach="o._report_reservations()" t-as="r"
+                                    t-att-style="'background-color:#F4F8F9;' if r_index % 2 else ''">
+                                    <td style="padding:5px 6px;border-bottom:1px solid #E1ECEE;"><span t-field="r.product_id"/></td>
+                                    <td style="padding:5px 6px;border-bottom:1px solid #E1ECEE;font-weight:bold;"><span t-field="r.lot_id.name"/></td>
+                                    <td style="padding:5px 6px;border-bottom:1px solid #E1ECEE;"><span t-field="r.reservation_block_start"/></td>
+                                    <td style="padding:5px 6px;border-bottom:1px solid #E1ECEE;"><span t-field="r.reservation_block_end"/></td>
+                                    <td style="padding:5px 6px;border-bottom:1px solid #E1ECEE;"><span t-field="r.state"/></td>
+                                    <td style="padding:5px 6px;border-bottom:1px solid #E1ECEE;color:#48606A;">
+                                        <span t-if="r.delivery_picking_id" t-field="r.delivery_picking_id.name"/>
+                                        <span t-else="">—</span>
+                                    </td>
+                                    <td style="padding:5px 6px;border-bottom:1px solid #E1ECEE;color:#48606A;">
+                                        <span t-if="r.return_picking_id" t-field="r.return_picking_id.name"/>
+                                        <span t-else="">—</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <div t-if="not o._report_reservations()"
+                             style="padding:14px;color:#90A4AB;font-size:12px;text-align:center;">
+                            Sin reservas de serial registradas en esta orden.
+                        </div>
+
+                        <!-- ===== Logistics notes ===== -->
+                        <div t-if="o.x_logistics_notes" style="margin-top:16px;">
+                            <div style="font-weight:bold;color:#0E7C86;font-size:13px;margin-bottom:4px;">Notas logísticas</div>
+                            <div style="font-size:11px;background-color:#F4F8F9;border:1px solid #E1ECEE;border-radius:8px;padding:10px;">
+                                <span t-field="o.x_logistics_notes"/>
+                            </div>
+                        </div>
+
+                        <!-- ===== Footer ===== -->
+                        <div style="margin-top:26px;border-top:1px solid #E1ECEE;padding-top:8px;
+                                    font-size:10px;color:#90A4AB;text-align:center;">
+                            Generado por AlphaQueb · Rental Serial Planning · alphaqueb.com
+                        </div>
+
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>

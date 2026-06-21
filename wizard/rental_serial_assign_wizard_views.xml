@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_rental_serial_assign_wizard_form" model="ir.ui.view">
+        <field name="name">rental.serial.assign.wizard.form</field>
+        <field name="model">rental.serial.assign.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Assign Serials">
+                <group>
+                    <group>
+                        <field name="product_id"/>
+                        <field name="required_qty"/>
+                    </group>
+                    <group>
+                        <field name="block_start"/>
+                        <field name="block_end"/>
+                        <field name="location_id"/>
+                    </group>
+                </group>
+                <field name="line_ids">
+                    <list editable="bottom" create="false" delete="false"
+                          decoration-success="status == 'available'"
+                          decoration-muted="status in ('no_stock','in_reservation')"
+                          decoration-danger="status == 'blocked'">
+                        <field name="status" widget="badge"
+                               decoration-success="status == 'available'"
+                               decoration-danger="status == 'blocked'"
+                               decoration-info="status == 'in_reservation'"/>
+                        <field name="lot_id"/>
+                        <field name="selected"
+                               readonly="status != 'available'"/>
+                    </list>
+                </field>
+                <footer>
+                    <button name="action_assign" type="object" string="Assign Selected"
+                            class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

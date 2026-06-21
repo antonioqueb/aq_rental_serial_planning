@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_rental_package_list" model="ir.ui.view">
+        <field name="name">rental.package.template.list</field>
+        <field name="model">rental.package.template</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="code"/>
+                <field name="component_count"/>
+                <field name="pricing_policy"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_rental_package_form" model="ir.ui.view">
+        <field name="name">rental.package.template.form</field>
+        <field name="model">rental.package.template</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_check_availability" type="object"
+                            string="Check Availability" class="btn-primary"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_check_availability" type="object"
+                                class="oe_stat_button" icon="fa-calendar-check-o">
+                            <field name="component_count" widget="statinfo" string="Components"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name" placeholder="Package name"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="code"/>
+                            <field name="sale_product_id"/>
+                            <field name="active" widget="boolean_toggle"/>
+                        </group>
+                        <group>
+                            <field name="pricing_policy"/>
+                            <field name="fixed_price"
+                                   invisible="pricing_policy != 'fixed_package_price'"/>
+                            <field name="currency_id" invisible="1"/>
+                            <field name="hide_components_on_quote"/>
+                            <field name="hide_components_on_invoice"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Components" name="components">
+                            <field name="line_ids">
+                                <list editable="bottom">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="product_id"/>
+                                    <field name="tracking"/>
+                                    <field name="quantity"/>
+                                    <field name="required"/>
+                                    <field name="allow_substitution"/>
+                                    <field name="allowed_substitute_product_ids"
+                                           widget="many2many_tags"
+                                           column_invisible="not parent.id"
+                                           invisible="not allow_substitution"/>
+                                    <field name="discount_percentage"/>
+                                    <field name="notes"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Description" name="desc">
+                            <field name="description"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_rental_package" model="ir.actions.act_window">
+        <field name="name">Rental Packages</field>
+        <field name="res_model">rental.package.template</field>
+        <field name="view_mode">list,form</field>
+    </record>
+</odoo>

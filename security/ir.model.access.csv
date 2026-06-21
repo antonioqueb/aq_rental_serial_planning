@@ -1,0 +1,17 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_reservation_user,reservation.user,model_rental_serial_reservation,group_rental_planner_user,1,1,1,0
+access_reservation_wh,reservation.wh,model_rental_serial_reservation,group_rental_warehouse_user,1,1,0,0
+access_reservation_manager,reservation.manager,model_rental_serial_reservation,group_rental_planner_manager,1,1,1,1
+access_reservation_admin,reservation.admin,model_rental_serial_reservation,group_rental_administrator,1,1,1,1
+access_package_user,package.user,model_rental_package_template,group_rental_planner_user,1,0,0,0
+access_package_admin,package.admin,model_rental_package_template,group_rental_administrator,1,1,1,1
+access_package_manager,package.manager,model_rental_package_template,group_rental_planner_manager,1,1,1,0
+access_package_line_user,package.line.user,model_rental_package_template_line,group_rental_planner_user,1,0,0,0
+access_package_line_admin,package.line.admin,model_rental_package_template_line,group_rental_administrator,1,1,1,1
+access_package_line_manager,package.line.manager,model_rental_package_template_line,group_rental_planner_manager,1,1,1,1
+access_downtime_user,downtime.user,model_rental_serial_downtime,group_rental_planner_user,1,0,0,0
+access_downtime_wh,downtime.wh,model_rental_serial_downtime,group_rental_warehouse_user,1,1,1,0
+access_downtime_admin,downtime.admin,model_rental_serial_downtime,group_rental_administrator,1,1,1,1
+access_downtime_manager,downtime.manager,model_rental_serial_downtime,group_rental_planner_manager,1,1,1,1
+access_assign_wizard,assign.wizard,model_rental_serial_assign_wizard,group_rental_planner_user,1,1,1,1
+access_assign_wizard_line,assign.wizard.line,model_rental_serial_assign_wizard_line,group_rental_planner_user,1,1,1,1

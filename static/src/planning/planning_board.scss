@@ -1,0 +1,165 @@
+.aq_planning_board {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+    background: #fff;
+
+    $label-width: 240px;
+
+    .aq_pb_toolbar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        align-items: center;
+        padding: 8px 12px;
+        border-bottom: 1px solid #dee2e6;
+        background: #f8f9fa;
+
+        .aq_pb_nav, .aq_pb_filters {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+        }
+        input.o_input, select.o_input { width: auto; min-width: 120px; }
+    }
+
+    .aq_pb_legend {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 14px;
+        padding: 6px 12px;
+        font-size: 12px;
+        border-bottom: 1px solid #eee;
+        color: #555;
+
+        .aq_pb_legend_item { display: inline-flex; align-items: center; gap: 4px; }
+        .aq_pb_swatch {
+            width: 14px; height: 14px; border-radius: 3px; display: inline-block;
+        }
+    }
+
+    .aq_pb_loading, .aq_pb_noresult {
+        padding: 40px; text-align: center; color: #888;
+    }
+
+    .aq_pb_grid {
+        flex: 1;
+        overflow: auto;
+        position: relative;
+    }
+
+    .aq_pb_header {
+        display: flex;
+        position: sticky;
+        top: 0;
+        z-index: 5;
+        background: #fff;
+        border-bottom: 2px solid #dee2e6;
+    }
+
+    .aq_pb_rowlabel {
+        width: $label-width;
+        min-width: $label-width;
+        padding: 6px 10px;
+        border-right: 1px solid #dee2e6;
+        box-sizing: border-box;
+        background: #fff;
+        position: sticky;
+        left: 0;
+        z-index: 2;
+    }
+    .aq_pb_corner { font-weight: 600; }
+
+    .aq_pb_timeline {
+        position: relative;
+        flex: 1;
+        min-width: 600px;
+        min-height: 34px;
+    }
+
+    .aq_pb_colhead {
+        position: absolute;
+        top: 0;
+        font-size: 11px;
+        font-weight: 600;
+        color: #555;
+        padding: 6px 4px;
+        white-space: nowrap;
+        &.aq_pb_weekend { color: #b02a37; }
+    }
+
+    .aq_pb_gridline {
+        position: absolute;
+        top: 0; bottom: 0;
+        width: 1px;
+        background: #f0f0f0;
+        &.aq_pb_weekend { background: #fbeaec; width: 100%; max-width: 14.2%; }
+    }
+
+    .aq_pb_product_row {
+        display: flex;
+        cursor: pointer;
+        background: #eef2f7;
+        border-bottom: 1px solid #dde3ea;
+        &:hover { background: #e3eaf2; }
+        .aq_pb_product { font-weight: 600; background: #eef2f7; }
+    }
+
+    .aq_pb_serial_row {
+        display: flex;
+        border-bottom: 1px solid #f0f0f0;
+        min-height: 34px;
+        &:hover .aq_pb_serial { background: #f6f9fc; }
+        .aq_pb_serial { font-size: 13px; display: flex; align-items: center; }
+        .aq_pb_dt_btn { margin-left: auto; padding: 0 6px; opacity: 0.5; }
+        &:hover .aq_pb_dt_btn { opacity: 1; }
+    }
+
+    .aq_pb_block {
+        position: absolute;
+        top: 4px;
+        height: 26px;
+        border-radius: 4px;
+        color: #fff;
+        font-size: 11px;
+        line-height: 26px;
+        padding: 0 6px;
+        overflow: hidden;
+        white-space: nowrap;
+        cursor: pointer;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+        z-index: 1;
+        transition: filter .1s;
+        &:hover { filter: brightness(0.92); z-index: 3; }
+        &.aq_pb_downtime {
+            background-image: repeating-linear-gradient(
+                45deg, transparent, transparent 4px,
+                rgba(255,255,255,0.25) 4px, rgba(255,255,255,0.25) 8px);
+        }
+        .aq_pb_block_label { pointer-events: none; }
+    }
+
+    .aq_pb_panel {
+        position: absolute;
+        top: 0; right: 0; bottom: 0;
+        width: 340px;
+        background: #fff;
+        border-left: 1px solid #dee2e6;
+        box-shadow: -2px 0 8px rgba(0,0,0,0.08);
+        z-index: 20;
+        display: flex;
+        flex-direction: column;
+
+        .aq_pb_panel_head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 12px;
+            border-bottom: 1px solid #eee;
+            background: #f8f9fa;
+        }
+        .aq_pb_panel_body { padding: 12px; overflow: auto; }
+        .aq_pb_panel_actions { display: flex; gap: 6px; flex-wrap: wrap; }
+    }
+}

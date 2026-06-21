@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<!-- AQ Rental Serial Planning — AlphaQueb -->
+<section style="font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#0B1F2A;line-height:1.55;max-width:980px;margin:0 auto;">
+
+  <!-- ============== HERO ============== -->
+  <div style="background:linear-gradient(135deg,#0B1F2A 0%,#0E5563 55%,#0E7C86 100%);border-radius:18px;padding:48px 44px;color:#fff;position:relative;overflow:hidden;">
+    <div style="position:absolute;right:-40px;top:-40px;width:220px;height:220px;background:radial-gradient(circle,#19C3D6 0%,transparent 70%);opacity:.25;"></div>
+
+    <!-- AlphaQueb logo -->
+    <div style="display:flex;align-items:center;gap:14px;margin-bottom:28px;">
+      <svg width="46" height="46" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs><linearGradient id="aqg" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#19C3D6"/><stop offset="1" stop-color="#0E7C86"/>
+        </linearGradient></defs>
+        <path d="M50 8 L86 28 V72 L50 92 L14 72 V28 Z" fill="url(#aqg)"/>
+        <path d="M50 8 L86 28 L50 48 L14 28 Z" fill="#fff" opacity=".22"/>
+        <path d="M50 48 L86 28 V72 L50 92 Z" fill="#000" opacity=".14"/>
+        <text x="50" y="62" font-size="34" font-weight="800" fill="#fff" text-anchor="middle" font-family="Segoe UI,Arial">AQ</text>
+      </svg>
+      <span style="font-weight:800;letter-spacing:3px;font-size:15px;">ALPHA<span style="color:#19C3D6;">QUEB</span></span>
+    </div>
+
+    <h1 style="font-size:38px;margin:0 0 10px;font-weight:800;">Rental Serial Planning</h1>
+    <p style="font-size:19px;margin:0;opacity:.92;max-width:640px;">
+      Planeación de renta de eventos <strong>por número de serie</strong>, estilo
+      Booqable, nativa en Odoo 19. Reserva unidades específicas, separa el periodo
+      facturable del operativo y elimina la doble reserva.
+    </p>
+
+    <div style="margin-top:30px;display:flex;gap:10px;flex-wrap:wrap;">
+      <span style="background:rgba(255,255,255,.14);padding:7px 14px;border-radius:30px;font-size:13px;">Odoo 19 Enterprise</span>
+      <span style="background:rgba(255,255,255,.14);padding:7px 14px;border-radius:30px;font-size:13px;">Reserva por serial</span>
+      <span style="background:rgba(255,255,255,.14);padding:7px 14px;border-radius:30px;font-size:13px;">Tablero OWL</span>
+      <span style="background:rgba(255,255,255,.14);padding:7px 14px;border-radius:30px;font-size:13px;">Sin doble booking</span>
+    </div>
+  </div>
+
+  <!-- ============== PROBLEM / VALUE ============== -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:30px;">
+    <div style="background:#F4F8F9;border-radius:14px;padding:26px;border:1px solid #E1ECEE;">
+      <h3 style="margin:0 0 8px;color:#0E7C86;">El problema</h3>
+      <p style="margin:0;font-size:15px;">Odoo Rental bloquea <em>cantidades</em>, no unidades. No distingue lo que el
+      cliente paga de lo que la operación realmente ocupa (montaje, entrega, recolección, limpieza).</p>
+    </div>
+    <div style="background:#F4F8F9;border-radius:14px;padding:26px;border:1px solid #E1ECEE;">
+      <h3 style="margin:0 0 8px;color:#0E7C86;">La solución AlphaQueb</h3>
+      <p style="margin:0;font-size:15px;">Una capa de reserva por <strong>stock.lot</strong> con periodo facturable y
+      periodo operativo independientes, motor de disponibilidad por serial y un calendario tipo Booqable.</p>
+    </div>
+  </div>
+
+  <!-- ============== TWO PERIODS DIAGRAM ============== -->
+  <h2 style="margin:42px 0 6px;color:#0B1F2A;">Periodo facturable ≠ Periodo operativo</h2>
+  <p style="margin:0 0 18px;color:#48606A;">Cobras el sábado. Bloqueas de jueves a martes. La disponibilidad se calcula sobre el bloque operativo.</p>
+  <div style="background:#fff;border:1px solid #E1ECEE;border-radius:14px;padding:24px;">
+    <div style="position:relative;height:14px;background:#EAF3F4;border-radius:8px;margin:34px 0 8px;">
+      <div style="position:absolute;left:8%;width:84%;top:0;height:14px;background:repeating-linear-gradient(45deg,#0E7C86,#0E7C86 8px,#13929e 8px,#13929e 16px);border-radius:8px;"></div>
+      <div style="position:absolute;left:42%;width:18%;top:-26px;height:14px;background:#19C3D6;border-radius:8px;box-shadow:0 2px 6px rgba(25,195,214,.5);"></div>
+      <span style="position:absolute;left:42%;top:-48px;font-size:12px;font-weight:700;color:#0E7C86;">Facturable (sáb)</span>
+      <span style="position:absolute;left:8%;top:20px;font-size:12px;color:#48606A;">Bloqueo operativo: jue → mar</span>
+    </div>
+    <div style="display:flex;justify-content:space-between;font-size:11px;color:#90A4AB;margin-top:18px;">
+      <span>Mié · Prep</span><span>Jue · Entrega</span><span>Sáb · Evento</span><span>Lun · Recoge</span><span>Mar · Libera</span>
+    </div>
+  </div>
+
+  <!-- ============== FEATURE GRID ============== -->
+  <h2 style="margin:42px 0 18px;color:#0B1F2A;">Capacidades</h2>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;">
+    <!-- repeated cards -->
+    <div style="border:1px solid #E1ECEE;border-radius:14px;padding:22px;">
+      <div style="font-size:24px;">🎯</div>
+      <h4 style="margin:10px 0 6px;color:#0E7C86;">Reserva por serial</h4>
+      <p style="margin:0;font-size:14px;color:#48606A;">Selecciona los stock.lot exactos. Bloqueo solo de las unidades elegidas.</p>
+    </div>
+    <div style="border:1px solid #E1ECEE;border-radius:14px;padding:22px;">
+      <div style="font-size:24px;">🛡️</div>
+      <h4 style="margin:10px 0 6px;color:#0E7C86;">Cero doble booking</h4>
+      <p style="margin:0;font-size:14px;color:#48606A;">Validación ORM + constraint PostgreSQL <code>EXCLUDE</code> a prueba de concurrencia.</p>
+    </div>
+    <div style="border:1px solid #E1ECEE;border-radius:14px;padding:22px;">
+      <div style="font-size:24px;">📅</div>
+      <h4 style="margin:10px 0 6px;color:#0E7C86;">Tablero tipo Booqable</h4>
+      <p style="margin:0;font-size:14px;color:#48606A;">Componente OWL: una fila por serial, bloques de color, filtros y acciones rápidas.</p>
+    </div>
+    <div style="border:1px solid #E1ECEE;border-radius:14px;padding:22px;">
+      <div style="font-size:24px;">📦</div>
+      <h4 style="margin:10px 0 6px;color:#0E7C86;">Paquetes / bundles</h4>
+      <p style="margin:0;font-size:14px;color:#48606A;">Explota componentes; disponibilidad = el componente más limitado.</p>
+    </div>
+    <div style="border:1px solid #E1ECEE;border-radius:14px;padding:22px;">
+      <div style="font-size:24px;">🚚</div>
+      <h4 style="margin:10px 0 6px;color:#0E7C86;">Inventario nativo</h4>
+      <p style="margin:0;font-size:14px;color:#48606A;">Pickings reales de salida y retorno con línea por número de serie.</p>
+    </div>
+    <div style="border:1px solid #E1ECEE;border-radius:14px;padding:22px;">
+      <div style="font-size:24px;">🔧</div>
+      <h4 style="margin:10px 0 6px;color:#0E7C86;">Downtime &amp; soft holds</h4>
+      <p style="margin:0;font-size:14px;color:#48606A;">Mantenimiento/daño bloquean disponibilidad; apartados temporales con expiración.</p>
+    </div>
+  </div>
+
+  <!-- ============== BOARD MOCKUP ============== -->
+  <h2 style="margin:42px 0 18px;color:#0B1F2A;">Tablero de planeación</h2>
+  <div style="background:#fff;border:1px solid #E1ECEE;border-radius:14px;padding:14px;box-shadow:0 8px 24px rgba(11,31,42,.08);">
+    <div style="display:flex;gap:8px;font-size:11px;margin-bottom:10px;">
+      <span style="background:#0E7C86;color:#fff;padding:4px 10px;border-radius:6px;">Week</span>
+      <span style="background:#EAF3F4;color:#48606A;padding:4px 10px;border-radius:6px;">All warehouses</span>
+      <span style="background:#EAF3F4;color:#48606A;padding:4px 10px;border-radius:6px;">All packages</span>
+    </div>
+    <table style="width:100%;border-collapse:collapse;font-size:12px;">
+      <tr style="color:#90A4AB;"><td style="width:180px;padding:6px;">Producto / Serial</td>
+        <td>Lun</td><td>Mar</td><td>Mié</td><td>Jue</td><td>Vie</td><td>Sáb</td><td>Dom</td></tr>
+      <tr style="background:#EEF2F7;"><td style="padding:7px;font-weight:700;">▾ Sillas Manhattan <span style="background:#cfd8df;border-radius:8px;padding:0 7px;">20</span></td><td colspan="7"></td></tr>
+      <tr><td style="padding:5px 7px;color:#48606A;">▦ SILLA-001</td>
+        <td colspan="3"></td><td colspan="3" style="padding:2px;"><div style="background:#198754;color:#fff;border-radius:4px;padding:2px 6px;">Reserved · Aurora</div></td><td></td></tr>
+      <tr><td style="padding:5px 7px;color:#48606A;">▦ SILLA-002</td>
+        <td colspan="1"></td><td colspan="2" style="padding:2px;"><div style="background:#20c997;color:#fff;border-radius:4px;padding:2px 6px;">In use</div></td><td colspan="4"></td></tr>
+      <tr><td style="padding:5px 7px;color:#48606A;">▦ SILLA-003</td>
+        <td colspan="2"></td><td colspan="2" style="padding:2px;"><div style="background:#f0ad4e;color:#fff;border-radius:4px;padding:2px 6px;">Soft hold</div></td><td colspan="3"></td></tr>
+      <tr><td style="padding:5px 7px;color:#48606A;">▦ SILLA-010</td>
+        <td colspan="3"></td><td colspan="2" style="padding:2px;"><div style="background:#6c757d;color:#fff;border-radius:4px;padding:2px 6px;background-image:repeating-linear-gradient(45deg,transparent,transparent 4px,rgba(255,255,255,.3) 4px,rgba(255,255,255,.3) 8px);">Mantenimiento</div></td><td colspan="2"></td></tr>
+    </table>
+    <div style="display:flex;gap:14px;flex-wrap:wrap;font-size:11px;color:#48606A;margin-top:12px;">
+      <span>🟩 Reserved</span><span>🟢 In use</span><span>🟧 Soft hold</span><span>⬜ Released</span><span>🟥 Conflict</span><span>⬛ Downtime</span>
+    </div>
+  </div>
+
+  <!-- ============== ACCEPTANCE ============== -->
+  <h2 style="margin:42px 0 18px;color:#0B1F2A;">Reemplaza la lógica de Booqable</h2>
+  <div style="background:#0B1F2A;border-radius:14px;padding:28px 30px;color:#D7E6E9;">
+    <ul style="margin:0;padding-left:20px;font-size:15px;line-height:2;">
+      <li>Renta por número de serie con disponibilidad individual.</li>
+      <li>Periodo cobrado distinto al periodo bloqueado.</li>
+      <li>Paquetes que explotan componentes internamente.</li>
+      <li>Calendario por serial con estados visuales.</li>
+      <li>Integración con cotización, orden, inventario, entrega, retorno y factura.</li>
+    </ul>
+  </div>
+
+  <!-- ============== FOOTER ============== -->
+  <div style="text-align:center;margin:40px 0 16px;color:#90A4AB;font-size:13px;">
+    <div style="display:inline-flex;align-items:center;gap:8px;">
+      <svg width="22" height="22" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <defs><linearGradient id="aqg2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#19C3D6"/><stop offset="1" stop-color="#0E7C86"/></linearGradient></defs>
+        <path d="M50 8 L86 28 V72 L50 92 L14 72 V28 Z" fill="url(#aqg2)"/>
+      </svg>
+      <strong style="letter-spacing:2px;color:#48606A;">ALPHAQUEB</strong>
+    </div>
+    <p style="margin:8px 0 0;">© AlphaQueb · Desarrollo Odoo a medida · alphaqueb.com</p>
+  </div>
+
+</section>
