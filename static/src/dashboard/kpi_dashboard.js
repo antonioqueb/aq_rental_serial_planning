@@ -4,11 +4,11 @@ import { registry } from "@web/core/registry";
 import { useService } from "@web/core/utils/hooks";
 import { Component, useState, onWillStart } from "@odoo/owl";
 
-// Getting Ready palette — warm editorial funnel (champagne -> caramel)
+// Getting Ready palette — sage-green funnel (salvia light -> olive), soft_hold champagne
 const STATE_COLORS = {
-    quotation: "#E0D5C2", soft_hold: "#D8B98C", reserved: "#CBB596",
-    prepared: "#C7A578", picked_up: "#BE9466", delivered: "#B07F50",
-    in_use: "#9E6A3E", returned: "#C79A6B", released: "#CFCABF",
+    quotation: "#C7D7C9", soft_hold: "#C9A36A", reserved: "#A9C2B2",
+    prepared: "#93B19E", picked_up: "#7DA08B", delivered: "#6E927C",
+    in_use: "#5F7668", returned: "#BFA070", released: "#C9C9C2",
 };
 
 export class RentalKpiDashboard extends Component {
@@ -42,13 +42,14 @@ export class RentalKpiDashboard extends Component {
     stateColor(key) { return STATE_COLORS[key] || "#cbd5e1"; }
     pct(value, max) { return max > 0 ? Math.round((value / max) * 100) : 0; }
     utilColor(pct) {
-        // warm scale: taupe -> gold -> caramel -> warm brick
-        return pct >= 85 ? "#A8442E" : pct >= 60 ? "#A86F45" : pct >= 30 ? "#C79A6B" : "#B8A995";
+        // green (free) -> champagne -> caramel -> warm brick (full)
+        return pct >= 85 ? "#A8442E" : pct >= 60 ? "#B07F50" : pct >= 30 ? "#C9A36A" : "#8FAF9B";
     }
 
     get donutStyle() {
         const u = this.state.data.headline.utilization;
-        return `background: conic-gradient(#C79A6B 0 ${u}%, #E8DFD0 ${u}% 100%);`;
+        // champagne arc (occupied) over salvia-green track (free)
+        return `background: conic-gradient(#C9A36A 0 ${u}%, #DCE5DC ${u}% 100%);`;
     }
 
     get cards() {

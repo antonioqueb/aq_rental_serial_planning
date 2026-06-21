@@ -1,31 +1,33 @@
 // ===========================================================================
 // AQ Rental — KPI / Planning dashboard
-// Branding: "Getting Ready" — warm editorial neutrals (ivory, champagne,
-// taupe, golden nude, caramel, warm silver, charcoal). No glow, no saturated
-// blues/greens/purples.
+// Branding: "Getting Ready" — sage-GREEN base + warm neutrals (marfil canvas,
+// champagne premium accent, taupe, charcoal). No glow, no saturated tech hues.
 // ===========================================================================
-$d-accent: #c79a6b;   // dorado nude
-$d-accent2: #a86f45;  // caramelo suave
-$d-ink: #191714;      // negro carbón
-$d-muted: #6d6255;    // café grisáceo
-$d-faint: #b8a995;    // taupe claro
-$d-line: #e8dfce;     // champagne border
-$d-bg: #f7f3ea;       // marfil cálido
-$d-surface: #fffdf8;  // ivory
-$d-champ: #d8cbb8;    // champagne beige
-$d-track: #eae0cf;    // bar track
-$d-silver: #c9c9c2;   // plata cálida
-$d-danger: #a8442e;   // warm brick (alertas, sin rojo neón)
-$d-sh-sm: 0 1px 2px rgba(109, 98, 85, .14);
-$d-sh-md: 0 8px 20px rgba(109, 98, 85, .16);
+$d-green: #8faf9b;       // verde Getting Ready (base)
+$d-green-dark: #5f7668;  // verde oliva grisáceo
+$d-green-med: #7d9d88;
+$d-salvia: #c7d7c9;      // salvia claro
+$d-champ: #c9a36a;       // champagne / dorado (acento premium)
+$d-taupe: #b8a995;       // beige taupe (mobiliario)
+$d-ink: #1f211d;         // carbón suave
+$d-muted: #6b7a6f;       // verde-gris apagado (texto secundario)
+$d-faint: #9da9a0;
+$d-line: #e3e6dd;        // borde neutro verdoso
+$d-bg: #f7f3ea;          // marfil cálido (lienzo)
+$d-surface: #fffdf8;     // blanco cálido
+$d-track: #e2e8e1;       // pista de barras
+$d-silver: #c9c9c2;
+$d-danger: #a8442e;      // ladrillo cálido (alertas)
+$d-sh-sm: 0 1px 2px rgba(31, 33, 29, .1);
+$d-sh-md: 0 8px 20px rgba(31, 33, 29, .13);
 
 .aq_kpi_dashboard {
     display: flex; flex-direction: column; height: 100%; overflow: hidden;
     background: $d-bg; color: $d-ink; font-size: 13px; -webkit-font-smoothing: antialiased;
 
     *::-webkit-scrollbar { width: 10px; height: 10px; }
-    *::-webkit-scrollbar-thumb { background: #c9bba6; border-radius: 8px; border: 2px solid transparent; background-clip: content-box; }
-    *::-webkit-scrollbar-thumb:hover { background: $d-faint; background-clip: content-box; }
+    *::-webkit-scrollbar-thumb { background: #b9c5bb; border-radius: 8px; border: 2px solid transparent; background-clip: content-box; }
+    *::-webkit-scrollbar-thumb:hover { background: $d-green; background-clip: content-box; }
 
     // ---- topbar
     .aq_kpi_topbar {
@@ -35,12 +37,12 @@ $d-sh-md: 0 8px 20px rgba(109, 98, 85, .16);
         .aq_kpi_sub { font-size: 12px; color: $d-faint; }
         .aq_kpi_controls { display: flex; align-items: center; gap: 8px; }
         .aq_kpi_period {
-            background: #efe7d8; border-radius: 10px; padding: 3px; gap: 2px; box-shadow: inset 0 1px 2px rgba(109, 98, 85, .12);
+            background: #e7ece6; border-radius: 10px; padding: 3px; gap: 2px; box-shadow: inset 0 1px 2px rgba(31, 33, 29, .08);
             .btn { border: none !important; border-radius: 7px !important; background: transparent; color: $d-muted; font-weight: 700; box-shadow: none !important; }
-            .btn.btn-primary { background: $d-surface; color: $d-accent2; box-shadow: $d-sh-sm; }
+            .btn.btn-primary { background: $d-surface; color: $d-green-dark; box-shadow: $d-sh-sm; }
         }
-        .btn-secondary { background: $d-accent; border-color: $d-accent; color: #fffdf8; border-radius: 9px; font-weight: 600;
-            &:hover { background: $d-accent2; border-color: $d-accent2; } }
+        .btn-secondary { background: $d-green-dark; border-color: $d-green-dark; color: #fffdf8; border-radius: 9px; font-weight: 600;
+            &:hover { background: #4e6357; border-color: #4e6357; } }
         .btn-light { border: 1px solid $d-line; border-radius: 9px; background: $d-surface; color: $d-muted; }
     }
 
@@ -55,7 +57,7 @@ $d-sh-md: 0 8px 20px rgba(109, 98, 85, .16);
     .aq_util { display: flex; align-items: center; gap: 26px; }
     .aq_kpi_donut {
         width: 134px; height: 134px; border-radius: 50%; flex: 0 0 auto;
-        display: flex; align-items: center; justify-content: center; box-shadow: inset 0 0 0 1px rgba(25, 23, 20, .05);
+        display: flex; align-items: center; justify-content: center; box-shadow: inset 0 0 0 1px rgba(31, 33, 29, .05);
         .aq_kpi_donut_hole {
             width: 98px; height: 98px; border-radius: 50%; background: $d-surface;
             display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: $d-sh-sm;
@@ -67,11 +69,11 @@ $d-sh-md: 0 8px 20px rgba(109, 98, 85, .16);
     .aq_util_row { display: flex; align-items: center; gap: 9px; color: $d-muted; strong { color: $d-ink; margin-left: 4px; } }
     .aq_util_total { margin-top: 6px; padding-top: 9px; border-top: 1px dashed $d-line; font-size: 12px; color: $d-faint; strong { color: $d-ink; } }
     .aq_dot { width: 11px; height: 11px; border-radius: 50%; display: inline-block;
-        &.is-busy { background: $d-accent2; } &.is-ok { background: $d-silver; } &.is-muted { background: $d-muted; } }
+        &.is-busy { background: $d-champ; } &.is-ok { background: $d-green; } &.is-muted { background: $d-muted; } }
 
     .aq_value { display: flex; flex-direction: column; justify-content: center; border: none;
-        background: linear-gradient(135deg, #191714 0%, #6d6255 55%, #a86f45 100%); color: #fffdf8; box-shadow: $d-sh-md; }
-    .aq_value_icon { width: 42px; height: 42px; border-radius: 12px; background: rgba(255, 253, 248, .16); color: $d-accent;
+        background: linear-gradient(135deg, #1f211d 0%, #5f7668 55%, #8faf9b 100%); color: #fffdf8; box-shadow: $d-sh-md; }
+    .aq_value_icon { width: 42px; height: 42px; border-radius: 12px; background: rgba(255, 253, 248, .16); color: $d-champ;
         display: inline-flex; align-items: center; justify-content: center; font-size: 18px; margin-bottom: 12px; }
     .aq_value_amount { font-size: 32px; font-weight: 900; letter-spacing: -1px; }
     .aq_value_label { font-size: 13px; opacity: .92; margin-top: 2px; }
@@ -83,17 +85,17 @@ $d-sh-md: 0 8px 20px rgba(109, 98, 85, .16);
         display: flex; align-items: center; gap: 14px; background: $d-surface; border: 1px solid $d-line;
         border-radius: 16px; padding: 16px; box-shadow: $d-sh-sm; transition: transform .12s, box-shadow .12s;
         &:hover { transform: translateY(-2px); box-shadow: $d-sh-md; }
-        .aq_kpi_card_icon { width: 44px; height: 44px; border-radius: 13px; background: #efe6d6; color: $d-muted;
+        .aq_kpi_card_icon { width: 44px; height: 44px; border-radius: 13px; background: #e6ece5; color: $d-green-dark;
             display: inline-flex; align-items: center; justify-content: center; font-size: 18px; flex: 0 0 auto; }
         .aq_kpi_card_value { font-size: 28px; font-weight: 900; letter-spacing: -.8px; line-height: 1; color: $d-ink; }
         .aq_kpi_card_label { font-size: 12px; color: $d-muted; font-weight: 600; margin-top: 3px; }
         .aq_kpi_card_sub { font-size: 11px; color: $d-faint; margin-top: 2px; }
 
-        &.is-busy .aq_kpi_card_icon { background: #f0e2cc; color: $d-accent2; }
-        &.is-info .aq_kpi_card_icon { background: #eae7df; color: $d-muted; }
-        &.is-ok .aq_kpi_card_icon { background: #efe6d6; color: $d-accent2; }
-        &.is-warn .aq_kpi_card_icon { background: #f3e6ce; color: $d-accent2; }
-        &.is-muted .aq_kpi_card_icon { background: #e6dfd2; color: $d-muted; }
+        &.is-busy .aq_kpi_card_icon { background: #f0e6d2; color: #b07f50; }
+        &.is-info .aq_kpi_card_icon { background: #e2ebe2; color: $d-green-dark; }
+        &.is-ok .aq_kpi_card_icon { background: #e2ebe2; color: $d-green-dark; }
+        &.is-warn .aq_kpi_card_icon { background: #f3e6ce; color: #b07f50; }
+        &.is-muted .aq_kpi_card_icon { background: #e7e4db; color: $d-muted; }
         &.is-danger { border-color: #e7c9bd; .aq_kpi_card_icon { background: #f3ddd2; color: $d-danger; } .aq_kpi_card_value { color: $d-danger; } }
     }
 
@@ -101,17 +103,17 @@ $d-sh-md: 0 8px 20px rgba(109, 98, 85, .16);
     .aq_kpi_grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
     @media (max-width: 900px) { .aq_kpi_grid2 { grid-template-columns: 1fr; } }
     .aq_kpi_panel { background: $d-surface; border: 1px solid $d-line; border-radius: 18px; box-shadow: $d-sh-sm; padding: 18px 20px; }
-    .aq_panel_title { font-size: 14px; font-weight: 800; color: $d-ink; margin-bottom: 16px; display: flex; align-items: center; i { color: $d-accent; } }
+    .aq_panel_title { font-size: 14px; font-weight: 800; color: $d-ink; margin-bottom: 16px; display: flex; align-items: center; i { color: $d-green-dark; } }
     .aq_panel_empty { color: $d-faint; padding: 16px 0; text-align: center; }
 
     // horizontal bars
     .aq_bars { display: flex; flex-direction: column; gap: 11px; }
     .aq_bar_row { display: grid; grid-template-columns: 180px 1fr 44px; align-items: center; gap: 12px; }
-    .aq_bar_label { font-size: 12.5px; color: #3a342c; font-weight: 600; white-space: normal; word-break: break-word; line-height: 1.2; }
+    .aq_bar_label { font-size: 12.5px; color: #2f352f; font-weight: 600; white-space: normal; word-break: break-word; line-height: 1.2; }
     .aq_bar_track { height: 12px; background: $d-track; border-radius: 999px; overflow: hidden; }
     .aq_bar_fill { height: 100%; border-radius: 999px; min-width: 4px; transition: width .4s cubic-bezier(.4, 0, .2, 1);
-        &.aq_accent { background: linear-gradient(90deg, #d8b98c, #c79a6b); }
-        &.aq_accent2 { background: linear-gradient(90deg, #c79a6b, #a86f45); } }
+        &.aq_accent { background: linear-gradient(90deg, #8faf9b, #5f7668); }
+        &.aq_accent2 { background: linear-gradient(90deg, #d8b98c, #c9a36a); } }
     .aq_bar_value { font-size: 13px; font-weight: 800; text-align: right; color: $d-ink; font-variant-numeric: tabular-nums; }
 
     // column chart
@@ -120,7 +122,7 @@ $d-sh-md: 0 8px 20px rgba(109, 98, 85, .16);
     .aq_col_val { font-size: 12px; font-weight: 800; color: $d-muted; margin-bottom: 4px; }
     .aq_col_bar_wrap { flex: 1; width: 100%; display: flex; align-items: flex-end; justify-content: center; }
     .aq_col_bar { width: 62%; min-height: 4px; border-radius: 9px 9px 3px 3px;
-        background: linear-gradient(180deg, #d8b98c, #a86f45); box-shadow: inset 0 1px 0 rgba(255, 253, 248, .35);
+        background: linear-gradient(180deg, #8faf9b, #5f7668); box-shadow: inset 0 1px 0 rgba(255, 253, 248, .3);
         transition: height .4s cubic-bezier(.4, 0, .2, 1); }
     .aq_col_label { font-size: 10.5px; color: $d-faint; margin-top: 8px; font-weight: 600; white-space: nowrap; }
 }
