@@ -6,7 +6,7 @@
             <!-- ===== Toolbar ===== -->
             <div class="aq_pb_toolbar">
                 <div class="aq_pb_nav">
-                    <button class="btn btn-light" t-on-click="() => this.shift(-1)" aria-label="Anterior" title="Anterior">
+                    <button class="btn btn-light" t-on-click="() => this.nav(-1)" aria-label="Anterior" title="Anterior">
                         <i class="fa fa-chevron-left"/>
                     </button>
                     <button class="btn btn-light aq_today_btn" t-on-click="() => this.goToday()" title="Ir a hoy">Hoy</button>
@@ -15,7 +15,7 @@
                     <span class="mx-1">→</span>
                     <input type="date" class="o_input" t-att-value="state.dateEnd" aria-label="Fecha fin"
                            t-on-change="(ev) => this.onDateChange('dateEnd', ev)"/>
-                    <button class="btn btn-light" t-on-click="() => this.shift(1)" aria-label="Siguiente" title="Siguiente">
+                    <button class="btn btn-light" t-on-click="() => this.nav(1)" aria-label="Siguiente" title="Siguiente">
                         <i class="fa fa-chevron-right"/>
                     </button>
                     <button class="btn btn-light" t-on-click="() => this.refresh()" aria-label="Actualizar" title="Actualizar">
@@ -23,13 +23,20 @@
                     </button>
                 </div>
 
-                <div class="aq_pb_zoom btn-group" role="group" aria-label="Vista">
-                    <button class="btn" t-att-class="state.zoom === 'day' ? 'btn-primary' : 'btn-light'"
-                            t-on-click="() => this.setZoom('day')">Día</button>
-                    <button class="btn" t-att-class="state.zoom === 'week' ? 'btn-primary' : 'btn-light'"
-                            t-on-click="() => this.setZoom('week')">Semana</button>
-                    <button class="btn" t-att-class="state.zoom === 'month' ? 'btn-primary' : 'btn-light'"
-                            t-on-click="() => this.setZoom('month')">Mes</button>
+                <!-- view-mode switcher -->
+                <div class="aq_pb_modes btn-group" role="group" aria-label="Modo de vista">
+                    <t t-foreach="viewModes" t-as="m" t-key="m.key">
+                        <button class="btn btn-sm" t-att-class="state.viewMode === m.key ? 'btn-primary' : 'btn-light'"
+                                t-on-click="() => this.setViewMode(m.key)" t-att-title="m.label">
+                            <i t-attf-class="fa {{m.icon}}"/> <span class="aq_mode_label" t-esc="m.label"/>
+                        </button>
+                    </t>
+                </div>
+
+                <div t-if="showZoom" class="aq_pb_zoom btn-group" role="group" aria-label="Granularidad">
+                    <button class="btn" t-att-class="state.zoom === 'day' ? 'btn-secondary' : 'btn-light'" t-on-click="() => this.setZoom('day')">Día</button>
+                    <button class="btn" t-att-class="state.zoom === 'week' ? 'btn-secondary' : 'btn-light'" t-on-click="() => this.setZoom('week')">Sem</button>
+                    <button class="btn" t-att-class="state.zoom === 'month' ? 'btn-secondary' : 'btn-light'" t-on-click="() => this.setZoom('month')">Mes</button>
                 </div>
 
                 <div class="aq_pb_search">
@@ -75,9 +82,7 @@
                             <span class="aq_chip_label" t-esc="chip.label"/>: <t t-esc="chip.value"/>
                         </span>
                     </t>
-                    <button t-if="hasActiveFilters" class="btn btn-sm btn-link" t-on-click="() => this.clearFilters()">
-                        Limpiar filtros
-                    </button>
+                    <button t-if="hasActiveFilters" class="btn btn-sm btn-link" t-on-click="() => this.clearFilters()">Limpiar filtros</button>
                 </div>
             </div>
 
@@ -91,8 +96,8 @@
                 </t>
             </div>
 
-            <!-- ===== Legend (grouped, collapsible) ===== -->
-            <div class="aq_rental_legend">
+            <!-- ===== Legend (state) ===== -->
+            <div t-if="showStateLegend" class="aq_rental_legend">
                 <button class="aq_legend_toggle" t-on-click="() => this.toggleLegend()"
                         t-att-aria-expanded="!state.legendCollapsed" aria-label="Mostrar u ocultar leyenda">
                     <i t-att-class="state.legendCollapsed ? 'fa fa-caret-right' : 'fa fa-caret-down'"/> Leyenda
@@ -117,109 +122,232 @@
                 <i class="fa fa-spinner fa-spin"/> Cargando disponibilidad…
             </div>
 
-            <!-- ===== Grid ===== -->
-            <div t-else="" class="aq_pb_grid">
-                <!-- header -->
-                <div class="aq_timeline_header">
-                    <div class="aq_resource_column_header">Producto / Serie</div>
-                    <div class="aq_pb_timeline">
-                        <t t-foreach="columns" t-as="col" t-key="col.key">
-                            <div class="aq_colhead" t-att-class="{'aq_timeline_weekend': col.isWeekend, 'aq_timeline_today': col.isToday}"
-                                 t-attf-style="left:{{col.left}}%;">
-                                <t t-esc="col.label"/>
+            <t t-else="">
+                <!-- ============================== TIMELINE ============================== -->
+                <div t-if="state.viewMode === 'timeline'" class="aq_pb_grid">
+                    <div class="aq_timeline_header">
+                        <div class="aq_resource_column_header">Producto / Serie</div>
+                        <div class="aq_pb_timeline">
+                            <t t-foreach="columns" t-as="col" t-key="col.key">
+                                <div class="aq_colhead" t-att-class="{'aq_timeline_weekend': col.isWeekend, 'aq_timeline_today': col.isToday}"
+                                     t-attf-style="left:{{col.left}}%;"><t t-esc="col.label"/></div>
+                            </t>
+                        </div>
+                    </div>
+                    <div class="aq_pb_body">
+                        <t t-foreach="filteredProducts" t-as="product" t-key="product.product_id">
+                            <div class="aq_product_row" t-on-click="() => this.toggleProduct(product.product_id)">
+                                <div class="aq_resource_column aq_product_summary">
+                                    <span class="aq_product_name">
+                                        <i t-att-class="isExpanded(product) ? 'fa fa-caret-down' : 'fa fa-caret-right'"/>
+                                        <strong t-esc="product.product_name"/>
+                                        <small t-if="product.sku" class="text-muted ms-1" t-esc="product.sku"/>
+                                    </span>
+                                    <span class="aq_product_availability_badge" t-att-class="product._summary.badge">
+                                        <t t-esc="product._summary.available"/>/<t t-esc="product._summary.total"/> disp.
+                                        <t t-if="product._summary.blocked"> · <t t-esc="product._summary.blocked"/> ocup.</t>
+                                    </span>
+                                </div>
+                                <div class="aq_pb_timeline aq_gridlines">
+                                    <t t-foreach="columns" t-as="col" t-key="col.key">
+                                        <div class="aq_timeline_cell" t-att-class="{'aq_timeline_weekend': col.isWeekend}" t-attf-style="left:{{col.left}}%;"/>
+                                    </t>
+                                </div>
                             </div>
+                            <t t-if="isExpanded(product)">
+                                <t t-foreach="product.serials" t-as="serial" t-key="serial.lot_id">
+                                    <div class="aq_serial_row">
+                                        <div class="aq_resource_column aq_serial_label">
+                                            <span class="aq_serial_name"><i class="fa fa-barcode me-1 text-muted"/><t t-esc="serial.lot_name"/></span>
+                                            <span t-att-class="serial._badgeClass" t-esc="serial._badgeLabel"/>
+                                            <span class="aq_serial_actions">
+                                                <button t-on-click.stop="() => this.viewHistory(serial)" title="Ver historial" aria-label="Ver historial"><i class="fa fa-history"/></button>
+                                                <button t-on-click.stop="() => this.reserveSerial(serial, product)" title="Reservar esta serie" aria-label="Reservar"><i class="fa fa-calendar-plus-o"/></button>
+                                                <button t-on-click.stop="() => this.startDowntime(serial.lot_id)" title="Crear mantenimiento / bloqueo" aria-label="Mantenimiento"><i class="fa fa-wrench"/></button>
+                                                <button t-on-click.stop="() => this.copySerial(serial)" title="Copiar número de serie" aria-label="Copiar"><i class="fa fa-clone"/></button>
+                                            </span>
+                                        </div>
+                                        <div class="aq_pb_timeline">
+                                            <t t-foreach="columns" t-as="col" t-key="col.key">
+                                                <div class="aq_timeline_cell" t-att-class="{'aq_timeline_weekend': col.isWeekend}" t-attf-style="left:{{col.left}}%;"/>
+                                            </t>
+                                            <t t-if="todayLineLeft !== null"><div class="aq_today_line" t-attf-style="left:{{todayLineLeft}}%;"/></t>
+                                            <t t-foreach="serial.blocks" t-as="block" t-key="block.type + '_' + block.id">
+                                                <t t-call="aq_rental_serial_planning.Block"/>
+                                            </t>
+                                        </div>
+                                    </div>
+                                </t>
+                            </t>
                         </t>
+                        <div t-if="!filteredProducts.length" class="aq_pb_noresult">Ningún producto coincide con la búsqueda o los filtros.</div>
                     </div>
                 </div>
 
-                <!-- body -->
-                <div class="aq_pb_body">
-                    <t t-foreach="filteredProducts" t-as="product" t-key="product.product_id">
-                        <!-- product group row -->
-                        <div class="aq_product_row" t-on-click="() => this.toggleProduct(product.product_id)">
-                            <div class="aq_resource_column aq_product_summary">
-                                <span class="aq_product_name">
-                                    <i t-att-class="isExpanded(product) ? 'fa fa-caret-down' : 'fa fa-caret-right'"/>
-                                    <strong t-esc="product.product_name"/>
-                                    <small t-if="product.sku" class="text-muted ms-1" t-esc="product.sku"/>
-                                </span>
-                                <span class="aq_product_availability_badge" t-att-class="product._summary.badge"
-                                      t-attf-title="{{product._summary.available}} disponibles de {{product._summary.total}}">
-                                    <t t-esc="product._summary.available"/>/<t t-esc="product._summary.total"/> disp.
-                                    <t t-if="product._summary.blocked"> · <t t-esc="product._summary.blocked"/> ocup.</t>
-                                </span>
-                            </div>
-                            <div class="aq_pb_timeline aq_gridlines">
-                                <t t-foreach="columns" t-as="col" t-key="col.key">
-                                    <div class="aq_timeline_cell" t-att-class="{'aq_timeline_weekend': col.isWeekend}"
-                                         t-attf-style="left:{{col.left}}%;"/>
-                                </t>
-                            </div>
+                <!-- ============================== CLIENTE ============================== -->
+                <div t-if="state.viewMode === 'customer'" class="aq_pb_grid">
+                    <div class="aq_timeline_header">
+                        <div class="aq_resource_column_header">Cliente / Serie</div>
+                        <div class="aq_pb_timeline">
+                            <t t-foreach="columns" t-as="col" t-key="col.key">
+                                <div class="aq_colhead" t-att-class="{'aq_timeline_weekend': col.isWeekend, 'aq_timeline_today': col.isToday}"
+                                     t-attf-style="left:{{col.left}}%;"><t t-esc="col.label"/></div>
+                            </t>
                         </div>
-
-                        <!-- serial rows -->
-                        <t t-if="isExpanded(product)">
-                            <t t-foreach="product.serials" t-as="serial" t-key="serial.lot_id">
+                    </div>
+                    <div class="aq_pb_body">
+                        <t t-foreach="customerGroups" t-as="group" t-key="group.key">
+                            <div class="aq_product_row" t-att-class="group.isMaint ? 'is-maint' : ''">
+                                <div class="aq_resource_column aq_product_summary">
+                                    <span class="aq_product_name">
+                                        <i t-att-class="group.isMaint ? 'fa fa-wrench' : 'fa fa-user'"/>
+                                        <strong t-esc="group.title"/>
+                                    </span>
+                                    <span class="aq_product_availability_badge"><t t-esc="group.serials.length"/> series</span>
+                                </div>
+                                <div class="aq_pb_timeline aq_gridlines">
+                                    <t t-foreach="columns" t-as="col" t-key="col.key">
+                                        <div class="aq_timeline_cell" t-att-class="{'aq_timeline_weekend': col.isWeekend}" t-attf-style="left:{{col.left}}%;"/>
+                                    </t>
+                                </div>
+                            </div>
+                            <t t-foreach="group.serials" t-as="serial" t-key="serial.lot_id">
                                 <div class="aq_serial_row">
                                     <div class="aq_resource_column aq_serial_label">
-                                        <span class="aq_serial_name">
-                                            <i class="fa fa-barcode me-1 text-muted"/>
-                                            <t t-esc="serial.lot_name"/>
-                                        </span>
-                                        <span t-att-class="serial._badgeClass" t-esc="serial._badgeLabel"/>
-                                        <span class="aq_serial_actions">
-                                            <button t-on-click.stop="() => this.viewHistory(serial)" title="Ver historial" aria-label="Ver historial"><i class="fa fa-history"/></button>
-                                            <button t-on-click.stop="() => this.reserveSerial(serial, product)" title="Reservar esta serie" aria-label="Reservar esta serie"><i class="fa fa-calendar-plus-o"/></button>
-                                            <button t-on-click.stop="() => this.startDowntime(serial.lot_id)" title="Crear mantenimiento / bloqueo" aria-label="Crear mantenimiento"><i class="fa fa-wrench"/></button>
-                                            <button t-on-click.stop="() => this.copySerial(serial)" title="Copiar número de serie" aria-label="Copiar serie"><i class="fa fa-clone"/></button>
-                                        </span>
+                                        <span class="aq_serial_name"><i class="fa fa-barcode me-1 text-muted"/><t t-esc="serial.lot_name"/></span>
+                                        <small class="text-muted" t-esc="serial.product_name"/>
                                     </div>
                                     <div class="aq_pb_timeline">
                                         <t t-foreach="columns" t-as="col" t-key="col.key">
-                                            <div class="aq_timeline_cell" t-att-class="{'aq_timeline_weekend': col.isWeekend}"
-                                                 t-attf-style="left:{{col.left}}%;"/>
+                                            <div class="aq_timeline_cell" t-att-class="{'aq_timeline_weekend': col.isWeekend}" t-attf-style="left:{{col.left}}%;"/>
                                         </t>
-                                        <t t-if="todayLineLeft !== null">
-                                            <div class="aq_today_line" t-attf-style="left:{{todayLineLeft}}%;"/>
-                                        </t>
+                                        <t t-if="todayLineLeft !== null"><div class="aq_today_line" t-attf-style="left:{{todayLineLeft}}%;"/></t>
                                         <t t-foreach="serial.blocks" t-as="block" t-key="block.type + '_' + block.id">
-                                            <div t-att-class="blockClass(block)" t-att-style="block._style"
-                                                 t-att-title="block._stateLabel + ' · ' + block.name"
-                                                 t-att-aria-label="block._stateLabel + ' ' + block.name + (block.partner ? ' ' + block.partner : '')"
-                                                 tabindex="0"
-                                                 t-on-click.stop="() => this.onBlockClick(block)"
-                                                 t-on-mouseenter="(ev) => this.onBlockEnter(ev, block)"
-                                                 t-on-mouseleave="() => this.onBlockLeave()">
-                                                <div class="aq_block_billable" t-if="block._billableStyle" t-att-style="block._billableStyle"/>
-                                                <span class="aq_block_conflict_icon" t-if="block.conflict"><i class="fa fa-exclamation-triangle"/></span>
-                                                <span class="aq_block_overdue_icon" t-if="block._overdueOnly"><i class="fa fa-clock-o"/></span>
-                                                <div class="aq_block_customer" t-if="block.partner" t-esc="block.partner"/>
-                                                <div class="aq_block_main"><span t-esc="block.name"/> · <span t-esc="block._stateLabel"/></div>
-                                                <div class="aq_block_dates" t-esc="block._rangeLabel"/>
-                                            </div>
+                                            <t t-call="aq_rental_serial_planning.Block"/>
                                         </t>
                                     </div>
                                 </div>
                             </t>
-                            <div t-if="!product.serials.length" class="aq_serial_row aq_empty">
-                                <div class="aq_resource_column text-muted">Sin series en stock</div>
-                                <div class="aq_pb_timeline"/>
-                            </div>
                         </t>
-                    </t>
-                    <div t-if="!filteredProducts.length" class="aq_pb_noresult">
-                        Ningún producto coincide con la búsqueda o los filtros.
+                        <div t-if="!customerGroups.length" class="aq_pb_noresult">No hay reservas en el periodo seleccionado.</div>
                     </div>
                 </div>
-            </div>
+
+                <!-- ============================== CARGA / HEATMAP ============================== -->
+                <div t-if="state.viewMode === 'heatmap'" class="aq_heatmap">
+                    <div class="aq_hm_legend">
+                        Ocupación:
+                        <span class="aq_hm_cell lvl-free">0</span>
+                        <span class="aq_hm_cell lvl-low"/><span class="aq_hm_cell lvl-mid"/>
+                        <span class="aq_hm_cell lvl-high"/><span class="aq_hm_cell lvl-full">Lleno</span>
+                        <small class="text-muted ms-2">(número = unidades libres)</small>
+                    </div>
+                    <div class="aq_hm_scroll">
+                        <div class="aq_hm_row aq_hm_head">
+                            <div class="aq_hm_label">Producto</div>
+                            <t t-foreach="rangeDays" t-as="day" t-key="day.key">
+                                <div class="aq_hm_colhead" t-att-class="{'aq_timeline_weekend': day.isWeekend, 'aq_timeline_today': day.isToday}" t-esc="day.label"/>
+                            </t>
+                        </div>
+                        <t t-foreach="heatmapRows" t-as="row" t-key="row.product.product_id">
+                            <div class="aq_hm_row">
+                                <div class="aq_hm_label" t-on-click="() => this.heatDrill(row.product)" t-att-title="row.product.product_name">
+                                    <strong t-esc="row.product.product_name"/>
+                                    <small class="text-muted ms-1" t-esc="row.total + ' u.'"/>
+                                </div>
+                                <t t-foreach="row.cells" t-as="cell" t-key="cell.key">
+                                    <div t-attf-class="aq_hm_cell lvl-{{cell.level}}"
+                                         t-att-title="cell.free + ' libres de ' + cell.total"
+                                         t-on-click="() => this.heatDrill(row.product)">
+                                        <t t-if="cell.total" t-esc="cell.free"/>
+                                    </div>
+                                </t>
+                            </div>
+                        </t>
+                        <div t-if="!heatmapRows.length" class="aq_pb_noresult">Sin productos.</div>
+                    </div>
+                </div>
+
+                <!-- ============================== MES ============================== -->
+                <div t-if="state.viewMode === 'month'" class="aq_month_view">
+                    <div class="aq_month_toolbar">
+                        <button class="btn btn-light btn-sm" t-on-click="() => this.monthShift(-1)"><i class="fa fa-chevron-left"/></button>
+                        <span class="aq_month_label" t-esc="monthLabel"/>
+                        <button class="btn btn-light btn-sm" t-on-click="() => this.monthShift(1)"><i class="fa fa-chevron-right"/></button>
+                        <select class="o_input ms-3" t-on-change="(ev) => this.onMonthProductChange(ev)" aria-label="Producto">
+                            <t t-foreach="monthProducts" t-as="mp" t-key="mp.product_id">
+                                <option t-att-value="mp.product_id" t-att-selected="monthProduct ? mp.product_id === monthProduct.product_id : false"><t t-esc="mp.product_name"/></option>
+                            </t>
+                        </select>
+                        <span class="aq_hm_legend ms-auto">
+                            <span class="aq_hm_cell lvl-free"/>libre
+                            <span class="aq_hm_cell lvl-mid"/>parcial
+                            <span class="aq_hm_cell lvl-full"/>lleno
+                        </span>
+                    </div>
+                    <div t-if="!monthProduct" class="aq_pb_noresult">Selecciona un producto.</div>
+                    <div t-else="" class="aq_month_grid">
+                        <div class="aq_month_weekhead">
+                            <div>Lun</div><div>Mar</div><div>Mié</div><div>Jue</div><div>Vie</div><div class="is-we">Sáb</div><div class="is-we">Dom</div>
+                        </div>
+                        <t t-foreach="monthWeeks" t-as="week" t-key="week_index">
+                            <div class="aq_month_week">
+                                <t t-foreach="week" t-as="cell" t-key="cell_index">
+                                    <div t-if="!cell" class="aq_month_cell is-empty"/>
+                                    <div t-else="" t-att-class="cell.cls"
+                                         t-on-click="() => this.monthDayDrill()">
+                                        <div class="aq_month_daynum" t-esc="cell.day"/>
+                                        <div class="aq_month_free"><t t-esc="cell.free"/>/<t t-esc="cell.total"/></div>
+                                        <div class="aq_month_freelabel">libres</div>
+                                    </div>
+                                </t>
+                            </div>
+                        </t>
+                    </div>
+                </div>
+
+                <!-- ============================== AGENDA ============================== -->
+                <div t-if="state.viewMode === 'agenda'" class="aq_agenda_view">
+                    <t t-foreach="agendaDays" t-as="day" t-key="day.key">
+                        <div class="aq_agenda_day" t-att-class="day.isToday ? 'is-today' : ''">
+                            <div class="aq_agenda_date"><t t-esc="day.label"/><span t-if="day.isToday" class="aq_agenda_today_tag">HOY</span></div>
+                            <div class="aq_agenda_cols">
+                                <div class="aq_agenda_col">
+                                    <div class="aq_agenda_col_title aq_out">▸ Salidas (preparar / entregar)</div>
+                                    <div t-if="!day.salidas.length" class="aq_agenda_empty">—</div>
+                                    <t t-foreach="day.salidas" t-as="it" t-key="it.label + it.rep">
+                                        <div class="aq_agenda_item" t-on-click="() => this.agendaOpen(it.rep)">
+                                            <span class="aq_agenda_qty" t-esc="it.label"/>
+                                            <span class="aq_agenda_partner" t-if="it.partner" t-esc="it.partner"/>
+                                            <span class="aq_serial_badge aq_agenda_state" t-esc="it.stateLabel"/>
+                                        </div>
+                                    </t>
+                                </div>
+                                <div class="aq_agenda_col">
+                                    <div class="aq_agenda_col_title aq_in">▸ Retornos (recoger / liberar)</div>
+                                    <div t-if="!day.retornos.length" class="aq_agenda_empty">—</div>
+                                    <t t-foreach="day.retornos" t-as="it" t-key="it.label + it.rep">
+                                        <div class="aq_agenda_item" t-on-click="() => this.agendaOpen(it.rep)">
+                                            <span class="aq_agenda_qty" t-esc="it.label"/>
+                                            <span class="aq_agenda_partner" t-if="it.partner" t-esc="it.partner"/>
+                                            <span class="aq_serial_badge aq_agenda_state" t-esc="it.stateLabel"/>
+                                        </div>
+                                    </t>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                    <div t-if="!agendaDays.length" class="aq_pb_noresult">No hay movimientos en el periodo seleccionado.</div>
+                </div>
+            </t>
 
             <!-- ===== Rich tooltip ===== -->
             <div t-if="state.tooltip" class="aq_rental_tooltip" t-attf-style="left:{{state.tooltip.x}}px;top:{{state.tooltip.y}}px;">
-                <div class="aq_tt_head">
-                    <span class="aq_tt_folio" t-esc="state.tooltip.block.name"/>
-                    <span class="aq_serial_badge" t-attf-class="aq_state_{{state.tooltip.block._stateKey}}" t-esc="state.tooltip.block._stateLabel"/>
-                </div>
                 <t t-set="b" t-value="state.tooltip.block"/>
+                <div class="aq_tt_head">
+                    <span class="aq_tt_folio" t-esc="b.name"/>
+                    <span class="aq_serial_badge" t-attf-class="aq_state_{{b._stateKey}}" t-esc="b._stateLabel"/>
+                </div>
                 <div t-if="b.conflict" class="aq_tt_alert">⚠ Conflicto<t t-if="b._conflictWith"> con <t t-esc="b._conflictWith"/></t></div>
                 <div t-if="b._overdueOnly" class="aq_tt_alert">⚠ Retorno atrasado</div>
                 <table class="aq_tt_table">
@@ -235,7 +363,7 @@
                 </table>
             </div>
 
-            <!-- ===== Drawer (operative card) ===== -->
+            <!-- ===== Drawer ===== -->
             <div t-if="state.selected" class="aq_reservation_drawer">
                 <t t-set="r" t-value="state.selected"/>
                 <div class="aq_drawer_header">
@@ -251,9 +379,7 @@
                     <div t-if="r.partner" class="aq_drawer_section">
                         <div class="aq_drawer_label">Cliente</div>
                         <div class="aq_drawer_value aq_drawer_customer" t-esc="r.partner"/>
-                        <div t-if="r.sale_order" class="aq_drawer_link" t-on-click="() => this.openSaleOrder(r)">
-                            Pedido <t t-esc="r.sale_order"/>
-                        </div>
+                        <div t-if="r.sale_order" class="aq_drawer_link" t-on-click="() => this.openSaleOrder(r)">Pedido <t t-esc="r.sale_order"/></div>
                     </div>
                     <div class="aq_drawer_section">
                         <div class="aq_drawer_label">Producto</div>
@@ -313,6 +439,24 @@
                     <button class="btn btn-primary btn-sm" t-on-click="() => this.submitDowntime()">Crear bloqueo</button>
                 </div>
             </div>
+        </div>
+    </t>
+
+    <!-- Reusable reservation block (used by timeline & customer modes) -->
+    <t t-name="aq_rental_serial_planning.Block">
+        <div t-att-class="blockClass(block)" t-att-style="block._style"
+             t-att-title="block._stateLabel + ' · ' + block.name"
+             t-att-aria-label="block._stateLabel + ' ' + block.name + (block.partner ? ' ' + block.partner : '')"
+             tabindex="0"
+             t-on-click.stop="() => this.onBlockClick(block)"
+             t-on-mouseenter="(ev) => this.onBlockEnter(ev, block)"
+             t-on-mouseleave="() => this.onBlockLeave()">
+            <div class="aq_block_billable" t-if="block._billableStyle" t-att-style="block._billableStyle"/>
+            <span class="aq_block_conflict_icon" t-if="block.conflict"><i class="fa fa-exclamation-triangle"/></span>
+            <span class="aq_block_overdue_icon" t-if="block._overdueOnly"><i class="fa fa-clock-o"/></span>
+            <div class="aq_block_customer" t-if="block.partner" t-esc="block.partner"/>
+            <div class="aq_block_main"><span t-esc="block.name"/> · <span t-esc="block._stateLabel"/></div>
+            <div class="aq_block_dates" t-esc="block._rangeLabel"/>
         </div>
     </t>
 </templates>

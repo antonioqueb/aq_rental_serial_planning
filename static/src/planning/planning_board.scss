@@ -373,3 +373,95 @@ $aq-label-w-compact: 210px;
         .aq_serial_badge.aq_state_#{$k} { background: mix($c, #ffffff, 24%); color: darken($c, 22%); }
     }
 }
+
+// ============================================================ view modes
+$aq-occ: (free: (#dcfce7, #166534), low: (#bbf7d0, #166534), mid: (#fef9c3, #854d0e),
+          high: (#fed7aa, #9a3412), full: (#fecaca, #991b1b), none: (#f3f4f6, #9ca3af));
+
+.aq_planning_view {
+    .aq_pb_modes .aq_mode_label { margin-left: 3px; }
+
+    .aq_product_row.is-maint .aq_resource_column { background: #f1f5f9; color: #475569; }
+
+    // ---------------- heatmap ----------------
+    .aq_heatmap { flex: 1; overflow: auto; display: flex; flex-direction: column; }
+    .aq_hm_legend {
+        display: flex; align-items: center; gap: 6px;
+        padding: 8px 12px; font-size: 12px; color: #475569; border-bottom: 1px solid #eef2f7;
+        .aq_hm_cell { width: 22px; min-width: 22px; height: 18px; }
+    }
+    .aq_hm_scroll { flex: 1; overflow: auto; }
+    .aq_hm_row { display: flex; border-bottom: 1px solid #f1f5f9; }
+    .aq_hm_row.aq_hm_head { position: sticky; top: 0; z-index: 5; background: #fff; border-bottom: 2px solid #e5e7eb; }
+    .aq_hm_label {
+        width: 220px; min-width: 220px; padding: 6px 10px; font-size: 13px;
+        position: sticky; left: 0; background: #fff; border-right: 1px solid #e5e7eb; z-index: 2;
+        cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        &:hover { background: #f8fafc; }
+    }
+    .aq_hm_colhead {
+        flex: 1; min-width: 34px; text-align: center; font-size: 11px; font-weight: 600;
+        color: #475569; padding: 6px 2px;
+        &.aq_timeline_weekend { color: #b91c1c; }
+        &.aq_timeline_today { color: #1d4ed8; font-weight: 800; }
+    }
+    .aq_hm_cell {
+        flex: 1; min-width: 34px; height: 32px; display: inline-flex; align-items: center; justify-content: center;
+        font-size: 11px; font-weight: 700; border-right: 1px solid rgba(255, 255, 255, .6);
+        cursor: pointer; transition: filter .1s;
+        &:hover { filter: brightness(.94); }
+    }
+    @each $k, $pair in $aq-occ {
+        .aq_hm_cell.lvl-#{$k} { background: nth($pair, 1); color: nth($pair, 2); }
+        .aq_month_cell.lvl-#{$k} { background: nth($pair, 1); color: nth($pair, 2); }
+    }
+
+    // ---------------- month ----------------
+    .aq_month_view { flex: 1; overflow: auto; display: flex; flex-direction: column; padding: 12px; }
+    .aq_month_toolbar {
+        display: flex; align-items: center; gap: 8px; margin-bottom: 12px;
+        .aq_month_label { font-size: 18px; font-weight: 700; min-width: 160px; text-align: center; }
+        select.o_input { width: auto; max-width: 280px; }
+        .aq_hm_legend { border: none; padding: 0; gap: 4px;
+            .aq_hm_cell { width: 16px; min-width: 16px; height: 14px; border: 1px solid #e5e7eb; } }
+    }
+    .aq_month_grid { flex: 1; display: flex; flex-direction: column; gap: 6px; }
+    .aq_month_weekhead, .aq_month_week { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
+    .aq_month_weekhead > div {
+        text-align: center; font-size: 11px; font-weight: 700; color: #6b7280; text-transform: uppercase;
+        &.is-we { color: #b91c1c; }
+    }
+    .aq_month_week { flex: 1; }
+    .aq_month_cell {
+        border: 1px solid #e5e7eb; border-radius: 8px; padding: 6px 8px; min-height: 64px;
+        display: flex; flex-direction: column; cursor: pointer; transition: box-shadow .1s;
+        &:hover { box-shadow: 0 4px 10px rgba(15, 23, 42, .12); }
+        &.is-empty { background: transparent; border: none; cursor: default; box-shadow: none; }
+        &.is-today { outline: 2px solid #2563eb; outline-offset: -2px; }
+        &.is-weekend { border-style: dashed; }
+        .aq_month_daynum { font-size: 12px; font-weight: 700; opacity: .8; }
+        .aq_month_free { font-size: 20px; font-weight: 800; margin-top: auto; }
+        .aq_month_freelabel { font-size: 10px; text-transform: uppercase; opacity: .8; }
+    }
+
+    // ---------------- agenda ----------------
+    .aq_agenda_view { flex: 1; overflow: auto; padding: 12px 16px; }
+    .aq_agenda_day { border-left: 3px solid #e5e7eb; padding: 4px 0 4px 14px; margin-bottom: 14px;
+        &.is-today { border-left-color: #2563eb; } }
+    .aq_agenda_date { font-weight: 700; font-size: 15px; margin-bottom: 8px; text-transform: capitalize; }
+    .aq_agenda_today_tag { background: #2563eb; color: #fff; font-size: 10px; padding: 1px 6px; border-radius: 999px; margin-left: 8px; vertical-align: middle; }
+    .aq_agenda_cols { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    @media (max-width: 820px) { .aq_agenda_cols { grid-template-columns: 1fr; } }
+    .aq_agenda_col_title { font-size: 12px; font-weight: 700; text-transform: uppercase; margin-bottom: 6px;
+        &.aq_out { color: #1d4ed8; } &.aq_in { color: #b45309; } }
+    .aq_agenda_empty { color: #cbd5e1; padding: 4px 0; }
+    .aq_agenda_item {
+        display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+        padding: 6px 8px; border: 1px solid #eef2f7; border-radius: 8px; margin-bottom: 6px; cursor: pointer;
+        background: #fff;
+        &:hover { background: #f8fafc; border-color: #cbd5e1; }
+        .aq_agenda_qty { font-weight: 700; }
+        .aq_agenda_partner { color: #475569; }
+        .aq_agenda_state { margin-left: auto; }
+    }
+}

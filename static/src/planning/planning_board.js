@@ -66,6 +66,15 @@ const OPERATION_STATES = ["reserved", "prepared", "picked_up", "delivered", "in_
 
 const WD = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"];
 const MO = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"];
+const MO_FULL = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
+                 "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+const VIEW_MODES = [
+    { key: "timeline", label: "Timeline", icon: "fa-tasks" },
+    { key: "month", label: "Mes", icon: "fa-calendar" },
+    { key: "agenda", label: "Agenda", icon: "fa-list-ul" },
+    { key: "heatmap", label: "Carga", icon: "fa-th" },
+    { key: "customer", label: "Cliente", icon: "fa-users" },
+];
 
 // ---------- date helpers (UTC-naive in, browser-local out) ----------
 function pad(n) { return String(n).padStart(2, "0"); }
@@ -120,6 +129,8 @@ export class RentalPlanningBoard extends Component {
 
         this.state = useState({
             loading: true,
+            viewMode: "timeline",
+            monthProductId: null,
             zoom: "week",
             dateStart: today,
             dateEnd: isoDate(addDaysUTC(new Date(), 14)),
@@ -232,6 +243,9 @@ export class RentalPlanningBoard extends Component {
                     // precomputed booleans (avoid `and` in OWL templates)
                     block._overdueOnly = !!block.overdue && !block.conflict;
                     block._hasSaleOrder = !block._isDowntime && !!block.sale_order_id;
+                    block._blocking = block._isDowntime
+                        || OPERATION_STATES.includes(block.state)
+                        || block.state === "soft_hold";
                     // conflict partner (overlap with a sibling on the same serial)
                     block._conflictWith = "";
                     if (block.conflict) {
@@ -410,6 +424,231 @@ export class RentalPlanningBoard extends Component {
         return c;
     }
 
+    // ==================================================================
+    // Alternate view modes (all derived from the already-loaded data)
+    // ==================================================================
+    get viewModes() { return VIEW_MODES; }
+    get showStateLegend() { return ["timeline", "customer"].includes(this.state.viewMode); }
+    get showZoom() { return this.state.viewMode !== "month"; }
+    get isTimelineLike() { return ["timeline", "customer", "heatmap", "agenda"].includes(this.state.viewMode); }
+
+    setViewMode(mode) {
+        this.state.viewMode = mode;
+        if (mode === "month") {
+            const d = dayStartUTC(this.state.dateStart);
+            const first = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), 1));
+            const last = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth() + 1, 0));
+            this.state.dateStart = isoDate(first);
+            this.state.dateEnd = isoDate(last);
+            if (!this.state.monthProductId && this.state.products.length) {
+                this.state.monthProductId = this.state.products[0].product_id;
+            }
+            this.loadBoard();
+        }
+    }
+    nav(dir) {
+        if (this.state.viewMode === "month") this.monthShift(dir);
+        else this.shift(dir);
+    }
+    monthShift(dir) {
+        const d = dayStartUTC(this.state.dateStart);
+        const first = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth() + dir, 1));
+        const last = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth() + dir + 1, 0));
+        this.state.dateStart = isoDate(first);
+        this.state.dateEnd = isoDate(last);
+        this.loadBoard();
+    }
+    onMonthProductChange(ev) { this.state.monthProductId = parseInt(ev.target.value); }
+
+    // --- shared day axis ---
+    get rangeDays() {
+        const out = [];
+        let cur = this.rangeStart;
+        const end = this.rangeEnd.getTime();
+        const todayISO = isoDate(new Date());
+        let guard = 0;
+        while (cur.getTime() < end && guard < 92) {
+            const dow = cur.getUTCDay();
+            const key = isoDate(cur);
+            out.push({
+                key, ms: cur.getTime(),
+                label: `${WD[dow]} ${pad(cur.getUTCDate())}`,
+                full: `${WD[dow]} ${cur.getUTCDate()} ${MO[cur.getUTCMonth()]}`,
+                isWeekend: dow === 0 || dow === 6,
+                isToday: key === todayISO,
+            });
+            cur = addDaysUTC(cur, 1);
+            guard++;
+        }
+        return out;
+    }
+
+    _dayBusy(product, ds, de) {
+        let busy = 0;
+        for (const s of product.serials) {
+            for (const b of s.blocks) {
+                if (b._blocking
+                    && parseUTC(b.start).getTime() < de
+                    && parseUTC(b.end).getTime() > ds) { busy++; break; }
+            }
+        }
+        return busy;
+    }
+    _level(busy, total) {
+        if (!total) return "none";
+        const r = busy / total;
+        if (r >= 1) return "full";
+        if (r >= 0.66) return "high";
+        if (r >= 0.33) return "mid";
+        if (r > 0) return "low";
+        return "free";
+    }
+
+    // --- month (availability calendar for one product) ---
+    get monthProducts() { return this.state.products; }
+    get monthProduct() {
+        return this.state.products.find((p) => p.product_id === this.state.monthProductId)
+            || this.state.products[0] || null;
+    }
+    get monthLabel() {
+        const d = dayStartUTC(this.state.dateStart);
+        return `${MO_FULL[d.getUTCMonth()]} ${d.getUTCFullYear()}`;
+    }
+    get monthWeeks() {
+        const product = this.monthProduct;
+        const d = dayStartUTC(this.state.dateStart);
+        const year = d.getUTCFullYear(), month = d.getUTCMonth();
+        const startDow = (new Date(Date.UTC(year, month, 1)).getUTCDay() + 6) % 7; // Monday=0
+        const daysInMonth = new Date(Date.UTC(year, month + 1, 0)).getUTCDate();
+        const todayISO = isoDate(new Date());
+        const cells = [];
+        for (let i = 0; i < startDow; i++) cells.push(null);
+        for (let day = 1; day <= daysInMonth; day++) {
+            const ds = Date.UTC(year, month, day);
+            const total = product ? product.serials.length : 0;
+            const busy = product ? this._dayBusy(product, ds, ds + 86400000) : 0;
+            const dow = new Date(ds).getUTCDay();
+            const level = this._level(busy, total);
+            const isToday = isoDate(new Date(ds)) === todayISO;
+            const isWeekend = dow === 0 || dow === 6;
+            cells.push({
+                key: `${year}-${month}-${day}`, day,
+                total, busy, free: total - busy, level, isToday, isWeekend,
+                cls: `aq_month_cell lvl-${level}`
+                    + (isToday ? " is-today" : "")
+                    + (isWeekend ? " is-weekend" : ""),
+            });
+        }
+        while (cells.length % 7) cells.push(null);
+        const weeks = [];
+        for (let i = 0; i < cells.length; i += 7) weeks.push(cells.slice(i, i + 7));
+        return weeks;
+    }
+    monthDayDrill() {
+        const p = this.monthProduct;
+        if (p) this.state.filters.product_ids = [p.product_id];
+        this.state.viewMode = "timeline";
+        this.loadBoard();
+    }
+
+    // --- heatmap (products x days, occupation level) ---
+    get heatmapRows() {
+        const days = this.rangeDays;
+        return this.filteredProducts.map((p) => ({
+            product: p,
+            total: p.serials.length,
+            cells: days.map((day) => {
+                const total = p.serials.length;
+                const busy = this._dayBusy(p, day.ms, day.ms + 86400000);
+                return { key: day.key, busy, total, free: total - busy, level: this._level(busy, total) };
+            }),
+        }));
+    }
+    heatDrill(product) {
+        this.state.filters.product_ids = [product.product_id];
+        this.state.viewMode = "timeline";
+        this.loadBoard();
+    }
+
+    // --- agenda (operational day list) ---
+    _agendaItem(g) {
+        return {
+            label: `${g.count}× ${g.product}`,
+            partner: g.partner, order: g.order,
+            stateLabel: RENTAL_STATE_LABELS[g.state] || g.state,
+            rep: g.rep,
+        };
+    }
+    get agendaDays() {
+        const inRange = new Set(this.rangeDays.map((d) => d.key));
+        const buckets = {};
+        const ensure = (k) => buckets[k] || (buckets[k] = { salidas: {}, retornos: {} });
+        const push = (side, gkey, b) => {
+            side[gkey] || (side[gkey] = {
+                count: 0, product: b.product_name, partner: b.partner,
+                order: b.sale_order, state: b.state, rep: b.id,
+            });
+            side[gkey].count++;
+        };
+        for (const p of this.filteredProducts) {
+            for (const s of p.serials) {
+                for (const b of s.blocks) {
+                    if (b._isDowntime) continue;
+                    const gkey = (b.sale_order || b.partner || "—") + "|" + (b.product_name || "");
+                    const startKey = isoDate(parseUTC(b.start));
+                    const endKey = isoDate(parseUTC(b.end));
+                    if (inRange.has(startKey)) push(ensure(startKey).salidas, gkey, b);
+                    if (inRange.has(endKey)) push(ensure(endKey).retornos, gkey, b);
+                }
+            }
+        }
+        const res = [];
+        for (const d of this.rangeDays) {
+            const e = buckets[d.key];
+            if (!e) continue;
+            const sal = Object.values(e.salidas), ret = Object.values(e.retornos);
+            if (!sal.length && !ret.length) continue;
+            res.push({
+                key: d.key, label: d.full, isToday: d.isToday,
+                salidas: sal.map((g) => this._agendaItem(g)),
+                retornos: ret.map((g) => this._agendaItem(g)),
+            });
+        }
+        return res;
+    }
+    agendaOpen(rep) {
+        this.action.doAction({
+            type: "ir.actions.act_window", res_model: "rental.serial.reservation",
+            res_id: rep, views: [[false, "form"]],
+        });
+    }
+
+    // --- group by customer / order (swimlanes) ---
+    get customerGroups() {
+        const groups = new Map();
+        for (const p of this.filteredProducts) {
+            for (const s of p.serials) {
+                for (const b of s.blocks) {
+                    const isMaint = b._isDowntime;
+                    const key = isMaint ? "__maint" : (b.partner || "—");
+                    const title = isMaint ? "Mantenimiento / Bloqueos" : (b.partner || "Sin cliente");
+                    if (!groups.has(key)) groups.set(key, { key, title, isMaint, serials: new Map() });
+                    const g = groups.get(key);
+                    if (!g.serials.has(s.lot_id)) {
+                        g.serials.set(s.lot_id, {
+                            lot_id: s.lot_id, lot_name: s.lot_name,
+                            product_name: p.product_name, blocks: [],
+                        });
+                    }
+                    g.serials.get(s.lot_id).blocks.push(b);
+                }
+            }
+        }
+        return [...groups.values()]
+            .map((g) => ({ key: g.key, title: g.title, isMaint: g.isMaint, serials: [...g.serials.values()] }))
+            .sort((a, b) => (a.isMaint ? 1 : 0) - (b.isMaint ? 1 : 0) || a.title.localeCompare(b.title));
+    }
+
     // ------------------------------------------------------------------
     // Interactions
     // ------------------------------------------------------------------
@@ -443,9 +682,9 @@ export class RentalPlanningBoard extends Component {
         this.loadBoard();
     }
     goToday() {
-        const t = isoDate(new Date());
-        this.state.dateStart = t;
-        this.setZoom(this.state.zoom);
+        this.state.dateStart = isoDate(new Date());
+        if (this.state.viewMode === "month") this.setViewMode("month");
+        else this.setZoom(this.state.zoom);
     }
     onFilterChange(field, ev) {
         const val = ev.target.value;
