@@ -426,6 +426,129 @@ class RentalSerialReservation(models.Model):
         }
 
     # ------------------------------------------------------------------
+    # Board / OWL data API (called from the planning board via orm.call,
+    # and re-exposed by the JSON controllers in controllers/main.py).
+    # Public @api.model methods on this accessible model so the frontend
+    # does not depend on extra controller/registry plumbing.
+    # ------------------------------------------------------------------
+    @api.model
+    def serial_timeline(self, date_start, date_end, product_ids=None,
+                        warehouse_id=None, package_id=None, partner_id=None,
+                        states=None):
+        start = fields.Datetime.to_datetime(date_start)
+        end = fields.Datetime.to_datetime(date_end)
+        Product = self.env["product.product"]
+        if package_id:
+            pkg = self.env["rental.package.template"].browse(int(package_id))
+            products = pkg.line_ids.mapped("product_id")
+        elif product_ids:
+            products = Product.browse(product_ids)
+        else:
+            products = Product.search([
+                ("tracking", "=", "serial"),
+                ("x_rental_serial_planning", "=", True)])
+        lots = self.env["stock.lot"].search([("product_id", "in", products.ids)])
+
+        res_domain = [
+            ("lot_id", "in", lots.ids),
+            ("reservation_block_start", "<", end),
+            ("reservation_block_end", ">", start),
+            ("state", "not in", ("cancelled",)),
+        ]
+        if partner_id:
+            res_domain.append(("partner_id", "=", int(partner_id)))
+        if warehouse_id:
+            res_domain.append(("warehouse_id", "=", int(warehouse_id)))
+        if states:
+            res_domain.append(("state", "in", states))
+        reservations = self.search(res_domain)
+
+        dt_domain = [
+            ("lot_id", "in", lots.ids),
+            ("state", "in", ("scheduled", "in_progress")),
+            ("start_datetime", "<", end),
+            "|", ("end_datetime", "=", False), ("end_datetime", ">", start),
+        ]
+        downtimes = self.env["rental.serial.downtime"].search(dt_domain)
+
+        res_by_lot = {}
+        for r in reservations:
+            res_by_lot.setdefault(r.lot_id.id, []).append({
+                "id": r.id, "type": "reservation", "name": r.name,
+                "state": r.state, "partner": r.partner_id.display_name,
+                "sale_order_id": r.sale_order_id.id,
+                "sale_order": r.sale_order_id.name,
+                "billable_start": r.rental_billable_start and r.rental_billable_start.isoformat(),
+                "billable_end": r.rental_billable_end and r.rental_billable_end.isoformat(),
+                "start": r.reservation_block_start.isoformat(),
+                "end": r.reservation_block_end.isoformat(),
+                "conflict": r.conflict_status == "conflict",
+            })
+        dt_by_lot = {}
+        for d in downtimes:
+            dt_by_lot.setdefault(d.lot_id.id, []).append({
+                "id": d.id, "type": "downtime", "name": d.name,
+                "state": "maintenance", "reason": d.reason,
+                "start": d.start_datetime.isoformat(),
+                "end": (d.end_datetime or end).isoformat(),
+                "conflict": False,
+            })
+
+        result = []
+        for product in products:
+            product_lots = lots.filtered(lambda l: l.product_id == product)
+            serial_rows = []
+            for lot in product_lots:
+                serial_rows.append({
+                    "lot_id": lot.id, "lot_name": lot.name,
+                    "blocks": res_by_lot.get(lot.id, []) + dt_by_lot.get(lot.id, []),
+                })
+            result.append({
+                "product_id": product.id,
+                "product_name": product.display_name,
+                "serial_count": len(product_lots),
+                "serials": serial_rows,
+            })
+        return {
+            "date_start": start.isoformat(),
+            "date_end": end.isoformat(),
+            "products": result,
+            "blocking_states": list(BLOCKING_STATES),
+        }
+
+    @api.model
+    def board_filters(self):
+        env = self.env
+        return {
+            "warehouses": [{"id": w.id, "name": w.name}
+                           for w in env["stock.warehouse"].search([])],
+            "products": [{"id": p.id, "name": p.display_name}
+                         for p in env["product.product"].search(
+                             [("tracking", "=", "serial"),
+                              ("x_rental_serial_planning", "=", True)])],
+            "packages": [{"id": p.id, "name": p.display_name}
+                         for p in env["rental.package.template"].search([])],
+            "states": [{"key": k, "label": v}
+                       for k, v in self._fields["state"].selection],
+        }
+
+    @api.model
+    def release_reservations(self, reservation_ids):
+        recs = self.browse(reservation_ids)
+        recs.action_release()
+        return {"released": recs.ids}
+
+    @api.model
+    def create_downtime_quick(self, lot_id, reason, start, end=None):
+        dt = self.env["rental.serial.downtime"].create({
+            "lot_id": int(lot_id),
+            "reason": reason,
+            "start_datetime": fields.Datetime.to_datetime(start),
+            "end_datetime": fields.Datetime.to_datetime(end) if end else False,
+        })
+        return {"downtime_id": dt.id}
+
+    # ------------------------------------------------------------------
     # Cron entry points
     # ------------------------------------------------------------------
     @api.model

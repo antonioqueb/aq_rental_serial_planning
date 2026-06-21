@@ -2,9 +2,7 @@
 
 import { registry } from "@web/core/registry";
 import { useService } from "@web/core/utils/hooks";
-import { rpc } from "@web/core/network/rpc";
 import { Component, useState, onWillStart } from "@odoo/owl";
-import { DateTime } from "luxon";
 
 const STATE_COLORS = {
     soft_hold: "#f0ad4e",
@@ -34,41 +32,80 @@ const STATE_LABELS = {
     maintenance: "Maintenance / Downtime",
 };
 
+const WEEKDAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+// --- native-Date helpers (all UTC, to match Odoo's naive UTC datetimes) ---
+function pad(n) {
+    return String(n).padStart(2, "0");
+}
+function parseUTC(s) {
+    if (!s) {
+        return null;
+    }
+    const hasTZ = /[zZ]$|[+-]\d\d:?\d\d$/.test(s);
+    return new Date(hasTZ ? s : s.replace(" ", "T") + "Z");
+}
+function toServer(d) {
+    // -> "YYYY-MM-DD HH:MM:SS" in UTC, the format Odoo expects.
+    return d.toISOString().slice(0, 19).replace("T", " ");
+}
+function isoDate(d) {
+    return d.toISOString().slice(0, 10);
+}
+function dayStartUTC(dateStr) {
+    return new Date(dateStr + "T00:00:00Z");
+}
+function dayEndUTC(dateStr) {
+    return new Date(dateStr + "T23:59:59Z");
+}
+function addDaysUTC(d, n) {
+    const x = new Date(d);
+    x.setUTCDate(x.getUTCDate() + n);
+    return x;
+}
+function addMonthsUTC(d, n) {
+    const x = new Date(d);
+    x.setUTCMonth(x.getUTCMonth() + n);
+    return x;
+}
+
 export class RentalPlanningBoard extends Component {
     static template = "aq_rental_serial_planning.PlanningBoard";
     static props = ["*"];
 
     setup() {
+        this.orm = useService("orm");
         this.action = useService("action");
         this.notification = useService("notification");
 
         const params = (this.props.action && this.props.action.params) || {};
-        // Work in UTC for all positioning math so the percentage offsets match
-        // the UTC-naive datetimes Odoo returns. (Odoo stores/returns UTC.)
-        const today = DateTime.utc().startOf("day");
+        const today = isoDate(new Date());
 
         this.state = useState({
             loading: true,
-            zoom: "week",                       // day | week | month
-            dateStart: today.toISODate(),
-            dateEnd: today.plus({ days: 14 }).toISODate(),
+            zoom: "week",
+            dateStart: today,
+            dateEnd: isoDate(addDaysUTC(new Date(), 14)),
             products: [],
-            expanded: {},                       // productId -> bool
+            expanded: {},
             filters: {
                 warehouse_id: params.warehouse_id || null,
                 product_ids: params.product_id ? [params.product_id] : null,
                 package_id: params.package_id || null,
-                partner_id: params.sale_order_id ? null : null,
+                partner_id: null,
                 states: null,
             },
             meta: { warehouses: [], products: [], packages: [], states: [] },
-            selected: null,                     // selected block detail
+            selected: null,
             showDowntime: false,
             downtimeForm: { lot_id: null, reason: "maintenance", start: "", end: "" },
         });
 
         onWillStart(async () => {
-            this.state.meta = await rpc("/rental_serial_planning/filters", {});
+            this.state.meta = await this.orm.call(
+                "rental.serial.reservation", "board_filters", []);
             await this.loadBoard();
         });
     }
@@ -79,17 +116,17 @@ export class RentalPlanningBoard extends Component {
     async loadBoard() {
         this.state.loading = true;
         const f = this.state.filters;
-        const data = await rpc("/rental_serial_planning/serial_timeline", {
-            date_start: this.toServer(this.rangeStart),
-            date_end: this.toServer(this.rangeEnd),
-            product_ids: f.product_ids,
-            warehouse_id: f.warehouse_id,
-            package_id: f.package_id,
-            partner_id: f.partner_id,
-            states: f.states,
-        });
+        const data = await this.orm.call(
+            "rental.serial.reservation", "serial_timeline", [], {
+                date_start: toServer(this.rangeStart),
+                date_end: toServer(this.rangeEnd),
+                product_ids: f.product_ids,
+                warehouse_id: f.warehouse_id,
+                package_id: f.package_id,
+                partner_id: f.partner_id,
+                states: f.states,
+            });
         this.state.products = data.products;
-        // Expand products with few serials by default for first load.
         for (const p of data.products) {
             if (!(p.product_id in this.state.expanded)) {
                 this.state.expanded[p.product_id] = data.products.length <= 3;
@@ -99,52 +136,47 @@ export class RentalPlanningBoard extends Component {
     }
 
     // ------------------------------------------------------------------
-    // Time axis helpers
+    // Time axis
     // ------------------------------------------------------------------
-    toServer(dt) {
-        // Odoo expects a UTC-naive 'YYYY-MM-DD HH:mm:ss' string.
-        return dt.toUTC().toFormat("yyyy-MM-dd HH:mm:ss");
-    }
-
     get rangeStart() {
-        return DateTime.fromISO(this.state.dateStart, { zone: "utc" }).startOf("day");
+        return dayStartUTC(this.state.dateStart);
     }
     get rangeEnd() {
-        return DateTime.fromISO(this.state.dateEnd, { zone: "utc" }).endOf("day");
+        return dayEndUTC(this.state.dateEnd);
     }
     get spanMs() {
-        return Math.max(this.rangeEnd.toMillis() - this.rangeStart.toMillis(), 1);
+        return Math.max(this.rangeEnd.getTime() - this.rangeStart.getTime(), 1);
     }
 
     get columns() {
         const cols = [];
-        const unit = this.state.zoom === "month" ? "month"
-            : this.state.zoom === "week" ? "day" : "day";
         let cursor = this.rangeStart;
+        const endMs = this.rangeEnd.getTime();
         let guard = 0;
-        while (cursor < this.rangeEnd && guard < 400) {
-            const next = cursor.plus(this.state.zoom === "month" ? { months: 1 } : { days: 1 });
+        while (cursor.getTime() < endMs && guard < 400) {
+            const dow = cursor.getUTCDay();
             cols.push({
-                key: cursor.toISODate(),
+                key: isoDate(cursor),
                 label: this.state.zoom === "month"
-                    ? cursor.toFormat("LLL yyyy")
-                    : cursor.toFormat("ccc dd"),
-                left: ((cursor.toMillis() - this.rangeStart.toMillis()) / this.spanMs) * 100,
-                isWeekend: cursor.weekday >= 6,
+                    ? `${MONTHS[cursor.getUTCMonth()]} ${cursor.getUTCFullYear()}`
+                    : `${WEEKDAYS[dow]} ${pad(cursor.getUTCDate())}`,
+                left: ((cursor.getTime() - this.rangeStart.getTime()) / this.spanMs) * 100,
+                isWeekend: dow === 0 || dow === 6,
             });
-            cursor = next;
+            cursor = this.state.zoom === "month"
+                ? addMonthsUTC(cursor, 1) : addDaysUTC(cursor, 1);
             guard++;
         }
         return cols;
     }
 
     blockStyle(block) {
-        const s = DateTime.fromISO(block.start, { zone: "utc" }).toMillis();
-        const e = DateTime.fromISO(block.end, { zone: "utc" }).toMillis();
-        const start = Math.max(s, this.rangeStart.toMillis());
-        const end = Math.min(e, this.rangeEnd.toMillis());
-        const left = ((start - this.rangeStart.toMillis()) / this.spanMs) * 100;
-        const width = Math.max(((end - start) / this.spanMs) * 100, 0.6);
+        const s = parseUTC(block.start).getTime();
+        const e = parseUTC(block.end).getTime();
+        const startMs = Math.max(s, this.rangeStart.getTime());
+        const endMs = Math.min(e, this.rangeEnd.getTime());
+        const left = ((startMs - this.rangeStart.getTime()) / this.spanMs) * 100;
+        const width = Math.max(((endMs - startMs) / this.spanMs) * 100, 0.6);
         const color = block.conflict ? "#dc3545" : (STATE_COLORS[block.state] || "#0d6efd");
         return `left:${left}%;width:${width}%;background:${color};`;
     }
@@ -180,19 +212,19 @@ export class RentalPlanningBoard extends Component {
         this.state.zoom = zoom;
         const start = this.rangeStart;
         if (zoom === "day") {
-            this.state.dateEnd = start.plus({ days: 2 }).toISODate();
+            this.state.dateEnd = isoDate(addDaysUTC(start, 2));
         } else if (zoom === "week") {
-            this.state.dateEnd = start.plus({ days: 14 }).toISODate();
+            this.state.dateEnd = isoDate(addDaysUTC(start, 14));
         } else {
-            this.state.dateEnd = start.plus({ months: 3 }).toISODate();
+            this.state.dateEnd = isoDate(addMonthsUTC(start, 3));
         }
         this.loadBoard();
     }
 
     shift(direction) {
         const days = this.state.zoom === "month" ? 30 : (this.state.zoom === "week" ? 7 : 1);
-        this.state.dateStart = this.rangeStart.plus({ days: direction * days }).toISODate();
-        this.state.dateEnd = this.rangeEnd.plus({ days: direction * days }).toISODate();
+        this.state.dateStart = isoDate(addDaysUTC(this.rangeStart, direction * days));
+        this.state.dateEnd = isoDate(addDaysUTC(this.rangeEnd, direction * days));
         this.loadBoard();
     }
 
@@ -226,7 +258,8 @@ export class RentalPlanningBoard extends Component {
     openReservation(block) {
         this.action.doAction({
             type: "ir.actions.act_window",
-            res_model: block.type === "downtime" ? "rental.serial.downtime" : "rental.serial.reservation",
+            res_model: block.type === "downtime"
+                ? "rental.serial.downtime" : "rental.serial.reservation",
             res_id: block.id,
             views: [[false, "form"]],
         });
@@ -234,7 +267,8 @@ export class RentalPlanningBoard extends Component {
 
     async releaseReservation(block) {
         try {
-            await rpc("/rental_serial_planning/release", { reservation_ids: [block.id] });
+            await this.orm.call("rental.serial.reservation", "release_reservations",
+                [[block.id]]);
             this.notification.add("Serial released.", { type: "success" });
             this.state.selected = null;
             await this.loadBoard();
@@ -244,13 +278,11 @@ export class RentalPlanningBoard extends Component {
     }
 
     startDowntime(lotId) {
+        const now = new Date();
+        const local = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`
+            + `T${pad(now.getHours())}:${pad(now.getMinutes())}`;
         this.state.showDowntime = true;
-        this.state.downtimeForm = {
-            lot_id: lotId,
-            reason: "maintenance",
-            start: DateTime.now().toFormat("yyyy-MM-dd'T'HH:mm"),
-            end: "",
-        };
+        this.state.downtimeForm = { lot_id: lotId, reason: "maintenance", start: local, end: "" };
     }
 
     async submitDowntime() {
@@ -260,11 +292,11 @@ export class RentalPlanningBoard extends Component {
             return;
         }
         try {
-            await rpc("/rental_serial_planning/create_downtime", {
+            await this.orm.call("rental.serial.reservation", "create_downtime_quick", [], {
                 lot_id: f.lot_id,
                 reason: f.reason,
-                start: this.toServer(DateTime.fromISO(f.start)),
-                end: f.end ? this.toServer(DateTime.fromISO(f.end)) : null,
+                start: toServer(new Date(f.start)),
+                end: f.end ? toServer(new Date(f.end)) : null,
             });
             this.notification.add("Downtime created.", { type: "success" });
             this.state.showDowntime = false;
