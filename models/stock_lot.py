@@ -18,12 +18,12 @@ class StockLot(models.Model):
         "res.currency", compute="_compute_rental_revenue")
 
     def _compute_rental_counts(self):
-        res_data = self.env["rental.serial.reservation"].read_group(
-            [("lot_id", "in", self.ids)], ["lot_id"], ["lot_id"])
-        res_map = {d["lot_id"][0]: d["__count"] for d in res_data}
-        dt_data = self.env["rental.serial.downtime"].read_group(
-            [("lot_id", "in", self.ids)], ["lot_id"], ["lot_id"])
-        dt_map = {d["lot_id"][0]: d["__count"] for d in dt_data}
+        res_data = self.env["rental.serial.reservation"]._read_group(
+            [("lot_id", "in", self.ids)], ["lot_id"], ["__count"])
+        res_map = {lot.id: count for lot, count in res_data if lot}
+        dt_data = self.env["rental.serial.downtime"]._read_group(
+            [("lot_id", "in", self.ids)], ["lot_id"], ["__count"])
+        dt_map = {lot.id: count for lot, count in dt_data if lot}
         for lot in self:
             lot.x_reservation_count = res_map.get(lot.id, 0)
             lot.x_downtime_count = dt_map.get(lot.id, 0)

@@ -1,6 +1,6 @@
 {
     "name": "AQ Rental Serial Planning",
-    "version": "19.0.1.0.0",
+    "version": "19.0.1.2.0",
     "category": "Sales/Rental",
     "summary": "Booqable-style serial-level rental planning, availability engine and "
                "timeline calendar on top of native Odoo Rental.",

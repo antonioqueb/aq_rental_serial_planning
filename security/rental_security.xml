@@ -1,33 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <record id="module_category_rental_planning" model="ir.module.category">
-        <field name="name">Rental Serial Planning</field>
-        <field name="sequence">90</field>
-    </record>
-
+    <!-- NOTE: Odoo 19 reworked res.groups and removed `category_id`
+         (group categorisation moved to the privilege system). Groups are
+         declared without it; they remain fully functional. -->
     <record id="group_rental_planner_user" model="res.groups">
         <field name="name">Rental Planner / User</field>
-        <field name="category_id" ref="module_category_rental_planning"/>
         <field name="comment">View calendar, check availability, create draft reservations.</field>
     </record>
 
     <record id="group_rental_warehouse_user" model="res.groups">
         <field name="name">Rental Warehouse User</field>
-        <field name="category_id" ref="module_category_rental_planning"/>
         <field name="implied_ids" eval="[(4, ref('group_rental_planner_user'))]"/>
         <field name="comment">Prepare, deliver, receive equipment and scan serials.</field>
     </record>
 
     <record id="group_rental_planner_manager" model="res.groups">
         <field name="name">Rental Planner / Manager</field>
-        <field name="category_id" ref="module_category_rental_planning"/>
         <field name="implied_ids" eval="[(4, ref('group_rental_warehouse_user'))]"/>
         <field name="comment">Confirm reservations, release serials, resolve conflicts, edit operational periods.</field>
     </record>
 
     <record id="group_rental_administrator" model="res.groups">
         <field name="name">Rental Administrator</field>
-        <field name="category_id" ref="module_category_rental_planning"/>
         <field name="implied_ids" eval="[(4, ref('group_rental_planner_manager'))]"/>
         <field name="comment">Configure packages, policies, buffers and downtimes.</field>
     </record>

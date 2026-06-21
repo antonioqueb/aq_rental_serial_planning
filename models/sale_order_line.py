@@ -223,10 +223,9 @@ class SaleOrderLine(models.Model):
 
     def _sort_serials(self, lots):
         """Order: fewest recent moves, then name. Cheap heuristic for wear."""
-        move_lines = self.env["stock.move.line"].read_group(
-            [("lot_id", "in", lots.ids)], ["lot_id"], ["lot_id"])
-        move_count = {m["lot_id"][0]: m["__count"]
-                      for m in move_lines if m.get("lot_id")}
+        move_lines = self.env["stock.move.line"]._read_group(
+            [("lot_id", "in", lots.ids)], ["lot_id"], ["__count"])
+        move_count = {lot.id: count for lot, count in move_lines if lot}
         return lots.sorted(key=lambda l: (move_count.get(l.id, 0), l.name or ""))
 
     def action_view_line_reservations(self):

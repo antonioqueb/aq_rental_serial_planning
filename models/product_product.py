@@ -10,11 +10,11 @@ class ProductProduct(models.Model):
         compute="_compute_serial_reservation_count")
 
     def _compute_serial_reservation_count(self):
-        data = self.env["rental.serial.reservation"].read_group(
+        data = self.env["rental.serial.reservation"]._read_group(
             [("product_id", "in", self.ids),
              ("state", "not in", ("cancelled", "released"))],
-            ["product_id"], ["product_id"])
-        mapped = {d["product_id"][0]: d["__count"] for d in data}
+            ["product_id"], ["__count"])
+        mapped = {product.id: count for product, count in data}
         for product in self:
             product.x_serial_reservation_count = mapped.get(product.id, 0)
 

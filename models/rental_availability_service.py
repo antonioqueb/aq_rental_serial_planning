@@ -66,10 +66,10 @@ class RentalAvailabilityService(models.AbstractModel):
         if location_id:
             location = self.env["stock.location"].browse(location_id)
             quant_domain.append(("location_id", "child_of", location.id))
-        quants = self.env["stock.quant"].read_group(
-            quant_domain, ["lot_id"], ["lot_id"]
+        quants = self.env["stock.quant"]._read_group(
+            quant_domain, ["lot_id"], []
         )
-        lot_ids_with_stock = {g["lot_id"][0] for g in quants if g.get("lot_id")}
+        lot_ids_with_stock = {lot.id for (lot,) in quants if lot}
         return lots.filtered(lambda l: l.id in lot_ids_with_stock)
 
     @api.model
@@ -85,10 +85,10 @@ class RentalAvailabilityService(models.AbstractModel):
         ]
         if ignore_reservation_ids:
             domain.append(("id", "not in", list(ignore_reservation_ids)))
-        groups = self.env["rental.serial.reservation"].read_group(
-            domain, ["lot_id"], ["lot_id"]
+        groups = self.env["rental.serial.reservation"]._read_group(
+            domain, ["lot_id"], []
         )
-        return {g["lot_id"][0] for g in groups if g.get("lot_id")}
+        return {lot.id for (lot,) in groups if lot}
 
     @api.model
     def _downtime_lot_ids(self, lot_ids, block_start, block_end):
@@ -103,10 +103,10 @@ class RentalAvailabilityService(models.AbstractModel):
             ("end_datetime", "=", False),  # open-ended downtime blocks forever
             ("end_datetime", ">", block_start),
         ]
-        groups = self.env["rental.serial.downtime"].read_group(
-            domain, ["lot_id"], ["lot_id"]
+        groups = self.env["rental.serial.downtime"]._read_group(
+            domain, ["lot_id"], []
         )
-        return {g["lot_id"][0] for g in groups if g.get("lot_id")}
+        return {lot.id for (lot,) in groups if lot}
 
     # ------------------------------------------------------------------
     # Public API - serials
