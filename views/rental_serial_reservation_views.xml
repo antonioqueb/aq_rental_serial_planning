@@ -148,7 +148,7 @@
                 <separator/>
                 <filter name="soft_hold" string="Soft Holds" domain="[('state','=','soft_hold')]"/>
                 <filter name="released" string="Released" domain="[('state','=','released')]"/>
-                <group expand="0" string="Group By">
+                <group string="Group By">
                     <filter name="g_product" string="Product" context="{'group_by':'product_id'}"/>
                     <filter name="g_lot" string="Serial" context="{'group_by':'lot_id'}"/>
                     <filter name="g_state" string="State" context="{'group_by':'state'}"/>
