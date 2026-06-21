@@ -530,7 +530,11 @@ class RentalSerialReservation(models.Model):
 
     @api.model
     def planning_dashboard(self, days=30):
-        """Aggregated KPIs for the planning / rental-management dashboard."""
+        """Aggregated KPIs for the planning / rental-management dashboard.
+
+        Everything respects the selected ``days`` horizon. Lists are grouped by
+        record id (and merged by display name) so no duplicates appear.
+        """
         now = fields.Datetime.now()
         horizon = now + timedelta(days=days)
         Lot = self.env["stock.lot"]
@@ -560,8 +564,11 @@ class RentalSerialReservation(models.Model):
         available_now = max(total_serials - blocked_now - maint_now, 0)
         utilization = round(100 * blocked_now / total_serials) if total_serials else 0
 
-        # --- counters ---
-        active_reservations = self.search_count([("state", "in", list(BLOCKING_STATES))])
+        # --- counters (horizon-aware where it makes sense) ---
+        active_reservations = self.search_count([
+            ("state", "in", list(BLOCKING_STATES)),
+            ("reservation_block_start", "<", horizon),
+            ("reservation_block_end", ">", now)])
         conflicts = self.search_count([("conflict_status", "=", "conflict")])
         soft_holds = self.search_count([("state", "=", "soft_hold")])
         soft_expiring = self.search_count([
@@ -571,6 +578,7 @@ class RentalSerialReservation(models.Model):
             ("state", "in", ["picked_up", "delivered", "in_use"]),
             ("reservation_block_end", "<", now),
             ("actual_return_datetime", "=", False)])
+        returns_pending = self.search_count([("state", "=", "returned")])
         deliveries_7d = self.search_count([
             ("state", "in", ["reserved", "prepared", "picked_up"]),
             ("reservation_block_start", ">=", now),
@@ -583,43 +591,90 @@ class RentalSerialReservation(models.Model):
             ("reason", "in", ["damaged", "lost"]),
             ("state", "in", ["scheduled", "in_progress"])])
 
-        # --- reservations by state ---
+        # --- reservations by state (with %) ---
         sel = dict(self._fields["state"].selection)
-        sg = self._read_group([("state", "!=", "cancelled")], ["state"], ["__count"])
+        sg = self._read_group([
+            ("state", "!=", "cancelled"),
+            ("reservation_block_start", "<", horizon),
+            ("reservation_block_end", ">", now)], ["state"], ["__count"])
         by_state = {st: cnt for st, cnt in sg}
         states_order = ["quotation", "soft_hold", "reserved", "prepared", "picked_up",
                         "delivered", "in_use", "returned", "released"]
-        reservations_by_state = [
-            {"key": s, "label": sel[s], "count": by_state.get(s, 0)} for s in states_order]
+        total_state = sum(by_state.get(s, 0) for s in states_order) or 0
+        reservations_by_state = [{
+            "key": s, "label": sel[s], "count": by_state.get(s, 0),
+            "pct": round(100 * by_state.get(s, 0) / total_state) if total_state else 0,
+        } for s in states_order if by_state.get(s, 0)]
 
-        # --- demand by week (next 8 weeks, by block start) ---
+        # --- demand: next 8 weeks (items blocked overlapping each week) ---
+        end56 = now + timedelta(days=56)
+        demand_recs = self.search([
+            ("state", "in", list(BLOCKING_STATES)),
+            ("reservation_block_end", ">", now),
+            ("reservation_block_start", "<", end56)])
         demand = []
         for i in range(8):
             ws = now + timedelta(days=7 * i)
             we = ws + timedelta(days=7)
-            cnt = self.search_count([
-                ("state", "not in", ["cancelled", "released"]),
-                ("reservation_block_start", ">=", ws),
-                ("reservation_block_start", "<", we)])
-            demand.append({"label": "%d %s" % (ws.day, _MONTHS_ES[ws.month - 1]), "count": cnt})
+            inweek = demand_recs.filtered(
+                lambda r: r.reservation_block_start < we and r.reservation_block_end > ws)
+            cnt = len(inweek)
+            custs = len(set(inweek.mapped("partner_id").ids))
+            pctw = round(100 * cnt / total_serials) if total_serials else 0
+            demand.append({
+                "label": "%d %s" % (ws.day, _MONTHS_ES[ws.month - 1]),
+                "week_index": i, "count": cnt, "customers": custs,
+                "pct": min(pctw, 100),
+                "level": "high" if pctw >= 66 else "mid" if pctw >= 33 else "low",
+            })
 
-        # --- top products by demand in horizon ---
-        pg = self._read_group([
+        # --- top products in horizon (grouped by product, merged by name) ---
+        recs_h = self.search([
             ("state", "not in", ["cancelled", "released"]),
             ("reservation_block_start", "<", horizon),
-            ("reservation_block_end", ">", now),
-        ], ["product_id"], ["__count"])
-        top_products = sorted(
-            [{"name": p.name, "count": c} for p, c in pg if p],
-            key=lambda x: -x["count"])[:8]
+            ("reservation_block_end", ">", now)])
+        by_name_p = {}
+        for r in recs_h:
+            e = by_name_p.setdefault(r.product_id.name or "—",
+                                     {"name": r.product_id.name or "—", "count": 0,
+                                      "product_id": r.product_id.id, "_orders": set()})
+            e["count"] += 1
+            if r.sale_order_id:
+                e["_orders"].add(r.sale_order_id.id)
+        products_list = sorted(by_name_p.values(), key=lambda x: -x["count"])
+        for e in products_list:
+            e["orders"] = len(e.pop("_orders"))
+        top_products = products_list[:8]
+        products_more = max(len(products_list) - 8, 0)
 
-        # --- top customers ---
-        cg = self._read_group([
-            ("state", "not in", ["cancelled"]), ("partner_id", "!=", False),
-        ], ["partner_id"], ["__count"])
-        top_customers = sorted(
-            [{"name": p.display_name, "count": c} for p, c in cg if p],
-            key=lambda x: -x["count"])[:6]
+        # --- top customers (grouped by partner) ---
+        recs_c = self.search([("state", "!=", "cancelled"), ("partner_id", "!=", False)])
+        cust = {}
+        for r in recs_c:
+            d = cust.setdefault(r.partner_id.id, {
+                "name": r.partner_id.name, "partner_id": r.partner_id.id,
+                "count": 0, "items": 0, "value": 0.0})
+            d["count"] += 1
+            if r.state in BLOCKING_STATES:
+                d["items"] += 1
+
+        # --- event orders / value (within the period) ---
+        event_orders = self.env["sale.order"].search([
+            ("x_is_event_rental", "=", True),
+            ("x_event_start", "<=", horizon), ("x_event_end", ">=", now)])
+        for o in event_orders:
+            if o.partner_id.id in cust:
+                cust[o.partner_id.id]["value"] += o.amount_total
+        top_customers = sorted(cust.values(), key=lambda x: -x["count"])[:8]
+        customers_more = max(len(cust) - 8, 0)
+
+        events_value = sum(event_orders.mapped("amount_total"))
+        prev_orders = self.env["sale.order"].search([
+            ("x_is_event_rental", "=", True),
+            ("x_event_start", "<=", now), ("x_event_end", ">=", now - timedelta(days=days))])
+        events_value_prev = sum(prev_orders.mapped("amount_total"))
+        events_delta = (round(100 * (events_value - events_value_prev) / events_value_prev)
+                        if events_value_prev else None)
 
         # --- utilization by product (now) ---
         lg = self._read_group([("product_id", "in", products.ids)], ["product_id"], ["__count"])
@@ -638,19 +693,15 @@ class RentalSerialReservation(models.Model):
                 continue
             bl = prod_blocked.get(p.id, 0)
             util_by_product.append({
-                "name": p.name, "total": tot, "blocked": bl,
-                "pct": round(100 * bl / tot)})
+                "name": p.name, "product_id": p.id, "total": tot, "blocked": bl,
+                "available": tot - bl, "pct": round(100 * bl / tot)})
         util_by_product = sorted(util_by_product, key=lambda x: -x["pct"])[:8]
-
-        # --- event orders / value ---
-        event_orders = self.env["sale.order"].search([
-            ("x_is_event_rental", "=", True), ("x_event_end", ">=", now)])
-        events_value = sum(event_orders.mapped("amount_total"))
 
         return {
             "generated": "%d %s %d, %02d:%02d" % (
                 now.day, _MONTHS_ES[now.month - 1], now.year, now.hour, now.minute),
             "currency": self.env.company.currency_id.symbol or "",
+            "days": days,
             "headline": {
                 "total_serials": total_serials,
                 "available_now": available_now,
@@ -662,16 +713,20 @@ class RentalSerialReservation(models.Model):
                 "conflicts": conflicts,
                 "soft_holds": soft_holds,
                 "soft_expiring": soft_expiring,
+                "returns_pending": returns_pending,
                 "deliveries_7d": deliveries_7d,
                 "returns_7d": returns_7d,
                 "damaged_lost": damaged_lost,
                 "upcoming_events": len(event_orders),
                 "events_value": events_value,
+                "events_delta": events_delta,
             },
             "reservations_by_state": reservations_by_state,
             "demand": demand,
             "top_products": top_products,
+            "products_more": products_more,
             "top_customers": top_customers,
+            "customers_more": customers_more,
             "util_by_product": util_by_product,
         }
 
