@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import base64
+
 from odoo import api, fields, models, _
 
 DOC_TYPES = [
@@ -77,8 +79,17 @@ class RentalDocumentInstance(models.Model):
         self.ensure_one()
         if self.state == "draft":
             self.state = "generated"
-        return self.env.ref(
-            "aq_rental_serial_planning.action_report_rental_document").report_action(self)
+        report = self.env.ref("aq_rental_serial_planning.action_report_rental_document")
+        # Archive the PDF on the document (best-effort; download still works).
+        try:
+            pdf, _dummy = report._render_qweb_pdf(report.report_name, self.ids)
+            self.pdf_attachment_id = self.env["ir.attachment"].create({
+                "name": (self.name or "Documento") + ".pdf", "type": "binary",
+                "datas": base64.b64encode(pdf), "res_model": self._name,
+                "res_id": self.id, "mimetype": "application/pdf"})
+        except Exception:  # pragma: no cover - rendering env may vary
+            pass
+        return report.report_action(self)
 
     def action_send(self):
         for d in self:

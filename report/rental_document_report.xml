@@ -7,8 +7,6 @@
         <field name="report_name">aq_rental_serial_planning.report_rental_document</field>
         <field name="report_file">aq_rental_serial_planning.report_rental_document</field>
         <field name="print_report_name">(object.name or 'Documento')</field>
-        <field name="attachment">(object.name or 'Documento') + '.pdf'</field>
-        <field name="attachment_use" eval="False"/>
     </record>
 
     <template id="report_rental_document">
