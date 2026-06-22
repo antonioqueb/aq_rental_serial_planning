@@ -55,17 +55,22 @@
                             <field name="line_ids">
                                 <list editable="bottom">
                                     <field name="sequence" widget="handle"/>
-                                    <field name="product_id"/>
-                                    <field name="tracking"/>
+                                    <field name="line_type"/>
+                                    <field name="product_id"
+                                           required="line_type in ('serial_rental','quantity_rental','consumable_sale')"/>
+                                    <field name="name"/>
+                                    <field name="tracking" optional="hide"/>
                                     <field name="quantity"/>
                                     <field name="required"/>
-                                    <field name="allow_substitution"/>
+                                    <field name="allow_substitution" optional="show"/>
                                     <field name="allowed_substitute_product_ids"
                                            widget="many2many_tags"
                                            column_invisible="not parent.id"
-                                           invisible="not allow_substitution"/>
-                                    <field name="discount_percentage"/>
-                                    <field name="notes"/>
+                                           invisible="not allow_substitution" optional="hide"/>
+                                    <field name="fixed_price" optional="hide"/>
+                                    <field name="discount_percentage" optional="hide"/>
+                                    <field name="show_on_quote" optional="hide"/>
+                                    <field name="notes" optional="hide"/>
                                 </list>
                             </field>
                         </page>

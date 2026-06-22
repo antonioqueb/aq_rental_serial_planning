@@ -20,9 +20,15 @@
         <field name="comment">Confirmar reservas, liberar series, resolver conflictos y editar periodos operativos.</field>
     </record>
 
+    <record id="group_rental_pricing_manager" model="res.groups">
+        <field name="name">Renta / Pricing Manager</field>
+        <field name="implied_ids" eval="[(4, ref('group_rental_planner_user'))]"/>
+        <field name="comment">Aprobar overrides de precio y editar reglas de pricing.</field>
+    </record>
+
     <record id="group_rental_administrator" model="res.groups">
         <field name="name">Renta / Administrador</field>
-        <field name="implied_ids" eval="[(4, ref('group_rental_planner_manager'))]"/>
+        <field name="implied_ids" eval="[(4, ref('group_rental_planner_manager')), (4, ref('group_rental_pricing_manager'))]"/>
         <field name="comment">Configurar paquetes, políticas, márgenes y bloqueos.</field>
     </record>
 </odoo>

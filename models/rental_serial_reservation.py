@@ -108,6 +108,9 @@ class RentalSerialReservation(models.Model):
         "stock.picking", string="Transferencia de entrega", copy=False, readonly=True)
     return_picking_id = fields.Many2one(
         "stock.picking", string="Transferencia de retorno", copy=False, readonly=True)
+    substitution_log_ids = fields.One2many(
+        "rental.serial.substitution.log", "reservation_id", string="Sustituciones")
+    substitution_count = fields.Integer(compute="_compute_substitution_count")
 
     _sql_constraints = [
         ("block_period_chk",
@@ -291,6 +294,41 @@ class RentalSerialReservation(models.Model):
     def _post_state_message(self, body):
         for rec in self:
             rec.message_post(body=body)
+
+    def _compute_substitution_count(self):
+        data = self.env["rental.serial.substitution.log"]._read_group(
+            [("reservation_id", "in", self.ids)], ["reservation_id"], ["__count"])
+        mapped = {r.id: c for r, c in data if r}
+        for rec in self:
+            rec.substitution_count = mapped.get(rec.id, 0)
+
+    def action_report_damage(self):
+        self.ensure_one()
+        return {
+            "type": "ir.actions.act_window", "name": _("Reportar daño / faltante"),
+            "res_model": "rental.damage.report", "view_mode": "form", "target": "new",
+            "context": {
+                "default_reservation_id": self.id,
+                "default_product_id": self.product_id.id,
+                "default_lot_id": self.lot_id.id,
+                "default_sale_order_id": self.sale_order_id.id,
+                "default_replacement_value": self.product_id.lst_price,
+            },
+        }
+
+    def action_open_substitution(self):
+        """Open the 'substitute serial' wizard for this reservation."""
+        self.ensure_one()
+        if not self.lot_id:
+            raise UserError(_("Asigna una serie antes de poder sustituirla."))
+        return {
+            "type": "ir.actions.act_window",
+            "name": _("Sustituir serie"),
+            "res_model": "rental.serial.substitution.wizard",
+            "view_mode": "form",
+            "target": "new",
+            "context": {"default_reservation_id": self.id, "active_id": self.id},
+        }
 
     # ------------------------------------------------------------------
     # Serial change with validation (Case 4)
@@ -591,6 +629,19 @@ class RentalSerialReservation(models.Model):
             ("reason", "in", ["damaged", "lost"]),
             ("state", "in", ["scheduled", "in_progress"])])
 
+        ShortageNeed = self.env["rental.shortage.need"]
+        shortage_open = ShortageNeed.search_count([("state", "not in", ["sourced", "cancelled"])])
+        shortage_pending = ShortageNeed.search_count([("state", "=", "pending")])
+        sqg = ShortageNeed._read_group(
+            [("state", "not in", ["sourced", "cancelled"])], [], ["shortage_qty:sum"])
+        shortage_qty_total = (sqg[0][0] or 0.0) if sqg else 0.0
+        overrides_pending = self.env["sale.order.line"].search_count(
+            [("x_price_override_status", "=", "pending")])
+        docs_pending_sign = self.env["rental.document.instance"].search_count(
+            [("state", "in", ["generated", "sent"])])
+        damage_open = self.env["rental.damage.report"].search_count(
+            [("state", "not in", ["charged", "cancelled"])])
+
         # --- reservations by state (with %) ---
         sel = dict(self._fields["state"].selection)
         sg = self._read_group([
@@ -720,6 +771,12 @@ class RentalSerialReservation(models.Model):
                 "upcoming_events": len(event_orders),
                 "events_value": events_value,
                 "events_delta": events_delta,
+                "shortage_open": shortage_open,
+                "shortage_pending": shortage_pending,
+                "shortage_qty_total": round(shortage_qty_total),
+                "overrides_pending": overrides_pending,
+                "docs_pending_sign": docs_pending_sign,
+                "damage_open": damage_open,
             },
             "reservations_by_state": reservations_by_state,
             "demand": demand,
@@ -728,6 +785,219 @@ class RentalSerialReservation(models.Model):
             "top_customers": top_customers,
             "customers_more": customers_more,
             "util_by_product": util_by_product,
+        }
+
+    @api.model
+    def commercial_reports(self, days=90):
+        """Aggregated commercial analytics (Section 12)."""
+        now = fields.Datetime.now()
+        horizon = now + timedelta(days=days)
+        past = now - timedelta(days=days)
+        Downtime = self.env["rental.serial.downtime"]
+        Damage = self.env["rental.damage.report"]
+
+        products = self.env["product.product"].search([
+            ("tracking", "=", "serial"), ("x_rental_serial_planning", "=", True)])
+        lots = self.env["stock.lot"].search([("product_id", "in", products.ids)])
+        lots_by_product = defaultdict(list)
+        for lot in lots:
+            lots_by_product[lot.product_id.id].append(lot)
+
+        # blocked now (per product / per lot)
+        res_now = self.search([
+            ("state", "in", ["soft_hold", "reserved", "prepared", "picked_up", "delivered", "in_use"]),
+            ("reservation_block_start", "<=", now), ("reservation_block_end", ">", now)])
+        blocked_lots_now = set(res_now.mapped("lot_id").ids)
+
+        # one pass over reservations in the window for revenue / counts
+        res = self.search([
+            ("state", "not in", ["cancelled"]),
+            ("reservation_block_start", "<", horizon),
+            ("reservation_block_end", ">", past)])
+        line_n = {}
+        lot_rev, lot_cnt, lot_days = defaultdict(float), defaultdict(int), defaultdict(float)
+        prod_rev, prod_cnt = defaultdict(float), defaultdict(int)
+        prod_last = {}
+        pkg_orders, pkg_rev = defaultdict(set), defaultdict(float)
+        for r in res:
+            line = r.sale_order_line_id
+            if line and line.id not in line_n:
+                line_n[line.id] = len(line.x_serial_reservation_ids.filtered(
+                    lambda x: x.state not in ("cancelled", "released"))) or 1
+            share = (line.price_subtotal / line_n[line.id]) if line else 0.0
+            lid, pid = r.lot_id.id, r.product_id.id
+            lot_rev[lid] += share
+            lot_cnt[lid] += 1
+            prod_rev[pid] += share
+            prod_cnt[pid] += 1
+            if r.reservation_block_start and r.reservation_block_end:
+                lot_days[lid] += (r.reservation_block_end - r.reservation_block_start).total_seconds() / 86400.0
+            if r.reservation_block_start:
+                prod_last[pid] = max(prod_last.get(pid, r.reservation_block_start), r.reservation_block_start)
+            if r.package_id:
+                pkg_orders[r.package_id.id].add(r.sale_order_id.id)
+                pkg_rev[r.package_id.id] += share
+
+        # downtime / damage per lot & product
+        dt = Downtime.search([("lot_id", "in", lots.ids)])
+        lot_damage, lot_lost, lot_maint = defaultdict(int), defaultdict(int), defaultdict(int)
+        for d in dt:
+            if d.reason in ("damaged",):
+                lot_damage[d.lot_id.id] += 1
+            elif d.reason in ("lost",):
+                lot_lost[d.lot_id.id] += 1
+            elif d.reason in ("maintenance", "repair", "cleaning"):
+                lot_maint[d.lot_id.id] += 1
+        dmg = Damage.search([("lot_id", "in", lots.ids)])
+        lot_dmg_charge = defaultdict(float)
+        prod_shortage = defaultdict(int)
+        for x in dmg:
+            lot_dmg_charge[x.lot_id.id] += x.suggested_charge or 0.0
+        for n in self.env["rental.shortage.need"].search(
+                [("product_id", "in", products.ids), ("state", "not in", ["cancelled", "sourced"])]):
+            prod_shortage[n.product_id.id] += 1
+
+        def _ceil(x):
+            return int(x) + (1 if x > int(x) else 0)
+
+        # --- product classification (12.1 / 12.2 / 12.9) ---
+        classification = []
+        for p in products:
+            total = len(lots_by_product.get(p.id, []))
+            blocked = len([l for l in lots_by_product.get(p.id, []) if l.id in blocked_lots_now])
+            util = round(100 * blocked / total) if total else 0
+            cnt = prod_cnt.get(p.id, 0)
+            rev = prod_rev.get(p.id, 0.0)
+            sc = prod_shortage.get(p.id, 0)
+            last = prod_last.get(p.id)
+            recent = bool(last and last >= past)
+            if util >= 80 or sc >= 2:
+                status, reason, suggest = "saturated", "Alta utilización / shortage frecuente", _ceil(total * 0.25)
+            elif sc >= 1:
+                status, reason, suggest = "shortage_risk", "Riesgo de faltante futuro", _ceil(total * 0.15)
+            elif not recent:
+                status, reason, suggest = "dead_stock", "Sin reservas en el periodo", 0
+            elif cnt <= max(1, _ceil(total * 0.15)):
+                status, reason, suggest = "low_rotation", "Baja rotación", 0
+            else:
+                status, reason, suggest = "healthy", "Rotación saludable", 0
+            classification.append({
+                "product": p.name, "total": total, "utilization": util,
+                "reservations": cnt, "revenue": round(rev), "shortage_count": sc,
+                "status": status, "reason": reason, "suggested_purchase": suggest})
+        classification.sort(key=lambda x: (-x["utilization"], -x["reservations"]))
+
+        # --- revenue per serial (12.3) ---
+        revenue_by_serial = []
+        for lot in lots:
+            rev = lot_rev.get(lot.id, 0.0)
+            if rev <= 0 and lot_cnt.get(lot.id, 0) == 0:
+                continue
+            dmgc = lot_damage.get(lot.id, 0)
+            revenue_by_serial.append({
+                "lot": lot.name, "product": lot.product_id.name,
+                "reservations": lot_cnt.get(lot.id, 0), "revenue": round(rev),
+                "days_blocked": round(lot_days.get(lot.id, 0.0), 1),
+                "damage_count": dmgc,
+                "score": round(rev / (1 + dmgc))})
+        revenue_by_serial.sort(key=lambda x: -x["revenue"])
+        revenue_by_serial = revenue_by_serial[:15]
+
+        # --- damage per serial (12.4) ---
+        damage_by_serial = []
+        for lot in lots:
+            risk = lot_damage.get(lot.id, 0) * 3 + lot_lost.get(lot.id, 0) * 5 + lot_maint.get(lot.id, 0)
+            if risk == 0:
+                continue
+            damage_by_serial.append({
+                "lot": lot.name, "product": lot.product_id.name,
+                "damage": lot_damage.get(lot.id, 0), "lost": lot_lost.get(lot.id, 0),
+                "maintenance": lot_maint.get(lot.id, 0),
+                "charges": round(lot_dmg_charge.get(lot.id, 0.0)), "risk": risk})
+        damage_by_serial.sort(key=lambda x: -x["risk"])
+        damage_by_serial = damage_by_serial[:15]
+
+        # --- margin per event (12.5) ---
+        orders = self.env["sale.order"].search([
+            ("x_is_event_rental", "=", True),
+            ("x_event_start", ">=", past), ("x_event_start", "<", horizon)])
+        margin_by_event = []
+        for o in orders:
+            revenue = o.amount_untaxed
+            cost = 0.0
+            for l in o.order_line.filtered(lambda l: not l.display_type and l.product_id):
+                cost += (l.product_id.standard_price or 0.0) * (l.product_uom_qty or 0.0)
+            margin = revenue - cost
+            margin_by_event.append({
+                "order": o.name, "event": o.x_event_name or "",
+                "partner": o.partner_id.display_name, "revenue": round(revenue),
+                "cost": round(cost), "margin": round(margin),
+                "margin_pct": round(100 * margin / revenue) if revenue else 0})
+        margin_by_event.sort(key=lambda x: -x["revenue"])
+        margin_by_event = margin_by_event[:15]
+
+        # --- category utilization (12.7) ---
+        cat_data = defaultdict(lambda: {"total": 0, "blocked": 0, "revenue": 0.0, "shortage": 0})
+        for p in products:
+            c = cat_data[p.categ_id.name or "—"]
+            c["total"] += len(lots_by_product.get(p.id, []))
+            c["blocked"] += len([l for l in lots_by_product.get(p.id, []) if l.id in blocked_lots_now])
+            c["revenue"] += prod_rev.get(p.id, 0.0)
+            c["shortage"] += prod_shortage.get(p.id, 0)
+        category_utilization = []
+        for name, c in cat_data.items():
+            category_utilization.append({
+                "category": name, "total": c["total"], "blocked": c["blocked"],
+                "available": c["total"] - c["blocked"],
+                "utilization": round(100 * c["blocked"] / c["total"]) if c["total"] else 0,
+                "revenue": round(c["revenue"]), "shortage_count": c["shortage"]})
+        category_utilization.sort(key=lambda x: -x["utilization"])
+
+        # --- package profitability (12.6) ---
+        package_profit = []
+        for pkg in self.env["rental.package.template"].search([]):
+            times = len(pkg_orders.get(pkg.id, set()))
+            if not times:
+                continue
+            comp_cost = sum(
+                (pl.product_id.standard_price or 0.0) * (pl.quantity or 0.0)
+                for pl in pkg.line_ids if pl.product_id)
+            rev = pkg_rev.get(pkg.id, 0.0)
+            package_profit.append({
+                "package": pkg.name, "times": times, "revenue": round(rev),
+                "component_cost": round(comp_cost),
+                "avg_margin": round(rev - comp_cost * times)})
+        package_profit.sort(key=lambda x: -x["revenue"])
+
+        # --- projected occupancy by week (12.8) ---
+        total_serials = len(lots)
+        projected = []
+        for i in range(8):
+            ws = now + timedelta(days=7 * i)
+            we = ws + timedelta(days=7)
+            week = res.filtered(
+                lambda r: r.state in BLOCKING_STATES
+                and r.reservation_block_start < we and r.reservation_block_end > ws)
+            confirmed = len(week.filtered(lambda r: r.state in (
+                "reserved", "prepared", "picked_up", "delivered", "in_use")))
+            quotes = len(week.filtered(lambda r: r.state in ("quotation", "soft_hold")))
+            blocked = len(set(week.mapped("lot_id").ids))
+            util = round(100 * blocked / total_serials) if total_serials else 0
+            projected.append({
+                "label": "%d %s" % (ws.day, _MONTHS_ES[ws.month - 1]),
+                "utilization": min(util, 100), "confirmed": confirmed,
+                "quotes": quotes, "shortage_risk": util >= 85})
+
+        return {
+            "currency": self.env.company.currency_id.symbol or "",
+            "days": days,
+            "classification": classification,
+            "revenue_by_serial": revenue_by_serial,
+            "damage_by_serial": damage_by_serial,
+            "margin_by_event": margin_by_event,
+            "category_utilization": category_utilization,
+            "package_profit": package_profit,
+            "projected": projected,
         }
 
     @api.model

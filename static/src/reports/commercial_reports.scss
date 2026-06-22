@@ -1,0 +1,48 @@
+// Commercial reports — reuses the KPI dashboard shell (.aq_kpi_dashboard) +
+// adds report tables and status pills.
+.aq_kpi_dashboard.aq_commercial {
+
+    .aq_report_table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 12.5px;
+
+        thead th {
+            text-align: left;
+            font-size: 10.5px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: .4px;
+            color: #6b7a6f;
+            padding: 6px 8px;
+            border-bottom: 2px solid #e3e6dd;
+            white-space: nowrap;
+        }
+        th.num, td.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+        tbody td { padding: 7px 8px; border-bottom: 1px solid #eef2ee; color: #1f211d; vertical-align: top; }
+        tbody tr:hover { background: #f7f9f6; }
+        .aq_panel_empty { text-align: center; }
+    }
+
+    .aq_status_pill {
+        display: inline-block;
+        font-size: 10px;
+        font-weight: 800;
+        padding: 2px 9px;
+        border-radius: 999px;
+        letter-spacing: .2px;
+        white-space: nowrap;
+        &.st-saturated { background: #fdece8; color: #b44434; }
+        &.st-shortage { background: #fdebd0; color: #b07f50; }
+        &.st-dead { background: #eceae4; color: #6b7a6f; }
+        &.st-low { background: #fef9e7; color: #9a7b1f; }
+        &.st-ok { background: #e3efe6; color: #2f7a52; }
+    }
+    .aq_status_reason { font-size: 10.5px; color: #9da9a0; margin-top: 2px; }
+
+    .aq_risk {
+        font-weight: 800;
+        &.is-high { color: #b44434; }
+    }
+    .text-buy { color: #5f7668; }
+}

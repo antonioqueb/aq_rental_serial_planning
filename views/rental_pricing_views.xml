@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ===== Pricing rule ===== -->
+    <record id="view_rental_pricing_rule_list" model="ir.ui.view">
+        <field name="name">rental.pricing.rule.list</field>
+        <field name="model">rental.pricing.rule</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="priority" widget="handle"/>
+                <field name="name"/>
+                <field name="scope"/>
+                <field name="apply_on"/>
+                <field name="pricing_method"/>
+                <field name="value"/>
+                <field name="season_id"/>
+                <field name="requires_manager_approval"/>
+                <field name="active" widget="boolean_toggle"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_rental_pricing_rule_form" model="ir.ui.view">
+        <field name="name">rental.pricing.rule.form</field>
+        <field name="model">rental.pricing.rule</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <div class="oe_title"><label for="name"/><h1><field name="name"/></h1></div>
+                    <group>
+                        <group string="Alcance">
+                            <field name="scope"/>
+                            <field name="product_id" invisible="scope != 'product'" required="scope == 'product'"/>
+                            <field name="category_id" invisible="scope != 'category'" required="scope == 'category'"/>
+                            <field name="package_id" invisible="scope != 'package'" required="scope == 'package'"/>
+                            <field name="partner_id" invisible="scope != 'customer'" required="scope == 'customer'"/>
+                            <field name="event_type_id" invisible="scope != 'event_type'" required="scope == 'event_type'"/>
+                            <field name="priority"/>
+                            <field name="active" widget="boolean_toggle"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                        <group string="Cálculo">
+                            <field name="apply_on"/>
+                            <field name="pricing_method"/>
+                            <field name="base"/>
+                            <field name="value"/>
+                            <field name="requires_manager_approval"/>
+                        </group>
+                    </group>
+                    <group string="Condiciones (cuándo aplica)">
+                        <group>
+                            <field name="season_id"/>
+                            <field name="date_start"/>
+                            <field name="date_end"/>
+                            <field name="weekdays"/>
+                        </group>
+                        <group>
+                            <field name="min_duration_hours"/>
+                            <field name="max_duration_hours"/>
+                            <field name="min_qty"/>
+                            <field name="max_qty"/>
+                        </group>
+                    </group>
+                    <field name="description" placeholder="Descripción..."/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_rental_pricing_rule" model="ir.actions.act_window">
+        <field name="name">Reglas de precio</field>
+        <field name="res_model">rental.pricing.rule</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- ===== Season ===== -->
+    <record id="view_rental_season_list" model="ir.ui.view">
+        <field name="name">rental.season.list</field>
+        <field name="model">rental.season</field>
+        <field name="arch" type="xml">
+            <list editable="bottom">
+                <field name="priority" widget="handle"/>
+                <field name="name"/>
+                <field name="date_start"/>
+                <field name="date_end"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_rental_season" model="ir.actions.act_window">
+        <field name="name">Temporadas</field>
+        <field name="res_model">rental.season</field>
+        <field name="view_mode">list</field>
+    </record>
+
+    <!-- ===== Event type ===== -->
+    <record id="view_rental_event_type_list" model="ir.ui.view">
+        <field name="name">rental.event.type.list</field>
+        <field name="model">rental.event.type</field>
+        <field name="arch" type="xml">
+            <list editable="bottom">
+                <field name="name"/>
+                <field name="active" widget="boolean_toggle"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_rental_event_type" model="ir.actions.act_window">
+        <field name="name">Tipos de evento</field>
+        <field name="res_model">rental.event.type</field>
+        <field name="view_mode">list</field>
+    </record>
+</odoo>

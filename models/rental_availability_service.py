@@ -157,6 +157,65 @@ class RentalAvailabilityService(models.AbstractModel):
         }
 
     # ------------------------------------------------------------------
+    # Public API - quantity (non-serial) availability
+    # ------------------------------------------------------------------
+    @api.model
+    def _physical_qty(self, product_id, location_id=None):
+        domain = [("product_id", "=", product_id),
+                  ("location_id.usage", "=", "internal"), ("quantity", ">", 0)]
+        if location_id:
+            loc = self.env["stock.location"].browse(location_id)
+            domain.append(("location_id", "child_of", loc.id))
+        groups = self.env["stock.quant"]._read_group(domain, [], ["quantity:sum"])
+        return (groups[0][0] or 0.0) if groups else 0.0
+
+    @api.model
+    def _reserved_qty(self, product_id, block_start, block_end, ignore_reservation_ids=None):
+        domain = [
+            ("product_id", "=", product_id),
+            ("state", "in", list(BLOCKING_STATES)),
+            ("reservation_block_start", "<", block_end),
+            ("reservation_block_end", ">", block_start),
+        ]
+        if ignore_reservation_ids:
+            domain.append(("id", "not in", list(ignore_reservation_ids)))
+        groups = self.env["rental.quantity.reservation"]._read_group(
+            domain, [], ["quantity_reserved:sum"])
+        return (groups[0][0] or 0.0) if groups else 0.0
+
+    @api.model
+    def get_quantity_availability(self, product_id, block_start, block_end,
+                                  location_id=None, requested_qty=0,
+                                  ignore_reservation_ids=None):
+        """Quantity-based availability for non-serialised rentable products.
+
+        Overlap does NOT fully block: occupied quantity is summed and compared
+        against physical stock. Shortage is reported, not enforced (shortage
+        policy enforcement is handled by the shortage layer, when present).
+        """
+        block_start, block_end = self._normalise_period(block_start, block_end)
+        physical = self._physical_qty(product_id, location_id)
+        reserved = self._reserved_qty(
+            product_id, block_start, block_end, ignore_reservation_ids)
+        available = physical - reserved
+        shortage = max(0.0, requested_qty - available) if requested_qty else 0.0
+        if not requested_qty:
+            status = "available"
+        elif available >= requested_qty:
+            status = "available"
+        else:
+            status = "available_with_shortage"
+        return {
+            "product_id": product_id,
+            "physical_qty": physical,
+            "reserved_qty": reserved,
+            "available_qty": available,
+            "requested_qty": requested_qty,
+            "shortage_qty": shortage,
+            "status": status,
+        }
+
+    # ------------------------------------------------------------------
     # Public API - packages
     # ------------------------------------------------------------------
     @api.model
@@ -168,16 +227,17 @@ class RentalAvailabilityService(models.AbstractModel):
 
         line_results = []
         limits = []
-        for line in package.line_ids.filtered(lambda l: l.required):
+        # Only inventory-affecting components limit a package (serial / quantity).
+        for line in package.line_ids.filtered(
+                lambda l: l.required and l.line_type in ("serial_rental", "quantity_rental")):
             product = line.product_id
-            if product.tracking == "serial":
+            if line.line_type == "serial_rental":
                 avail = self.get_product_availability(
                     product.id, block_start, block_end, location_id)
                 available_qty = avail["available_count"]
             else:
-                # Non serial component: fall back to forecasted qty.
-                available_qty = product.with_context(
-                    to_date=block_start).free_qty
+                available_qty = self.get_quantity_availability(
+                    product.id, block_start, block_end, location_id)["available_qty"]
             possible = int(available_qty // line.quantity) if line.quantity else 0
             limits.append(possible)
             line_results.append({

@@ -17,6 +17,21 @@
                         invisible="x_serial_picking_count == 0">
                     <field name="x_serial_picking_count" widget="statinfo" string="Transferencias"/>
                 </button>
+                <button name="action_view_shortage_needs" type="object"
+                        class="oe_stat_button" icon="fa-shopping-cart"
+                        invisible="x_shortage_count == 0">
+                    <field name="x_shortage_count" widget="statinfo" string="Faltantes"/>
+                </button>
+                <button name="action_view_documents" type="object"
+                        class="oe_stat_button" icon="fa-file-text-o"
+                        invisible="not x_is_event_rental">
+                    <field name="x_document_count" widget="statinfo" string="Documentos"/>
+                </button>
+                <button name="action_view_damage_reports" type="object"
+                        class="oe_stat_button" icon="fa-warning"
+                        invisible="x_damage_count == 0">
+                    <field name="x_damage_count" widget="statinfo" string="Actas"/>
+                </button>
             </xpath>
 
             <!-- Event header toggle -->
@@ -30,6 +45,21 @@
                         string="Explotar paquetes" invisible="not x_is_event_rental"/>
                 <button name="action_open_planning_board" type="object"
                         string="Tablero de Planeación" invisible="not x_is_event_rental"/>
+                <button name="action_approve_shortage" type="object"
+                        string="Autorizar shortage"
+                        groups="aq_rental_serial_planning.group_rental_planner_manager"
+                        invisible="x_shortage_count == 0"/>
+                <button name="action_recompute_rental_pricing" type="object"
+                        string="Recalcular precios" invisible="not x_is_event_rental"/>
+                <button name="action_approve_prices" type="object"
+                        string="Autorizar precios"
+                        groups="aq_rental_serial_planning.group_rental_pricing_manager"
+                        invisible="x_price_override_count == 0"/>
+                <button name="action_generate_late_fees" type="object"
+                        string="Generar cargos por retraso" invisible="not x_is_event_rental"/>
+                <button name="action_doc_contract" type="object" string="Contrato" invisible="not x_is_event_rental"/>
+                <button name="action_doc_outgoing" type="object" string="Checklist salida" invisible="not x_is_event_rental"/>
+                <button name="action_doc_return" type="object" string="Checklist retorno" invisible="not x_is_event_rental"/>
             </xpath>
 
             <!-- Order line columns -->
@@ -56,6 +86,7 @@
                     <group>
                         <group string="Evento">
                             <field name="x_event_name"/>
+                            <field name="x_event_type_id"/>
                             <field name="x_event_location"/>
                             <field name="x_event_start"/>
                             <field name="x_event_end"/>

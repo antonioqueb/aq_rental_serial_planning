@@ -9,6 +9,38 @@
             <field name="company_id" eval="False"/>
         </record>
 
+        <record id="seq_rental_quantity_reservation" model="ir.sequence">
+            <field name="name">Rental Quantity Reservation</field>
+            <field name="code">rental.quantity.reservation</field>
+            <field name="prefix">RQR/%(year)s/</field>
+            <field name="padding">5</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
+        <record id="seq_rental_shortage_need" model="ir.sequence">
+            <field name="name">Rental Shortage Need</field>
+            <field name="code">rental.shortage.need</field>
+            <field name="prefix">FALT/%(year)s/</field>
+            <field name="padding">5</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
+        <record id="seq_rental_document_instance" model="ir.sequence">
+            <field name="name">Rental Document</field>
+            <field name="code">rental.document.instance</field>
+            <field name="prefix">DOC/%(year)s/</field>
+            <field name="padding">5</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
+        <record id="seq_rental_damage_report" model="ir.sequence">
+            <field name="name">Rental Damage Report</field>
+            <field name="code">rental.damage.report</field>
+            <field name="prefix">ACTA/%(year)s/</field>
+            <field name="padding">5</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
         <record id="seq_rental_serial_downtime" model="ir.sequence">
             <field name="name">Rental Serial Downtime</field>
             <field name="code">rental.serial.downtime</field>

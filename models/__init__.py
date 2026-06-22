@@ -4,6 +4,12 @@ from . import product_product
 from . import rental_package
 from . import rental_serial_reservation
 from . import rental_serial_downtime
+from . import rental_serial_substitution
+from . import rental_quantity_reservation
+from . import rental_shortage
+from . import rental_pricing
+from . import rental_document
+from . import rental_damage
 from . import stock_lot
 from . import sale_order
 from . import sale_order_line

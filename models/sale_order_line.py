@@ -4,6 +4,8 @@ from datetime import timedelta
 from odoo import api, fields, models, _
 from odoo.exceptions import UserError
 
+from .rental_package import LINE_TYPES
+
 
 class SaleOrderLine(models.Model):
     _inherit = "sale.order.line"
@@ -17,6 +19,55 @@ class SaleOrderLine(models.Model):
         "sale.order.line", string="Línea de paquete padre", ondelete="cascade")
     x_child_line_ids = fields.One2many(
         "sale.order.line", "x_parent_package_line_id", string="Componentes explotados")
+
+    # Mixed inventory line type (Section 2-3)
+    x_line_type = fields.Selection(LINE_TYPES, string="Tipo operativo")
+    x_quantity_reservation_ids = fields.One2many(
+        "rental.quantity.reservation", "sale_order_line_id", string="Reservas por cantidad")
+    x_quantity_reservation_count = fields.Integer(compute="_compute_qty_reservation_count")
+
+    # Shortage / oversell (Section 6)
+    x_shortage_allowed = fields.Boolean(string="Shortage permitido")
+    x_shortage_qty = fields.Float(string="Faltante")
+    x_shortage_status = fields.Selection(
+        [("none", "Sin faltante"), ("warning", "Faltante por conseguir"),
+         ("pending", "Pendiente de autorización"), ("sourced", "Conseguido"),
+         ("blocked", "Bloqueado")],
+        string="Estado de shortage", default="none")
+    x_shortage_need_ids = fields.One2many(
+        "rental.shortage.need", "sale_order_line_id", string="Faltantes")
+    x_requires_shortage_approval = fields.Boolean(string="Requiere autorización de shortage")
+    x_shortage_approved_by = fields.Many2one("res.users", string="Shortage autorizado por")
+    x_shortage_approved_date = fields.Datetime(string="Fecha de autorización de shortage")
+
+    # Advanced pricing / overrides (Section 11)
+    x_price_computed = fields.Float(string="Precio calculado")
+    x_auto_fee = fields.Char(string="Cargo automático")
+    x_price_override = fields.Boolean(string="Precio modificado")
+    x_price_override_reason = fields.Char(string="Motivo del override")
+    x_price_override_requested_by = fields.Many2one("res.users", string="Solicitado por")
+    x_price_override_approved_by = fields.Many2one("res.users", string="Aprobado por")
+    x_price_override_approved_date = fields.Datetime(string="Fecha de aprobación")
+    x_price_override_status = fields.Selection(
+        [("none", "Sin override"), ("pending", "Pendiente"),
+         ("approved", "Aprobado"), ("rejected", "Rechazado")],
+        string="Estado del override", default="none")
+
+    @api.onchange("price_unit")
+    def _onchange_price_override(self):
+        """Flag a manual price change that deviates from the computed price."""
+        for line in self:
+            ref = line.x_price_computed
+            if not ref or abs((line.price_unit or 0.0) - ref) <= 0.01:
+                continue
+            if line.env.user.has_group("aq_rental_serial_planning.group_rental_pricing_manager"):
+                line.x_price_override = True
+                line.x_price_override_status = "approved"
+                line.x_price_override_approved_by = line.env.uid
+            else:
+                line.x_price_override = True
+                line.x_price_override_status = "pending"
+                line.x_price_override_requested_by = line.env.uid
 
     # Serial handling
     x_requires_serial_assignment = fields.Boolean(
@@ -39,6 +90,23 @@ class SaleOrderLine(models.Model):
         string="Disponible en el periodo", compute="_compute_available_qty")
     x_conflict_warning = fields.Char(string="Aviso de conflicto",
                                      compute="_compute_conflict_warning")
+
+    def _compute_qty_reservation_count(self):
+        data = self.env["rental.quantity.reservation"]._read_group(
+            [("sale_order_line_id", "in", self.ids)], ["sale_order_line_id"], ["__count"])
+        mapped = {l.id: c for l, c in data if l}
+        for line in self:
+            line.x_quantity_reservation_count = mapped.get(line.id, 0)
+
+    @api.onchange("product_id")
+    def _onchange_x_line_type(self):
+        if self.product_id and not self.x_line_type:
+            if self.product_id.tracking == "serial":
+                self.x_line_type = "serial_rental"
+            elif self.product_id.type == "service":
+                self.x_line_type = "service"
+            else:
+                self.x_line_type = "quantity_rental"
 
     @api.depends("product_id.x_requires_serial_reservation",
                  "product_id.tracking")
@@ -128,27 +196,89 @@ class SaleOrderLine(models.Model):
         self.x_is_package_parent = True
         b_start, b_end = self._get_billable_period()
         blk_start, blk_end = self._get_block_period()
+        hide = package.hide_components_on_quote
         sequence = self.sequence
         for pl in package.line_ids:
             sequence += 1
-            child = self.create({
+            lt = pl.line_type or "quantity_rental"
+            qty = (pl.quantity or 0.0) * self.product_uom_qty
+            vals = {
                 "order_id": self.order_id.id,
-                "product_id": pl.product_id.id,
-                "product_uom_qty": pl.quantity * self.product_uom_qty,
                 "sequence": sequence,
                 "x_parent_package_line_id": self.id,
                 "x_package_id": package.id,
                 "x_package_line_id": pl.id,
+                "x_line_type": lt,
                 "x_billable_start": b_start,
                 "x_billable_end": b_end,
                 "x_block_start": blk_start,
                 "x_block_end": blk_end,
-                # Components priced inside the parent when hidden.
-                "price_unit": 0.0 if package.hide_components_on_quote else pl.product_id.lst_price,
                 "discount": pl.discount_percentage,
+            }
+            if lt == "note":
+                vals.update({"display_type": "line_note",
+                             "name": pl.name or (pl.product_id.display_name or _("Nota"))})
+                self.create(vals)
+                continue
+            if lt in ("manual_charge", "manual_discount"):
+                price = pl.fixed_price or (pl.product_id.lst_price if pl.product_id else 0.0)
+                if lt == "manual_discount":
+                    price = -abs(price)
+                vals.update({
+                    "product_id": pl.product_id.id or False,
+                    "name": pl.name or (pl.product_id.display_name if pl.product_id else _("Cargo")),
+                    "product_uom_qty": 1.0,
+                    "price_unit": price,
+                })
+                self.create(vals)
+                continue
+            # serial_rental / quantity_rental / consumable_sale / service
+            vals.update({
+                "product_id": pl.product_id.id,
+                "product_uom_qty": qty,
+                "price_unit": 0.0 if hide else (pl.fixed_price or pl.product_id.lst_price),
             })
-            if package.hide_components_on_quote:
-                child.product_uom_qty = pl.quantity * self.product_uom_qty
+            if pl.name:
+                vals["name"] = pl.name
+            child = self.create(vals)
+            # quantity rentals auto-create a quantity reservation (no serial needed)
+            if lt == "quantity_rental":
+                child._ensure_quantity_reservation()
+        return True
+
+    # ------------------------------------------------------------------
+    # Quantity reservation (Section 5)
+    # ------------------------------------------------------------------
+    def _ensure_quantity_reservation(self):
+        QtyRes = self.env["rental.quantity.reservation"]
+        for line in self:
+            if line.x_quantity_reservation_ids.filtered(
+                    lambda r: r.state not in ("cancelled", "released")):
+                continue
+            blk_start, blk_end = line._get_block_period()
+            if not (blk_start and blk_end):
+                continue
+            b_start, b_end = line._get_billable_period()
+            wh = line.order_id.warehouse_id
+            QtyRes.create({
+                "sale_order_id": line.order_id.id,
+                "sale_order_line_id": line.id,
+                "package_id": line.x_package_id.id or False,
+                "partner_id": line.order_id.partner_id.id,
+                "product_id": line.product_id.id,
+                "warehouse_id": wh.id if wh else False,
+                "location_id": wh.lot_stock_id.id if wh else False,
+                "quantity_reserved": line.product_uom_qty or 1.0,
+                "rental_billable_start": b_start,
+                "rental_billable_end": b_end,
+                "reservation_block_start": blk_start,
+                "reservation_block_end": blk_end,
+                "state": "reserved",
+            })
+
+    def action_reserve_quantity(self):
+        for line in self.filtered(lambda l: l.x_line_type == "quantity_rental"):
+            line._ensure_quantity_reservation()
         return True
 
     # ------------------------------------------------------------------

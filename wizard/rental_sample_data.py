@@ -189,6 +189,31 @@ class RentalSampleDataWizard(models.TransientModel):
             PkgLine.create({"package_id": terr.id, "product_id": products[pk].id,
                             "quantity": qty, "required": req, "discount_percentage": disc})
 
+        # --- Shortage policy (global, 25% sin autorización) ---
+        self.env["rental.shortage.policy"].create({
+            "name": "Política global de shortage (25%)",
+            "scope": "global", "allow_shortage": True,
+            "shortage_type": "percent", "max_shortage_percent": 25.0,
+            "requires_manager_approval": False, "default_resolution": "manual_task",
+            "lead_time_days": 2, "customer_visible_label": "Por confirmar"})
+
+        # --- Pricing: temporada, tipos de evento, reglas ---
+        self.env["rental.event.type"].create([{"name": "Boda"}, {"name": "Corporativo"}, {"name": "Social"}])
+        season = self.env["rental.season"].create({
+            "name": "Temporada alta", "date_start": self._at(-15, 0).date(),
+            "date_end": self._at(120, 0).date()})
+        Rule = self.env["rental.pricing.rule"]
+        Rule.create([
+            {"name": "Temporada alta +30%", "scope": "global", "apply_on": "rental_price",
+             "pricing_method": "percent_increase", "value": 30.0, "season_id": season.id},
+            {"name": "Fin de semana +15%", "scope": "global", "apply_on": "rental_price",
+             "pricing_method": "percent_increase", "value": 15.0, "weekdays": "5,6"},
+            {"name": "Cargo de entrega", "scope": "global", "apply_on": "delivery_fee",
+             "pricing_method": "amount_surcharge", "value": 300.0},
+            {"name": "Cargo por retraso/día", "scope": "global", "apply_on": "late_fee",
+             "pricing_method": "amount_surcharge", "value": 150.0},
+        ])
+
         # --- Event orders ---
         SaleOrder = self.env["sale.order"]
         OrderLine = self.env["sale.order.line"]

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Classify legacy package lines that predate the line_type field. -->
+    <function model="rental.package.template.line" name="_migrate_classify_line_types"/>
+</odoo>

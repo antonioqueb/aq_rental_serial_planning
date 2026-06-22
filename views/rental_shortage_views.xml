@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ============ Shortage policy ============ -->
+    <record id="view_rental_shortage_policy_list" model="ir.ui.view">
+        <field name="name">rental.shortage.policy.list</field>
+        <field name="model">rental.shortage.policy</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="priority" widget="handle"/>
+                <field name="name"/>
+                <field name="scope"/>
+                <field name="product_id"/>
+                <field name="category_id"/>
+                <field name="package_id"/>
+                <field name="allow_shortage"/>
+                <field name="requires_manager_approval"/>
+                <field name="default_resolution"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_rental_shortage_policy_form" model="ir.ui.view">
+        <field name="name">rental.shortage.policy.form</field>
+        <field name="model">rental.shortage.policy</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <div class="oe_title"><label for="name"/><h1><field name="name"/></h1></div>
+                    <group>
+                        <group string="Alcance">
+                            <field name="scope"/>
+                            <field name="product_id" invisible="scope != 'product'" required="scope == 'product'"/>
+                            <field name="category_id" invisible="scope != 'category'" required="scope == 'category'"/>
+                            <field name="package_id" invisible="scope != 'package'" required="scope == 'package'"/>
+                            <field name="priority"/>
+                            <field name="active" widget="boolean_toggle"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                        <group string="Límite">
+                            <field name="allow_shortage"/>
+                            <field name="shortage_type" invisible="not allow_shortage"/>
+                            <field name="max_shortage_qty" invisible="not allow_shortage or shortage_type != 'quantity'"/>
+                            <field name="max_shortage_percent" invisible="not allow_shortage or shortage_type != 'percent'"/>
+                            <field name="requires_manager_approval" invisible="not allow_shortage"/>
+                        </group>
+                    </group>
+                    <group string="Resolución">
+                        <field name="default_resolution"/>
+                        <field name="vendor_id" invisible="default_resolution not in ('purchase','subrent','subcontract')"/>
+                        <field name="subrent_product_id" invisible="default_resolution != 'subrent'"/>
+                        <field name="lead_time_days"/>
+                        <field name="customer_visible_label"/>
+                    </group>
+                    <field name="internal_notes" placeholder="Notas internas..."/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_rental_shortage_policy" model="ir.actions.act_window">
+        <field name="name">Políticas de shortage</field>
+        <field name="res_model">rental.shortage.policy</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- ============ Shortage need ============ -->
+    <record id="view_rental_shortage_need_list" model="ir.ui.view">
+        <field name="name">rental.shortage.need.list</field>
+        <field name="model">rental.shortage.need</field>
+        <field name="arch" type="xml">
+            <list decoration-warning="state == 'pending'" decoration-info="state == 'in_procurement'"
+                  decoration-muted="state in ('sourced','cancelled')">
+                <field name="name"/>
+                <field name="product_id"/>
+                <field name="partner_id"/>
+                <field name="shortage_qty"/>
+                <field name="event_date"/>
+                <field name="resolution_type"/>
+                <field name="responsible_id"/>
+                <field name="deadline"/>
+                <field name="state" widget="badge"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_rental_shortage_need_form" model="ir.ui.view">
+        <field name="name">rental.shortage.need.form</field>
+        <field name="model">rental.shortage.need</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_approve" type="object" string="Autorizar"
+                            groups="aq_rental_serial_planning.group_rental_planner_manager"
+                            invisible="state != 'pending'"/>
+                    <button name="action_start_procurement" type="object" string="Gestionar"
+                            invisible="state in ('sourced','cancelled')"/>
+                    <button name="action_sourced" type="object" string="Conseguido" class="btn-primary"
+                            invisible="state in ('sourced','cancelled')"/>
+                    <button name="action_cancel" type="object" string="Cancelar"
+                            invisible="state in ('sourced','cancelled')"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="oe_title"><h1><field name="name" readonly="1"/></h1></div>
+                    <group>
+                        <group>
+                            <field name="product_id"/>
+                            <field name="requested_qty"/>
+                            <field name="available_qty"/>
+                            <field name="shortage_qty"/>
+                            <field name="policy_id"/>
+                        </group>
+                        <group>
+                            <field name="partner_id"/>
+                            <field name="sale_order_id"/>
+                            <field name="event_date"/>
+                            <field name="resolution_type"/>
+                            <field name="vendor_id"/>
+                            <field name="responsible_id"/>
+                            <field name="deadline"/>
+                        </group>
+                    </group>
+                    <field name="notes" placeholder="Notas..."/>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_rental_shortage_need_search" model="ir.ui.view">
+        <field name="name">rental.shortage.need.search</field>
+        <field name="model">rental.shortage.need</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="product_id"/>
+                <field name="partner_id"/>
+                <field name="sale_order_id"/>
+                <filter name="open" string="Abiertos" domain="[('state','not in',['sourced','cancelled'])]"/>
+                <filter name="pending" string="Por autorizar" domain="[('state','=','pending')]"/>
+                <separator/>
+                <filter name="g_product" string="Producto" context="{'group_by':'product_id'}"/>
+                <filter name="g_state" string="Estado" context="{'group_by':'state'}"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_rental_shortage_need" model="ir.actions.act_window">
+        <field name="name">Faltantes por conseguir</field>
+        <field name="res_model">rental.shortage.need</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_rental_shortage_need_search"/>
+        <field name="context">{'search_default_open': 1}</field>
+    </record>
+</odoo>

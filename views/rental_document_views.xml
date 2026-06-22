@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ===== Template ===== -->
+    <record id="view_rental_document_template_list" model="ir.ui.view">
+        <field name="name">rental.document.template.list</field>
+        <field name="model">rental.document.template</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="document_type"/>
+                <field name="name"/>
+                <field name="requires_customer_signature"/>
+                <field name="requires_warehouse_signature"/>
+                <field name="show_prices"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_rental_document_template_form" model="ir.ui.view">
+        <field name="name">rental.document.template.form</field>
+        <field name="model">rental.document.template</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <div class="oe_title"><label for="name"/><h1><field name="name"/></h1></div>
+                    <group>
+                        <group>
+                            <field name="document_type"/>
+                            <field name="active" widget="boolean_toggle"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                        <group string="Firmas / aprobación">
+                            <field name="requires_customer_signature"/>
+                            <field name="requires_warehouse_signature"/>
+                            <field name="requires_internal_approval"/>
+                        </group>
+                    </group>
+                    <group string="Secciones visibles">
+                        <group>
+                            <field name="show_serial_lines"/>
+                            <field name="show_quantity_lines"/>
+                            <field name="show_consumables"/>
+                            <field name="show_services"/>
+                        </group>
+                        <group>
+                            <field name="show_prices"/>
+                            <field name="show_terms"/>
+                        </group>
+                    </group>
+                    <field name="body_html" placeholder="Términos / cuerpo del documento..."/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_rental_document_template" model="ir.actions.act_window">
+        <field name="name">Plantillas de documento</field>
+        <field name="res_model">rental.document.template</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- ===== Instance ===== -->
+    <record id="view_rental_document_instance_list" model="ir.ui.view">
+        <field name="name">rental.document.instance.list</field>
+        <field name="model">rental.document.instance</field>
+        <field name="arch" type="xml">
+            <list decoration-success="state == 'signed'" decoration-muted="state == 'cancelled'">
+                <field name="name"/>
+                <field name="document_type"/>
+                <field name="sale_order_id"/>
+                <field name="partner_id"/>
+                <field name="state" widget="badge"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_rental_document_instance_form" model="ir.ui.view">
+        <field name="name">rental.document.instance.form</field>
+        <field name="model">rental.document.instance</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_print" type="object" string="Generar / Imprimir PDF" class="btn-primary"/>
+                    <button name="action_send" type="object" string="Marcar enviado" invisible="state in ('signed','cancelled')"/>
+                    <button name="action_mark_signed" type="object" string="Marcar firmado" invisible="state in ('signed','cancelled')"/>
+                    <button name="action_cancel" type="object" string="Cancelar" invisible="state in ('signed','cancelled')"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="oe_title"><h1><field name="name" readonly="1"/></h1></div>
+                    <group>
+                        <group>
+                            <field name="document_type"/>
+                            <field name="template_id"/>
+                            <field name="sale_order_id"/>
+                            <field name="partner_id"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                        <group>
+                            <field name="pdf_attachment_id"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Firmas" name="signatures">
+                            <group>
+                                <group string="Cliente">
+                                    <field name="customer_signature" widget="signature"/>
+                                    <field name="customer_signed_by"/>
+                                    <field name="customer_signed_date"/>
+                                </group>
+                                <group string="Almacén">
+                                    <field name="warehouse_signature" widget="signature"/>
+                                    <field name="warehouse_signed_by"/>
+                                    <field name="warehouse_signed_date"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Evidencia" name="evidence">
+                            <field name="evidence_attachment_ids" widget="many2many_binary"/>
+                        </page>
+                        <page string="Notas" name="notes">
+                            <field name="notes"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_rental_document_instance" model="ir.actions.act_window">
+        <field name="name">Documentos</field>
+        <field name="res_model">rental.document.instance</field>
+        <field name="view_mode">list,form</field>
+    </record>
+</odoo>

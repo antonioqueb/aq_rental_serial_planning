@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="doc_tmpl_quote" model="rental.document.template">
+            <field name="name">Cotización comercial</field>
+            <field name="document_type">quote</field>
+            <field name="show_prices" eval="True"/>
+            <field name="show_terms" eval="True"/>
+            <field name="body_html"><![CDATA[<p>Cotización válida por 15 días. Precios sujetos a disponibilidad.</p>]]></field>
+        </record>
+
+        <record id="doc_tmpl_contract" model="rental.document.template">
+            <field name="name">Contrato de renta</field>
+            <field name="document_type">rental_contract</field>
+            <field name="requires_customer_signature" eval="True"/>
+            <field name="requires_internal_approval" eval="True"/>
+            <field name="show_prices" eval="True"/>
+            <field name="show_terms" eval="True"/>
+            <field name="body_html"><![CDATA[<p>El cliente se responsabiliza por el equipo entregado y acepta los cargos por daño, faltante y retorno tardío. Política de cancelación según términos comerciales.</p>]]></field>
+        </record>
+
+        <record id="doc_tmpl_liability" model="rental.document.template">
+            <field name="name">Carta responsiva</field>
+            <field name="document_type">liability_letter</field>
+            <field name="requires_customer_signature" eval="True"/>
+            <field name="show_prices" eval="False"/>
+            <field name="show_terms" eval="True"/>
+            <field name="body_html"><![CDATA[<p>Recibo de conformidad los equipos descritos y me hago responsable de su valor de reposición.</p>]]></field>
+        </record>
+
+        <record id="doc_tmpl_out_checklist" model="rental.document.template">
+            <field name="name">Checklist de salida</field>
+            <field name="document_type">outgoing_checklist</field>
+            <field name="requires_warehouse_signature" eval="True"/>
+            <field name="show_prices" eval="False"/>
+        </record>
+
+        <record id="doc_tmpl_return_checklist" model="rental.document.template">
+            <field name="name">Checklist de retorno</field>
+            <field name="document_type">return_checklist</field>
+            <field name="requires_warehouse_signature" eval="True"/>
+            <field name="show_prices" eval="False"/>
+        </record>
+
+        <record id="doc_tmpl_mounting" model="rental.document.template">
+            <field name="name">Hoja de montaje</field>
+            <field name="document_type">mounting_sheet</field>
+            <field name="show_prices" eval="False"/>
+        </record>
+
+        <record id="doc_tmpl_damage" model="rental.document.template">
+            <field name="name">Acta de daño / faltante</field>
+            <field name="document_type">damage_report</field>
+            <field name="requires_customer_signature" eval="True"/>
+            <field name="requires_warehouse_signature" eval="True"/>
+            <field name="show_prices" eval="True"/>
+        </record>
+    </data>
+</odoo>

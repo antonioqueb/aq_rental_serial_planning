@@ -13,13 +13,35 @@
               parent="menu_rental_planning_root"
               action="action_rental_planning_board" sequence="10"/>
 
+    <menuitem id="menu_rental_commercial_reports" name="Reportes Comerciales"
+              parent="menu_rental_planning_root"
+              action="action_rental_commercial_reports" sequence="7"
+              groups="group_rental_planner_manager"/>
+
     <menuitem id="menu_rental_reservations" name="Reservas por Serie"
               parent="menu_rental_planning_root"
               action="action_rental_serial_reservation" sequence="20"/>
 
+    <menuitem id="menu_rental_quantity_reservations" name="Reservas por Cantidad"
+              parent="menu_rental_planning_root"
+              action="action_rental_quantity_reservation" sequence="25"/>
+
+    <menuitem id="menu_rental_shortage_needs" name="Faltantes por Conseguir"
+              parent="menu_rental_planning_root"
+              action="action_rental_shortage_need" sequence="28"/>
+
+    <menuitem id="menu_rental_documents" name="Documentos"
+              parent="menu_rental_planning_root"
+              action="action_rental_document_instance" sequence="32"/>
+
+    <menuitem id="menu_rental_damage" name="Actas de Daño / Faltante"
+              parent="menu_rental_planning_root"
+              action="action_rental_damage_report" sequence="34"
+              groups="group_rental_warehouse_user"/>
+
     <menuitem id="menu_rental_downtime" name="Mantenimiento / Bloqueos"
               parent="menu_rental_planning_root"
-              action="action_rental_downtime" sequence="30"
+              action="action_rental_downtime" sequence="36"
               groups="group_rental_warehouse_user"/>
 
     <menuitem id="menu_rental_config" name="Configuración"
@@ -29,6 +51,26 @@
     <menuitem id="menu_rental_packages" name="Paquetes"
               parent="menu_rental_config"
               action="action_rental_package" sequence="10"/>
+
+    <menuitem id="menu_rental_shortage_policies" name="Políticas de Shortage"
+              parent="menu_rental_config"
+              action="action_rental_shortage_policy" sequence="20"/>
+
+    <menuitem id="menu_rental_pricing_rules" name="Reglas de Precio"
+              parent="menu_rental_config"
+              action="action_rental_pricing_rule" sequence="30"/>
+
+    <menuitem id="menu_rental_seasons" name="Temporadas"
+              parent="menu_rental_config"
+              action="action_rental_season" sequence="40"/>
+
+    <menuitem id="menu_rental_event_types" name="Tipos de Evento"
+              parent="menu_rental_config"
+              action="action_rental_event_type" sequence="50"/>
+
+    <menuitem id="menu_rental_doc_templates" name="Plantillas de Documento"
+              parent="menu_rental_config"
+              action="action_rental_document_template" sequence="60"/>
 
     <menuitem id="menu_rental_sample_data" name="Cargar datos de ejemplo"
               parent="menu_rental_config"

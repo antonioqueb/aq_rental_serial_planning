@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_rental_quantity_reservation_list" model="ir.ui.view">
+        <field name="name">rental.quantity.reservation.list</field>
+        <field name="model">rental.quantity.reservation</field>
+        <field name="arch" type="xml">
+            <list decoration-warning="shortage_qty &gt; 0" decoration-muted="state in ('released','cancelled')">
+                <field name="name"/>
+                <field name="product_id"/>
+                <field name="partner_id"/>
+                <field name="quantity_reserved"/>
+                <field name="shortage_qty"/>
+                <field name="reservation_block_start"/>
+                <field name="reservation_block_end"/>
+                <field name="state" widget="badge"/>
+                <field name="company_id" groups="base.group_multi_company" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_rental_quantity_reservation_form" model="ir.ui.view">
+        <field name="name">rental.quantity.reservation.form</field>
+        <field name="model">rental.quantity.reservation</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_reserve" type="object" string="Reservar" class="btn-primary"
+                            invisible="state not in ('draft','quotation','soft_hold')"/>
+                    <button name="action_prepare" type="object" string="Preparar" invisible="state != 'reserved'"/>
+                    <button name="action_pickup" type="object" string="Retirar" invisible="state != 'prepared'"/>
+                    <button name="action_deliver" type="object" string="Entregar" invisible="state != 'picked_up'"/>
+                    <button name="action_set_in_use" type="object" string="En uso" invisible="state != 'delivered'"/>
+                    <button name="action_return" type="object" string="Registrar devolución" invisible="state not in ('delivered','in_use','picked_up')"/>
+                    <button name="action_release" type="object" string="Liberar" invisible="state in ('released','cancelled','draft')"/>
+                    <button name="action_cancel" type="object" string="Cancelar" invisible="state in ('released','cancelled')"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="oe_title"><h1><field name="name" readonly="1"/></h1></div>
+                    <group>
+                        <group string="Inventario">
+                            <field name="product_id"/>
+                            <field name="quantity_reserved"/>
+                            <field name="shortage_qty"/>
+                            <field name="warehouse_id"/>
+                            <field name="location_id"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                        <group string="Comercial">
+                            <field name="partner_id"/>
+                            <field name="sale_order_id"/>
+                            <field name="package_id"/>
+                            <field name="auto_release_policy"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Periodo facturable">
+                            <field name="rental_billable_start"/>
+                            <field name="rental_billable_end"/>
+                        </group>
+                        <group string="Periodo operativo">
+                            <field name="reservation_block_start"/>
+                            <field name="reservation_block_end"/>
+                        </group>
+                    </group>
+                    <group string="Entrega / retorno">
+                        <field name="quantity_delivered"/>
+                        <field name="quantity_returned"/>
+                        <field name="quantity_lost"/>
+                        <field name="quantity_damaged"/>
+                    </group>
+                    <field name="notes" placeholder="Notas..."/>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_rental_quantity_reservation_search" model="ir.ui.view">
+        <field name="name">rental.quantity.reservation.search</field>
+        <field name="model">rental.quantity.reservation</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="product_id"/>
+                <field name="partner_id"/>
+                <field name="sale_order_id"/>
+                <filter name="shortage" string="Con faltante" domain="[('shortage_qty','&gt;',0)]"/>
+                <filter name="active_blocks" string="Activas"
+                        domain="[('state','in',['soft_hold','reserved','prepared','picked_up','delivered','in_use','returned'])]"/>
+                <separator/>
+                <filter name="g_product" string="Producto" context="{'group_by':'product_id'}"/>
+                <filter name="g_state" string="Estado" context="{'group_by':'state'}"/>
+                <filter name="g_partner" string="Cliente" context="{'group_by':'partner_id'}"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_rental_quantity_reservation" model="ir.actions.act_window">
+        <field name="name">Reservas por cantidad</field>
+        <field name="res_model">rental.quantity.reservation</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_rental_quantity_reservation_search"/>
+    </record>
+</odoo>

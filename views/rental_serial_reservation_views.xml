@@ -64,6 +64,12 @@
                             invisible="state in ('released','cancelled','draft')"/>
                     <button name="action_cancel" type="object" string="Cancelar"
                             invisible="state in ('released','cancelled')"/>
+                    <button name="action_open_substitution" type="object" string="Sustituir serie"
+                            icon="fa-exchange"
+                            invisible="lot_id == False or state in ('draft','cancelled','released')"/>
+                    <button name="action_report_damage" type="object" string="Reportar daño"
+                            icon="fa-warning"
+                            invisible="lot_id == False or state in ('draft','quotation','cancelled')"/>
                     <button name="action_reset_to_draft" type="object" string="Restablecer a borrador"
                             invisible="state not in ('cancelled',)"/>
                     <field name="state" widget="statusbar"
@@ -122,6 +128,21 @@
                                 </group>
                             </group>
                             <field name="notes" placeholder="Notas..."/>
+                        </page>
+                        <page string="Sustituciones" name="substitutions"
+                              invisible="substitution_count == 0">
+                            <field name="substitution_count" invisible="1"/>
+                            <field name="substitution_log_ids" readonly="1">
+                                <list>
+                                    <field name="date"/>
+                                    <field name="old_lot_id"/>
+                                    <field name="new_lot_id"/>
+                                    <field name="reason"/>
+                                    <field name="user_id"/>
+                                    <field name="old_downtime_id" optional="show"/>
+                                    <field name="notes" optional="hide"/>
+                                </list>
+                            </field>
                         </page>
                     </notebook>
                 </sheet>

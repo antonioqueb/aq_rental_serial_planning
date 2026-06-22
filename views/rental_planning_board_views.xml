@@ -9,4 +9,9 @@
         <field name="name">Indicadores de Planeación</field>
         <field name="tag">aq_rental_kpi_dashboard</field>
     </record>
+
+    <record id="action_rental_commercial_reports" model="ir.actions.client">
+        <field name="name">Reportes Comerciales</field>
+        <field name="tag">aq_rental_commercial_reports</field>
+    </record>
 </odoo>

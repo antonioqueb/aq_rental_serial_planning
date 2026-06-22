@@ -91,6 +91,8 @@ export class RentalKpiDashboard extends Component {
         if (h.soft_expiring) out.push({ key: "soft", icon: "fa-hourglass-half", level: "is-warning", text: `${h.soft_expiring} apartado(s) temporal(es) por expirar` });
         if (h.maint_now) out.push({ key: "maint", icon: "fa-wrench", level: "is-info", text: `${h.maint_now} item(s) en mantenimiento` });
         if (h.returns_pending) out.push({ key: "returns", icon: "fa-undo", level: "is-info", text: `${h.returns_pending} retorno(s) pendiente(s) de revisión` });
+        if (h.shortage_pending) out.push({ key: "shortage", icon: "fa-gavel", level: "is-critical", text: `${h.shortage_pending} shortage(s) por autorizar` });
+        else if (h.shortage_open) out.push({ key: "shortage", icon: "fa-shopping-cart", level: "is-warning", text: `${h.shortage_open} faltante(s) por conseguir` });
         return out;
     }
     get hasAlerts() { return this.alerts.length > 0; }
@@ -131,6 +133,26 @@ export class RentalKpiDashboard extends Component {
               sub: h.returns_pending ? "Por revisar y liberar" : "Sin retornos pendientes",
               sev: h.returns_pending ? "is-warning" : "", click: "returns",
               tip: "Equipos devueltos físicamente que aún no se revisan/liberan." },
+            { key: "shortage", icon: "fa-shopping-cart", label: "Faltantes por conseguir", value: h.shortage_open || 0,
+              sub: (h.shortage_qty_total || 0) ? `${this.fmt(h.shortage_qty_total)} unidades por conseguir` : "Sin faltantes",
+              sev: (h.shortage_open || 0) ? "is-warning" : "is-success", click: "shortage",
+              tip: "Líneas vendidas en sobreventa que requieren compra, subrenta o gestión." },
+            { key: "shortage_pending", icon: "fa-gavel", label: "Shortage por autorizar", value: h.shortage_pending || 0,
+              sub: (h.shortage_pending || 0) ? "Requieren autorización de gerente" : "Sin pendientes de autorización",
+              sev: (h.shortage_pending || 0) ? "is-critical" : "", click: "shortage",
+              tip: "Faltantes que exceden el umbral sin autorización y bloquean la confirmación." },
+            { key: "overrides", icon: "fa-tags", label: "Overrides de precio", value: h.overrides_pending || 0,
+              sub: (h.overrides_pending || 0) ? "Pendientes de autorización" : "Sin overrides pendientes",
+              sev: (h.overrides_pending || 0) ? "is-critical" : "", click: "overrides",
+              tip: "Precios modificados manualmente fuera de rango, pendientes de autorización." },
+            { key: "docs", icon: "fa-file-text-o", label: "Documentos por firmar", value: h.docs_pending_sign || 0,
+              sub: (h.docs_pending_sign || 0) ? "Generados o enviados, sin firma" : "Sin documentos pendientes",
+              sev: (h.docs_pending_sign || 0) ? "is-info" : "", click: "docs",
+              tip: "Contratos, responsivas y checklists pendientes de firma." },
+            { key: "damage", icon: "fa-warning", label: "Actas de daño abiertas", value: h.damage_open || 0,
+              sub: (h.damage_open || 0) ? "Pendientes de cargo" : "Sin actas abiertas",
+              sev: (h.damage_open || 0) ? "is-warning" : "is-success", click: "damage",
+              tip: "Actas de daño/faltante sin cargo generado." },
         ];
     }
 
@@ -140,6 +162,10 @@ export class RentalKpiDashboard extends Component {
             soft: () => this.openSoftHolds(), maint: () => this.openMaintenance(),
             returns: () => this.openReturnsPending(), board: () => this.openBoard(),
             deliveries: () => this.openBoard(), returns7: () => this.openBoard(),
+            shortage: () => this.openShortage(),
+            overrides: () => this.openOverrides(),
+            docs: () => this.openDocs(),
+            damage: () => this.openDamage(),
         };
         (map[card.click] || (() => this.openBoard()))();
     }
@@ -203,6 +229,37 @@ export class RentalKpiDashboard extends Component {
     openSoftHolds() { this._openReservations("Apartados temporales", [["state", "=", "soft_hold"]]); }
     openReturnsPending() { this._openReservations("Retornos pendientes", [["state", "=", "returned"]]); }
     openCustomer(c) { this._openReservations("Reservas · " + c.name, [["partner_id", "=", c.partner_id]]); }
+    openShortage() {
+        this.action.doAction({
+            type: "ir.actions.act_window", name: "Faltantes por conseguir",
+            res_model: "rental.shortage.need",
+            domain: [["state", "not in", ["sourced", "cancelled"]]],
+            views: [[false, "list"], [false, "form"]],
+        });
+    }
+    openOverrides() {
+        this.action.doAction({
+            type: "ir.actions.act_window", name: "Overrides de precio pendientes",
+            res_model: "sale.order", domain: [["x_price_override_count", ">", 0]],
+            views: [[false, "list"], [false, "form"]],
+        });
+    }
+    openDocs() {
+        this.action.doAction({
+            type: "ir.actions.act_window", name: "Documentos por firmar",
+            res_model: "rental.document.instance",
+            domain: [["state", "in", ["generated", "sent"]]],
+            views: [[false, "list"], [false, "form"]],
+        });
+    }
+    openDamage() {
+        this.action.doAction({
+            type: "ir.actions.act_window", name: "Actas de daño abiertas",
+            res_model: "rental.damage.report",
+            domain: [["state", "not in", ["charged", "cancelled"]]],
+            views: [[false, "list"], [false, "form"]],
+        });
+    }
     openMaintenance() {
         this.action.doAction({
             type: "ir.actions.act_window", name: "Mantenimiento / Bloqueos",

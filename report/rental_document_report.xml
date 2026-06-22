@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_report_rental_document" model="ir.actions.report">
+        <field name="name">Documento de renta</field>
+        <field name="model">rental.document.instance</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">aq_rental_serial_planning.report_rental_document</field>
+        <field name="report_file">aq_rental_serial_planning.report_rental_document</field>
+        <field name="print_report_name">(object.name or 'Documento')</field>
+        <field name="attachment">(object.name or 'Documento') + '.pdf'</field>
+        <field name="attachment_use" eval="False"/>
+    </record>
+
+    <template id="report_rental_document">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="web.basic_layout">
+                    <t t-set="o" t-value="doc.sale_order_id"/>
+                    <t t-set="tpl" t-value="doc.template_id"/>
+                    <div class="article" style="font-family:Helvetica,Arial,sans-serif;color:#1f211d;">
+
+                        <!-- header -->
+                        <table style="width:100%;border-collapse:collapse;margin-bottom:14px;">
+                            <tr>
+                                <td style="vertical-align:middle;width:56px;">
+                                    <div style="width:44px;height:44px;background-color:#5f7668;border-radius:10px;color:#fffdf8;text-align:center;line-height:44px;font-weight:bold;font-size:18px;">GR</div>
+                                </td>
+                                <td style="vertical-align:middle;">
+                                    <div style="font-weight:bold;letter-spacing:2px;font-size:12px;">GETTING <span style="color:#8faf9b;">READY</span></div>
+                                    <div style="font-size:19px;font-weight:bold;color:#5f7668;"><span t-field="doc.document_type"/></div>
+                                </td>
+                                <td style="vertical-align:middle;text-align:right;font-size:12px;color:#6d6255;">
+                                    <div style="font-size:15px;font-weight:bold;color:#1f211d;"><span t-field="doc.name"/></div>
+                                    <div t-if="o"><span t-field="o.name"/></div>
+                                    <div><span t-field="doc.partner_id"/></div>
+                                </td>
+                            </tr>
+                        </table>
+                        <div style="height:4px;background-color:#8faf9b;border-radius:3px;margin-bottom:14px;"></div>
+
+                        <!-- event info -->
+                        <table t-if="o" style="width:100%;border-collapse:collapse;margin-bottom:12px;font-size:12px;">
+                            <tr>
+                                <td style="width:50%;vertical-align:top;padding-right:8px;">
+                                    <div style="background:#f7f3ea;border:1px solid #e3e6dd;border-radius:8px;padding:10px;">
+                                        <div style="font-weight:bold;color:#5f7668;margin-bottom:4px;">EVENTO</div>
+                                        <div><strong>Nombre:</strong> <span t-field="o.x_event_name"/></div>
+                                        <div><strong>Tipo:</strong> <span t-field="o.x_event_type_id"/></div>
+                                        <div><strong>Ubicación:</strong> <span t-field="o.x_event_location"/></div>
+                                        <div><strong>Inicio:</strong> <span t-field="o.x_event_start"/></div>
+                                        <div><strong>Fin:</strong> <span t-field="o.x_event_end"/></div>
+                                    </div>
+                                </td>
+                                <td style="width:50%;vertical-align:top;padding-left:8px;">
+                                    <div style="background:#f7f3ea;border:1px solid #e3e6dd;border-radius:8px;padding:10px;">
+                                        <div style="font-weight:bold;color:#5f7668;margin-bottom:4px;">PERIODOS</div>
+                                        <div><strong>Facturable:</strong> <span t-field="o.x_billable_start"/> → <span t-field="o.x_billable_end"/></div>
+                                        <div><strong>Operativo:</strong> <span t-field="o.x_block_start"/> → <span t-field="o.x_block_end"/></div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <!-- serial lines -->
+                        <t t-if="o and (not tpl or tpl.show_serial_lines) and o.x_reservation_ids">
+                            <div style="font-weight:bold;color:#5f7668;font-size:13px;margin:8px 0 4px;">Equipos por número de serie</div>
+                            <table style="width:100%;border-collapse:collapse;font-size:11px;">
+                                <thead><tr style="background:#8faf9b;color:#fffdf8;">
+                                    <th style="padding:5px;text-align:left;">Producto</th>
+                                    <th style="padding:5px;text-align:left;">Serie</th>
+                                    <th style="padding:5px;text-align:left;">Estado</th>
+                                    <th style="padding:5px;text-align:center;">✔</th>
+                                </tr></thead>
+                                <tbody>
+                                    <tr t-foreach="o.x_reservation_ids" t-as="r">
+                                        <td style="padding:4px 5px;border-bottom:1px solid #e3e6dd;"><span t-field="r.product_id"/></td>
+                                        <td style="padding:4px 5px;border-bottom:1px solid #e3e6dd;font-weight:bold;"><span t-field="r.lot_id"/></td>
+                                        <td style="padding:4px 5px;border-bottom:1px solid #e3e6dd;"><span t-field="r.state"/></td>
+                                        <td style="padding:4px 5px;border-bottom:1px solid #e3e6dd;text-align:center;">☐</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </t>
+
+                        <!-- commercial lines (quantity / consumables / services / charges) -->
+                        <t t-if="o">
+                            <div style="font-weight:bold;color:#5f7668;font-size:13px;margin:12px 0 4px;">Detalle</div>
+                            <table style="width:100%;border-collapse:collapse;font-size:11px;">
+                                <thead><tr style="background:#f7f3ea;color:#1f211d;">
+                                    <th style="padding:5px;text-align:left;">Concepto</th>
+                                    <th style="padding:5px;text-align:right;">Cant.</th>
+                                    <th t-if="not tpl or tpl.show_prices" style="padding:5px;text-align:right;">Importe</th>
+                                </tr></thead>
+                                <tbody>
+                                    <tr t-foreach="o.order_line" t-as="l">
+                                        <t t-if="not l.display_type">
+                                            <td style="padding:4px 5px;border-bottom:1px solid #eee;"><span t-field="l.name"/></td>
+                                            <td style="padding:4px 5px;border-bottom:1px solid #eee;text-align:right;"><span t-field="l.product_uom_qty"/></td>
+                                            <td t-if="not tpl or tpl.show_prices" style="padding:4px 5px;border-bottom:1px solid #eee;text-align:right;">
+                                                <span t-field="l.price_subtotal" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                                            </td>
+                                        </t>
+                                    </tr>
+                                </tbody>
+                                <tfoot t-if="not tpl or tpl.show_prices">
+                                    <tr><td></td><td style="text-align:right;font-weight:bold;padding:6px 5px;">Total</td>
+                                        <td style="text-align:right;font-weight:bold;padding:6px 5px;">
+                                            <span t-field="o.amount_total" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/></td></tr>
+                                </tfoot>
+                            </table>
+                        </t>
+
+                        <!-- terms -->
+                        <div t-if="tpl and tpl.show_terms and tpl.body_html" style="margin-top:14px;font-size:11px;border-top:1px solid #e3e6dd;padding-top:8px;">
+                            <span t-field="tpl.body_html"/>
+                        </div>
+
+                        <!-- evidence -->
+                        <t t-if="doc.evidence_attachment_ids">
+                            <div style="font-weight:bold;color:#5f7668;font-size:13px;margin:14px 0 4px;">Evidencia</div>
+                            <div>
+                                <img t-foreach="doc.evidence_attachment_ids" t-as="att"
+                                     t-attf-src="data:#{att.mimetype or 'image/png'};base64,#{att.datas}"
+                                     style="max-height:120px;margin:4px;border:1px solid #e3e6dd;border-radius:6px;"/>
+                            </div>
+                        </t>
+
+                        <!-- signatures -->
+                        <table style="width:100%;margin-top:28px;font-size:11px;">
+                            <tr>
+                                <td t-if="not tpl or tpl.requires_customer_signature" style="width:50%;text-align:center;vertical-align:bottom;padding:0 16px;">
+                                    <img t-if="doc.customer_signature" t-attf-src="data:image/png;base64,#{doc.customer_signature}" style="max-height:70px;"/>
+                                    <div style="border-top:1px solid #1f211d;margin-top:40px;padding-top:4px;">Firma del cliente<br/><span t-field="doc.customer_signed_by"/></div>
+                                </td>
+                                <td t-if="not tpl or tpl.requires_warehouse_signature" style="width:50%;text-align:center;vertical-align:bottom;padding:0 16px;">
+                                    <img t-if="doc.warehouse_signature" t-attf-src="data:image/png;base64,#{doc.warehouse_signature}" style="max-height:70px;"/>
+                                    <div style="border-top:1px solid #1f211d;margin-top:40px;padding-top:4px;">Firma de almacén<br/><span t-field="doc.warehouse_signed_by"/></div>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <div style="margin-top:20px;border-top:1px solid #e3e6dd;padding-top:6px;font-size:10px;color:#9da9a0;text-align:center;">
+                            Getting Ready · Renta de mobiliario para eventos
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>
