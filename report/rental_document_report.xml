@@ -7,6 +7,10 @@
         <field name="report_name">aq_rental_serial_planning.report_rental_document</field>
         <field name="report_file">aq_rental_serial_planning.report_rental_document</field>
         <field name="print_report_name">(object.name or 'Documento')</field>
+        <!-- Explicitly clear any previously-stored attachment expression so the
+             report no longer tries to split/store the PDF (which required
+             data-oe-model/id on the .article div). -->
+        <field name="attachment" eval="False"/>
     </record>
 
     <template id="report_rental_document">
