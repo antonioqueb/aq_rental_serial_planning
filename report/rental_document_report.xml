@@ -17,7 +17,9 @@
                 <t t-call="web.basic_layout">
                     <t t-set="o" t-value="doc.sale_order_id"/>
                     <t t-set="tpl" t-value="doc.template_id"/>
-                    <div class="article" style="font-family:Helvetica,Arial,sans-serif;color:#1f211d;">
+                    <div class="article"
+                         t-att-data-oe-model="doc._name" t-att-data-oe-id="doc.id"
+                         style="font-family:Helvetica,Arial,sans-serif;color:#1f211d;">
 
                         <!-- header -->
                         <table style="width:100%;border-collapse:collapse;margin-bottom:14px;">
