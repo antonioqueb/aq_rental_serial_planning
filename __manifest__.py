@@ -58,7 +58,6 @@ application (``sale_renting``):
         "report/rental_document_report.xml",
         "data/document_templates.xml",
         "data/migrate_line_types.xml",
-        "data/load_sample_data.xml",
     ],
     "assets": {
         "web.assets_backend": [
