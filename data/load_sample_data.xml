@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<odoo>
-    <!-- Runs on EVERY install and update (not noupdate), independent of the
-         database demo flag. The method is idempotent: it only creates the
-         dataset once (marker product AQ-SILLA) and never raises. -->
-    <function model="rental.sample.data.wizard" name="_load_sample_data_auto"/>
-</odoo>
