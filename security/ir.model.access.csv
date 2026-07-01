@@ -15,7 +15,6 @@ access_downtime_admin,downtime.admin,model_rental_serial_downtime,group_rental_a
 access_downtime_manager,downtime.manager,model_rental_serial_downtime,group_rental_planner_manager,1,1,1,1
 access_assign_wizard,assign.wizard,model_rental_serial_assign_wizard,group_rental_planner_user,1,1,1,1
 access_assign_wizard_line,assign.wizard.line,model_rental_serial_assign_wizard_line,group_rental_planner_user,1,1,1,1
-access_sample_wizard,sample.wizard,model_rental_sample_data_wizard,group_rental_administrator,1,1,1,1
 access_subst_log_user,subst.log.user,model_rental_serial_substitution_log,group_rental_planner_user,1,0,1,0
 access_subst_log_wh,subst.log.wh,model_rental_serial_substitution_log,group_rental_warehouse_user,1,0,1,0
 access_subst_log_manager,subst.log.manager,model_rental_serial_substitution_log,group_rental_planner_manager,1,1,1,1

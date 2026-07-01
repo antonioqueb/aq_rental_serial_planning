@@ -71,9 +71,4 @@
     <menuitem id="menu_rental_doc_templates" name="Plantillas de Documento"
               parent="menu_rental_config"
               action="action_rental_document_template" sequence="60"/>
-
-    <menuitem id="menu_rental_sample_data" name="Cargar datos de ejemplo"
-              parent="menu_rental_config"
-              action="action_rental_sample_data" sequence="90"
-              groups="group_rental_administrator"/>
 </odoo>

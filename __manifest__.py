@@ -39,7 +39,6 @@ application (``sale_renting``):
         "data/ir_sequence.xml",
         "data/ir_cron.xml",
         "wizard/rental_serial_assign_wizard_views.xml",
-        "wizard/rental_sample_data_views.xml",
         "wizard/rental_serial_substitution_wizard_views.xml",
         "views/rental_serial_reservation_views.xml",
         "views/rental_quantity_reservation_views.xml",
